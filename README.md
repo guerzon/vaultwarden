@@ -14,7 +14,11 @@ helm install my-vaultwarden-release .
 
 ### Background
 
-This aim of this Helm chart is to deploy `vaultwarden` with a stable configuration to Kubernetes clusters. The upstream repository for the `vaultwarden` project can be found [here](https://github.com/dani-garcia/vaultwarden).
+In 2020, I built a simple project for deploying **Bitwarden_RS** to Kubernetes, which can be found [here](https://github.com/guerzon/bitwarden-kubernetes). That project is made up of various YAML files which have to be edited manually when adding required customizations.
+
+The aim of this project is to deploy `vaultwarden` with a stable configuration to Kubernetes clusters using [Helm](https://helm.sh/docs/).
+
+The upstream repository for the `vaultwarden` project can be found [here](https://github.com/dani-garcia/vaultwarden).
 
 ### Word of caution
 
