@@ -1,0 +1,62 @@
+{{- if .Values.ingress.enabled }}
+{{- $newAPIversion := .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+{{- if $newAPIversion }}
+apiVersion: networking.k8s.io/v1
+{{- else }}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ include "vaultwarden.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    {{- if .Values.ingress.allowList }}
+    nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingress.allowList }}
+    {{- end }}
+    {{- if .Values.ingress.tls }}
+    ingress.kubernetes.io/ssl-redirect: "true"
+    {{- end }}
+    {{- if eq "nginx" .Values.ingress.class }}
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Request-Id: $req_id";
+    nginx.ingress.kubernetes.io/connection-proxy-header: "keep-alive"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/limit-connections: "25"
+    nginx.ingress.kubernetes.io/limit-rps: "15"
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.class | quote }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.hostname | quote }}
+      secretName: {{ .Values.ingress.tlsSecret }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.hostname | quote }}
+      http:
+        paths:
+        - path: {{ .Values.ingress.path }}
+          pathType: {{ .Values.ingress.pathType }}
+          backend:
+            service:
+              name: {{ include "vaultwarden.fullname" . }}
+              port:
+                name: {{ .Values.service.http.name | quote }}
+        {{- if .Values.service.websocket.enabled }}
+        - path: {{ .Values.ingress.pathWs }}
+          pathType: {{ .Values.ingress.pathTypeWs }}
+          backend:
+            service:
+              name: {{ include "vaultwarden.fullname" . }}
+              port:
+                name: {{ .Values.service.websocket.name | quote }}
+        {{- end }}
+{{- end }}

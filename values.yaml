@@ -1,0 +1,94 @@
+
+## @section General settings
+##
+
+## @param vaultVersion vaultwarden version to deploy.
+## Ref: https://hub.docker.com/r/vaultwarden/server/tags
+##
+vaultVersion: "1.24.0"
+
+## @param adminToken The admin token
+##
+adminToken: "R@ndomToken$tring"
+
+## @param fullnameOverride String to override the application name.
+##
+fullnameOverride: ""
+
+## @section Exposure parameters
+##
+
+## Service configuration
+## Ref: TBD
+ingress:
+  ## @param ingress.enabled Deploy an ingress resource.
+  ##
+  enabled: false
+  ## @param ingress.class Ingress class
+  ## Currently, only ingress-nginx annotations are supported.
+  class: "nginx"
+  ## @param ingress.tls Enable TLS on the ingress resource.
+  ##
+  tls: true
+  ## @param ingress.hostname Hostname for the ingress.
+  ##
+  hostname: "warden.contoso.com"
+  ## @param ingress.path Default application path for the ingress
+  ##
+  path: "/"
+  ## @param ingress.pathWs Path for the websocket ingress
+  ##
+  pathWs: "/notifications/hub"
+  ## @param ingress.pathType Path type for the ingress
+  ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
+  pathType: "ImplementationSpecific"
+  ## @param ingress.pathTypeWs Path type for the ingress
+  ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
+  pathTypeWs: "ImplementationSpecific"
+  ## @param ingress.tlsSecret Kubernetes secret containing the SSL certificate.
+  ##
+  tlsSecret: ""
+  ## @param ingress.allowList Comma-separated list of IP addresses and subnets to allow.
+  ##
+  allowList: ""
+  ## TODO:
+  ##   - Nginx ingress annotations should be moved here.
+  ##   - Add support for using cert-manager.
+  ##   - Support for multiple TLS hostnames.
+  ##
+
+## Service configuration
+##
+service:
+  ## @param service.type Service type
+  ##
+  type: "ClusterIP"
+  ## @param service.http.name Name for the HTTP service
+  ## @param service.http.port Port for the HTTP service
+  ##
+  http:
+    name: "http"
+    port: 80
+  ## @param service.websocket.enabled Enable the websocket service
+  ## @param service.websocket.name Name for the websocket service
+  ## @param service.websocket.port Port for the websocket service
+  ##
+  websocket:
+    enabled: true
+    name: "websocket"
+    port: 3012
+  ## @param service.annotations Additional annotations for the vaultwarden service
+  ##
+  annotations: {}
+
+## 
+## SMTP configuration
+smtp:
+  ## @param smtp.username Username for the SMTP service.
+  ##
+  username: mailuser
+  ## @param smtp.password Password for the SMTP service.
+  ##
+  password: mailuser
