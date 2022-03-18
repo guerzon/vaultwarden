@@ -82,6 +82,14 @@ ingress:
 
 Complete configuration options can be found [below](#exposure-parameters).
 
+### Security options
+
+Admin token: `openssl rand -base64 48`
+
+### Mail settings
+
+To enable the SMTP service, make sure that at the minimum, `smtp.host` and `smtp.from` are set.
+
 ## Uninstalling the Chart
 
 To uninstall/delete the `vaultwarden-demo` release:
@@ -95,36 +103,50 @@ helm uninstall $RELEASE_NAME
 
 ### General settings
 
-| Name               | Description                              | Value               |
-| ------------------ | ---------------------------------------- | ------------------- |
-| `vaultVersion`     | vaultwarden version to deploy.           | `1.24.0`            |
-| `adminToken`       | The admin token                          | `R@ndomToken$tring` |
-| `fullnameOverride` | String to override the application name. | `""`                |
+| Name                    | Description                                   | Value               |
+| ----------------------- | --------------------------------------------- | ------------------- |
+| `vaultVersion`          | vaultwarden version to deploy.                | `1.24.0`            |
+| `domain`                | Domain name where the application is accessed | `""`                |
+| `adminToken`            | The admin token                               | `R@ndomToken$tring` |
+| `fullnameOverride`      | String to override the application name.      | `""`                |
+| `websocket.enabled`     | Enable websocket notifications                | `true`              |
+| `websocket.address`     | Websocket listen address                      | `0.0.0.0`           |
+| `websocket.port`        | Websocket listen port                         | `3012`              |
+| `serviceAccount.create` | Create a service account                      | `true`              |
+| `serviceAccount.name`   | Name of the service account to create         | `vaultwarden-svc`   |
 
 
 ### Exposure parameters
 
-| Name                        | Description                                                | Value                    |
-| --------------------------- | ---------------------------------------------------------- | ------------------------ |
-| `ingress.enabled`           | Deploy an ingress resource.                                | `false`                  |
-| `ingress.class`             | Ingress class                                              | `nginx`                  |
-| `ingress.tls`               | Enable TLS on the ingress resource.                        | `true`                   |
-| `ingress.hostname`          | Hostname for the ingress.                                  | `warden.contoso.com`     |
-| `ingress.path`              | Default application path for the ingress                   | `/`                      |
-| `ingress.pathWs`            | Path for the websocket ingress                             | `/notifications/hub`     |
-| `ingress.pathType`          | Path type for the ingress                                  | `ImplementationSpecific` |
-| `ingress.pathTypeWs`        | Path type for the ingress                                  | `ImplementationSpecific` |
-| `ingress.tlsSecret`         | Kubernetes secret containing the SSL certificate.          | `""`                     |
-| `ingress.allowList`         | Comma-separated list of IP addresses and subnets to allow. | `""`                     |
-| `service.type`              | Service type                                               | `ClusterIP`              |
-| `service.http.name`         | Name for the HTTP service                                  | `http`                   |
-| `service.http.port`         | Port for the HTTP service                                  | `80`                     |
-| `service.websocket.enabled` | Enable the websocket service                               | `true`                   |
-| `service.websocket.name`    | Name for the websocket service                             | `websocket`              |
-| `service.websocket.port`    | Port for the websocket service                             | `3012`                   |
-| `service.annotations`       | Additional annotations for the vaultwarden service         | `{}`                     |
-| `smtp.username`             | Username for the SMTP service.                             | `mailuser`               |
-| `smtp.password`             | Password for the SMTP service.                             | `mailuser`               |
+| Name                  | Description                                                | Value                    |
+| --------------------- | ---------------------------------------------------------- | ------------------------ |
+| `ingress.enabled`     | Deploy an ingress resource.                                | `false`                  |
+| `ingress.class`       | Ingress class                                              | `nginx`                  |
+| `ingress.tls`         | Enable TLS on the ingress resource.                        | `true`                   |
+| `ingress.hostname`    | Hostname for the ingress.                                  | `warden.contoso.com`     |
+| `ingress.path`        | Default application path for the ingress                   | `/`                      |
+| `ingress.pathWs`      | Path for the websocket ingress                             | `/notifications/hub`     |
+| `ingress.pathType`    | Path type for the ingress                                  | `ImplementationSpecific` |
+| `ingress.pathTypeWs`  | Path type for the ingress                                  | `ImplementationSpecific` |
+| `ingress.tlsSecret`   | Kubernetes secret containing the SSL certificate.          | `""`                     |
+| `ingress.allowList`   | Comma-separated list of IP addresses and subnets to allow. | `""`                     |
+| `service.type`        | Service type                                               | `ClusterIP`              |
+| `service.annotations` | Additional annotations for the vaultwarden service         | `{}`                     |
+
+
+### SMTP configuration
+
+| Name                 | Description                           | Value      |
+| -------------------- | ------------------------------------- | ---------- |
+| `smtp.host`          | SMTP host                             | `""`       |
+| `smtp.security`      | SMTP Encryption method                | `starttls` |
+| `smtp.port`          | SMTP port                             | `25`       |
+| `smtp.from`          | SMTP sender email address             | `""`       |
+| `smtp.fromName`      | SMTP sender FROM                      | `""`       |
+| `smtp.username`      | Username for the SMTP authentication. | `""`       |
+| `smtp.password`      | Password for the SMTP service.        | `""`       |
+| `smtp.authMechanism` | SMTP authentication mechanism         | `Plain`    |
+| `smtp.debug`         | SMTP debugging                        | `false`    |
 
 
 ## License

@@ -9,6 +9,8 @@ kind: Ingress
 metadata:
   name: {{ include "vaultwarden.fullname" . }}
   namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: vaultwarden
   annotations:
     ingress.kubernetes.io/rewrite-target: /
     {{- if .Values.ingress.allowList }}
@@ -49,14 +51,14 @@ spec:
             service:
               name: {{ include "vaultwarden.fullname" . }}
               port:
-                name: {{ .Values.service.http.name | quote }}
-        {{- if .Values.service.websocket.enabled }}
+                name: "http"
+        {{- if .Values.websocket.enabled }}
         - path: {{ .Values.ingress.pathWs }}
           pathType: {{ .Values.ingress.pathTypeWs }}
           backend:
             service:
               name: {{ include "vaultwarden.fullname" . }}
               port:
-                name: {{ .Values.service.websocket.name | quote }}
+                name: "websocket"
         {{- end }}
 {{- end }}

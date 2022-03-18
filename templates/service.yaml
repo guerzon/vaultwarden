@@ -14,13 +14,13 @@ spec:
   selector:
     app.kubernetes.io/component: vaultwarden
   ports:
-    - name: {{ .Values.service.http.name | quote }}
-      port: {{ .Values.service.http.port }}
+    - name: "http"
+      port: 80
       protocol: TCP
       targetPort: 8080
-    {{- if .Values.service.websocket.enabled }}
-    - name: {{ .Values.service.websocket.name | quote }}
-      port: {{ .Values.service.websocket.port }}
+    {{- if .Values.websocket.enabled }}
+    - name: "websocket"
+      port: 3012
       protocol: TCP
-      targetPort: 3012
+      targetPort: {{ .Values.websocket.port }}
     {{- end }}

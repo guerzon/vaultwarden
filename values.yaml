@@ -7,6 +7,11 @@
 ##
 vaultVersion: "1.24.0"
 
+## @param domain Domain name where the application is accessed
+## Example: https://warden.contoso.com:8443
+##
+domain: ""
+
 ## @param adminToken The admin token
 ##
 adminToken: "R@ndomToken$tring"
@@ -15,11 +20,26 @@ adminToken: "R@ndomToken$tring"
 ##
 fullnameOverride: ""
 
+## @param websocket.enabled Enable websocket notifications
+## @param websocket.address Websocket listen address
+## @param websocket.port Websocket listen port
+##
+websocket:
+  enabled: true
+  address: "0.0.0.0"
+  port: 3012
+
+## @param serviceAccount.create Create a service account
+## @param serviceAccount.name Name of the service account to create
+#
+serviceAccount:
+  create: true
+  name: "vaultwarden-svc"
+
 ## @section Exposure parameters
 ##
 
-## Service configuration
-## Ref: TBD
+## Ingress configuration
 ingress:
   ## @param ingress.enabled Deploy an ingress resource.
   ##
@@ -60,35 +80,49 @@ ingress:
   ##
 
 ## Service configuration
-##
 service:
   ## @param service.type Service type
   ##
   type: "ClusterIP"
-  ## @param service.http.name Name for the HTTP service
-  ## @param service.http.port Port for the HTTP service
-  ##
-  http:
-    name: "http"
-    port: 80
-  ## @param service.websocket.enabled Enable the websocket service
-  ## @param service.websocket.name Name for the websocket service
-  ## @param service.websocket.port Port for the websocket service
-  ##
-  websocket:
-    enabled: true
-    name: "websocket"
-    port: 3012
   ## @param service.annotations Additional annotations for the vaultwarden service
   ##
   annotations: {}
 
-## 
-## SMTP configuration
+## @section SMTP configuration
+##
 smtp:
-  ## @param smtp.username Username for the SMTP service.
+  ## @param smtp.host SMTP host
   ##
-  username: mailuser
+  host: ""
+  ## @param smtp.security SMTP Encryption method
+  ## Possible values:
+  ##  - starttls: explicit TLS using ports 587 or 25
+  ##  - force_tls: implicit TLS using port 465
+  ##  - off: no encryption, using port 25, unless using STARTTLS
+  ##
+  security: "starttls"
+  ## @param smtp.port SMTP port
+  ##
+  port: 25
+  ## @param smtp.from SMTP sender email address
+  ## Example: juan.delacruz@gmail.com
+  ##
+  from: ""
+  ## @param smtp.fromName SMTP sender FROM
+  ##
+  fromName: ""
+  ## @param smtp.username Username for the SMTP authentication.
+  ## Example: juan
+  ##
+  username: ""
   ## @param smtp.password Password for the SMTP service.
   ##
-  password: mailuser
+  password: ""
+  ## @param smtp.authMechanism SMTP authentication mechanism
+  ## Possible values: "Plain", "Login", "Xoauth2"
+  ## Multiple options need to be separated by a comma. (not tested)
+  ##
+  authMechanism: "Plain"
+  ## @param smtp.debug SMTP debugging
+  ##
+  debug: false
