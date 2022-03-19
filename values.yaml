@@ -74,13 +74,19 @@ serviceAccount:
 ##
 
 ## Ingress configuration
+## Refer to the README for some examples
+##
 ingress:
   ## @param ingress.enabled Deploy an ingress resource.
   ##
   enabled: false
-  ## @param ingress.class Ingress class
-  ## Currently, only ingress-nginx annotations are supported.
+  ## @param ingress.class Ingress resource class
+  ## To use ingress-nginx, set class to "nginx", or "alb" for AWS LB controller.
+  #
   class: "nginx"
+  ## @param ingress.additionalAnnotations Additional annotations for the ingress resource.
+  ##
+  additionalAnnotations: {}
   ## @param ingress.tls Enable TLS on the ingress resource.
   ##
   tls: true
@@ -101,14 +107,13 @@ ingress:
   ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
   ##
   pathTypeWs: "ImplementationSpecific"
-  ## @param ingress.tlsSecret Kubernetes secret containing the SSL certificate.
+  ## @param ingress.tlsSecret Kubernetes secret containing the SSL certificate when using the "nginx" class.
   ##
   tlsSecret: ""
-  ## @param ingress.allowList Comma-separated list of IP addresses and subnets to allow.
+  ## @param ingress.nginxAllowList Comma-separated list of IP addresses and subnets to allow.
   ##
-  allowList: ""
+  nginxAllowList: ""
   ## TODO:
-  ##   - Nginx ingress annotations should be moved here.
   ##   - Add support for using cert-manager.
   ##   - Support for multiple TLS hostnames.
   ##

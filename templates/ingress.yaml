@@ -13,11 +13,11 @@ metadata:
     app.kubernetes.io/component: vaultwarden
   annotations:
     ingress.kubernetes.io/rewrite-target: /
-    {{- if .Values.ingress.allowList }}
-    nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingress.allowList }}
-    {{- end }}
     {{- if .Values.ingress.tls }}
     ingress.kubernetes.io/ssl-redirect: "true"
+    {{- end }}
+    {{- if .Values.ingress.additionalAnnotations }}
+    {{- toYaml .Values.ingress.additionalAnnotations | nindent 4 }}
     {{- end }}
     {{- if eq "nginx" .Values.ingress.class }}
     nginx.ingress.kubernetes.io/configuration-snippet: |
@@ -32,14 +32,21 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    {{- if .Values.ingress.nginxAllowList }}
+    nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingress.nginxAllowList }}
+    {{- end }}
     {{- end }}
 spec:
+  {{- if .Values.ingress.class }}
   ingressClassName: {{ .Values.ingress.class | quote }}
+  {{- end }}
   {{- if .Values.ingress.tls }}
   tls:
     - hosts:
         - {{ .Values.ingress.hostname | quote }}
+      {{- if eq "nginx" .Values.ingress.class }}
       secretName: {{ .Values.ingress.tlsSecret }}
+      {{- end }}
   {{- end }}
   rules:
     - host: {{ .Values.ingress.hostname | quote }}

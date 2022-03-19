@@ -100,16 +100,16 @@ Detailed configuration options can be found in the [Database Configuration](#dat
 
 ### SSL and Ingress
 
-This chart supports the usage of existing Ingress Controllers, such as [ingress-nginx](https://github.com/kubernetes/ingress-nginx/) and certificates stored as Kubernets secrets.
+This chart supports the usage of existing Ingress Controllers for exposing the `vaultwarden` deployment.
 
-Nginx ingress controller can be installed by following [this](https://kubernetes.github.io/ingress-nginx/deploy/) guide.
+#### nginx-ingress
 
-An SSL certificate can be added as a secret with a few commands:
+Nginx ingress controller can be installed by following [this](https://kubernetes.github.io/ingress-nginx/deploy/) guide. An SSL certificate can be added as a secret with a few commands:
 
 ```bash
 cd <dir-containing-the-certs>
 kubectl create secret -n vaultwarden \
-  tls vaultwarden-ssl-cert \
+  tls vw-constoso-com-crt \
   --key privkey.pem \
   --cert fullchain.pem
 ```
@@ -119,9 +119,27 @@ Once both prerequisites are ready, values can be set as follows:
 ```yaml
 ingress:
   enabled: true
-  tls: true
-  hostname: vaultwarden.example.com
-  tlsSecret: vaultwarden-ssl-cert
+  class: "nginx"
+  tlsSecret: vw-constoso-com-crt
+  hostname: vaultwarden.contoso.com
+  allowList: "10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16"
+```
+
+#### AWS LB Controller
+
+When using AWS, the [AWS Load Balancer controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/deploy/installation/) can be used together with [ACM](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/guide/ingress/cert_discovery/).
+
+Example for AWS:
+
+```yaml
+ingress:
+  enabled: true
+  class: "alb"
+  hostname: vaultwarden.contoso.com
+  additionalAnnotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:eu-central-1:ACCOUNT:certificate/LONGID"
 ```
 
 Detailed configuration options can be found in the [Exposure Parameters](#exposure-parameters) section below.
@@ -170,6 +188,15 @@ storage:
   class: "local-path"
 ```
 
+Example for AWS:
+
+```yaml
+storage:
+  enabled: true
+  size: "10Gi"
+  class: "gp2"
+```
+
 Detailed configuration options can be found in the [Storage Configuration](#storage-configuration) section below.
 
 ## Uninstalling the Chart
@@ -216,20 +243,21 @@ helm uninstall $RELEASE_NAME
 
 ### Exposure Parameters
 
-| Name                  | Description                                                | Value                    |
-| --------------------- | ---------------------------------------------------------- | ------------------------ |
-| `ingress.enabled`     | Deploy an ingress resource.                                | `false`                  |
-| `ingress.class`       | Ingress class                                              | `nginx`                  |
-| `ingress.tls`         | Enable TLS on the ingress resource.                        | `true`                   |
-| `ingress.hostname`    | Hostname for the ingress.                                  | `warden.contoso.com`     |
-| `ingress.path`        | Default application path for the ingress                   | `/`                      |
-| `ingress.pathWs`      | Path for the websocket ingress                             | `/notifications/hub`     |
-| `ingress.pathType`    | Path type for the ingress                                  | `ImplementationSpecific` |
-| `ingress.pathTypeWs`  | Path type for the ingress                                  | `ImplementationSpecific` |
-| `ingress.tlsSecret`   | Kubernetes secret containing the SSL certificate.          | `""`                     |
-| `ingress.allowList`   | Comma-separated list of IP addresses and subnets to allow. | `""`                     |
-| `service.type`        | Service type                                               | `ClusterIP`              |
-| `service.annotations` | Additional annotations for the vaultwarden service         | `{}`                     |
+| Name                            | Description                                                                    | Value                    |
+| ------------------------------- | ------------------------------------------------------------------------------ | ------------------------ |
+| `ingress.enabled`               | Deploy an ingress resource.                                                    | `false`                  |
+| `ingress.class`                 | Ingress resource class                                                         | `nginx`                  |
+| `ingress.additionalAnnotations` | Additional annotations for the ingress resource.                               | `{}`                     |
+| `ingress.tls`                   | Enable TLS on the ingress resource.                                            | `true`                   |
+| `ingress.hostname`              | Hostname for the ingress.                                                      | `warden.contoso.com`     |
+| `ingress.path`                  | Default application path for the ingress                                       | `/`                      |
+| `ingress.pathWs`                | Path for the websocket ingress                                                 | `/notifications/hub`     |
+| `ingress.pathType`              | Path type for the ingress                                                      | `ImplementationSpecific` |
+| `ingress.pathTypeWs`            | Path type for the ingress                                                      | `ImplementationSpecific` |
+| `ingress.tlsSecret`             | Kubernetes secret containing the SSL certificate when using the "nginx" class. | `""`                     |
+| `ingress.nginxAllowList`        | Comma-separated list of IP addresses and subnets to allow.                     | `""`                     |
+| `service.type`                  | Service type                                                                   | `ClusterIP`              |
+| `service.annotations`           | Additional annotations for the vaultwarden service                             | `{}`                     |
 
 
 ### Database Configuration
