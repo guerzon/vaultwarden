@@ -1,10 +1,8 @@
 # vaultwarden-helm
 
-[vaultwarden](https://github.com/dani-garcia/vaultwarden), formerly known as **Bitwarden_RS**, is an alternative implementation of the Bitwarden server API in Rust, including the Web Vault.
+[vaultwarden](https://github.com/dani-garcia/vaultwarden), formerly known as **Bitwarden_RS**, is an alternative implementation of the Bitwarden server API and is written in Rust.
 
-## Intro
-
-### TL;DR
+## TL;DR
 
 ```bash
 git clone https://github.com/guerzon/vaultwarden
@@ -12,7 +10,9 @@ cd vaultwarden
 helm install my-vaultwarden-release .
 ```
 
-### Background
+## Description
+
+### Short intro
 
 In 2020, I built a simple project for deploying **Bitwarden_RS** to Kubernetes, which can be found [here](https://github.com/guerzon/bitwarden-kubernetes). That project is made up of various YAML files which have to be edited manually when adding required customizations.
 
@@ -20,11 +20,7 @@ The aim of this project is to deploy `vaultwarden` with a stable configuration t
 
 The upstream repository for the `vaultwarden` project can be found [here](https://github.com/dani-garcia/vaultwarden).
 
-### Word of caution
-
-I initially built this Helm chart for the purposes of learning Helm chart development, Kubernetes, and in general managing application releases using Helm.
-
-Thus, I cannot guarantee quality. Nevertheless, if you find any issues while using this chart, or have any suggestions, feel free to submit an issue.
+To learn more about Vaultwarden, please visit the [wiki](https://github.com/dani-garcia/vaultwarden/wiki).
 
 ## Prerequisites
 
@@ -54,6 +50,33 @@ helm upgrade -i \
   -f demo-values.yaml
 ```
 
+### Database options
+
+By default, `vaultwarden` uses a SQLite database located in `/data/db.sqlite3`. However, it is also possible to make use of an external database, in particular either [MySQL](https://www.mysql.com/downloads/) or [PostgreSQL](https://www.postgresql.org).
+
+To configure an external database, set `database.type` to either `mysql` or `postgresql` and specify the datase connection information.
+
+Example for using an external MySQL database:
+
+```yaml
+database:
+  type: mysql
+  host: database.contoso.eu
+  username: appuser
+  password: apppassword
+  dbName: prodapp
+```
+
+You can also specify the connection string:
+
+```yaml
+database:
+  type: postgresql
+  uriOverride: "postgresql://appuser:apppassword@pg.contoso.eu:5433/qualdb"
+```
+
+Detailed configuration options can be found in the [Database Configuration](#database-configuration) section below.
+
 ### SSL and Ingress
 
 This chart supports the usage of existing Ingress Controllers, such as [ingress-nginx](https://github.com/kubernetes/ingress-nginx/) and certificates stored as Kubernets secrets.
@@ -70,7 +93,7 @@ kubectl create secret -n vaultwarden \
   --cert fullchain.pem
 ```
 
-Once both prerequisites are ready, a custom `values.yml` can be set as follows:
+Once both prerequisites are ready, values can be set as follows:
 
 ```yaml
 ingress:
@@ -80,15 +103,53 @@ ingress:
   tlsSecret: vaultwarden-ssl-cert
 ```
 
-Complete configuration options can be found [below](#exposure-parameters).
+Detailed configuration options can be found in the [Exposure Parameters](#exposure-parameters) section below.
 
-### Security options
+### Security
 
-Admin token: `openssl rand -base64 48`
+An admin token can be generated with: `openssl rand -base64 48`.
+
+Detailed configuration options can be found in the [Security Settings](#security-settings) section below.
+
+By default, the chart deploys a [service account](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/) called `vaultwarden-svc`.
+
+```yaml
+serviceAccount:
+  create: true
+  name: "vaultwarden-svc"
+```
+
+Detailed configuration options can be found in the [Security settings](#security-settings) section below.
 
 ### Mail settings
 
-To enable the SMTP service, make sure that at the minimum, `smtp.host` and `smtp.from` are set.
+To enable the SMTP service, make sure that at a minimum, `smtp.host` and `smtp.from` are set.
+
+```yaml
+smtp:
+  host: mx01.contoso.com
+  from: no-reply@contoso.com
+  fromName: "Vault Administrator"
+  username: admin
+  password: password
+  acceptInvalidHostnames: "true"
+  acceptInvalidCerts: "true"
+```
+
+Detailed configuration options can be found in the [SMTP Configuration](#smtp-configuration) section below.
+
+### Storage
+
+To use persistent storage using a claim, set `storage.enabled` to `true`. The following example sets the storage class to an already-installed Rancher's [local path storage](https://github.com/rancher/local-path-provisioner) provisioner.
+
+```yaml
+storage:
+  enabled: true
+  size: "10Gi"
+  class: "local-path"
+```
+
+Detailed configuration options can be found in the [Storage Configuration](#storage-configuration) section below.
 
 ## Uninstalling the Chart
 
@@ -101,22 +162,38 @@ helm uninstall $RELEASE_NAME
 
 ## Parameters
 
-### General settings
+### Vaultwarden settings
 
-| Name                    | Description                                   | Value               |
-| ----------------------- | --------------------------------------------- | ------------------- |
-| `vaultVersion`          | vaultwarden version to deploy.                | `1.24.0`            |
-| `domain`                | Domain name where the application is accessed | `""`                |
-| `adminToken`            | The admin token                               | `R@ndomToken$tring` |
-| `fullnameOverride`      | String to override the application name.      | `""`                |
-| `websocket.enabled`     | Enable websocket notifications                | `true`              |
-| `websocket.address`     | Websocket listen address                      | `0.0.0.0`           |
-| `websocket.port`        | Websocket listen port                         | `3012`              |
-| `serviceAccount.create` | Create a service account                      | `true`              |
-| `serviceAccount.name`   | Name of the service account to create         | `vaultwarden-svc`   |
+| Name                | Description                                   | Value                |
+| ------------------- | --------------------------------------------- | -------------------- |
+| `image.registry`    | Vaultwarden image registry                    | `docker.io`          |
+| `image.repository`  | Vaultwarden image repository                  | `vaultwarden/server` |
+| `image.tag`         | Vaultwarden image tag                         | `1.24.0`             |
+| `image.pullPolicy`  | Vaultwarden image pull policy                 | `IfNotPresent`       |
+| `image.pullSecrets` | Specify docker-registry secret names          | `[]`                 |
+| `domain`            | Domain name where the application is accessed | `""`                 |
+| `websocket.enabled` | Enable websocket notifications                | `true`               |
+| `websocket.address` | Websocket listen address                      | `0.0.0.0`            |
+| `websocket.port`    | Websocket listen port                         | `3012`               |
+| `rocket.port`       | Rocket port                                   | `8080`               |
+| `rocket.workers`    | Rocket number of workers                      | `10`                 |
+| `webVaultEnabled`   | Enable Web Vault                              | `true`               |
 
 
-### Exposure parameters
+### Security settings
+
+| Name                    | Description                                                         | Value               |
+| ----------------------- | ------------------------------------------------------------------- | ------------------- |
+| `adminToken`            | The admin token used for /admin                                     | `R@ndomToken$tring` |
+| `signupDomains`         | List of domain names for users allowed to register                  | `contoso.com`       |
+| `signupsVerify`         | Whether to require account verification for newly-registered users. | `true`              |
+| `showPassHint`          | Whether a password hint should be shown in the page.                | `false`             |
+| `fullnameOverride`      | String to override the application name.                            | `""`                |
+| `serviceAccount.create` | Create a service account                                            | `true`              |
+| `serviceAccount.name`   | Name of the service account to create                               | `vaultwarden-svc`   |
+
+
+### Exposure Parameters
 
 | Name                  | Description                                                | Value                    |
 | --------------------- | ---------------------------------------------------------- | ------------------------ |
@@ -134,20 +211,58 @@ helm uninstall $RELEASE_NAME
 | `service.annotations` | Additional annotations for the vaultwarden service         | `{}`                     |
 
 
-### SMTP configuration
+### Database Configuration
 
-| Name                 | Description                           | Value      |
-| -------------------- | ------------------------------------- | ---------- |
-| `smtp.host`          | SMTP host                             | `""`       |
-| `smtp.security`      | SMTP Encryption method                | `starttls` |
-| `smtp.port`          | SMTP port                             | `25`       |
-| `smtp.from`          | SMTP sender email address             | `""`       |
-| `smtp.fromName`      | SMTP sender FROM                      | `""`       |
-| `smtp.username`      | Username for the SMTP authentication. | `""`       |
-| `smtp.password`      | Password for the SMTP service.        | `""`       |
-| `smtp.authMechanism` | SMTP authentication mechanism         | `Plain`    |
-| `smtp.debug`         | SMTP debugging                        | `false`    |
+| Name                   | Description                               | Value     |
+| ---------------------- | ----------------------------------------- | --------- |
+| `database.type`        | Database type, either mysql or postgresql | `default` |
+| `database.host`        | Database hostname or IP address           | `""`      |
+| `database.port`        | Database port                             | `""`      |
+| `database.username`    | Database username                         | `""`      |
+| `database.password`    | Database password                         | `""`      |
+| `database.dbName`      | Database name                             | `""`      |
+| `database.uriOverride` | Manually specify the DB connection string | `""`      |
 
+
+### SMTP Configuration
+
+| Name                          | Description                           | Value      |
+| ----------------------------- | ------------------------------------- | ---------- |
+| `smtp.host`                   | SMTP host                             | `""`       |
+| `smtp.security`               | SMTP Encryption method                | `starttls` |
+| `smtp.port`                   | SMTP port                             | `25`       |
+| `smtp.from`                   | SMTP sender email address             | `""`       |
+| `smtp.fromName`               | SMTP sender FROM                      | `""`       |
+| `smtp.username`               | Username for the SMTP authentication. | `""`       |
+| `smtp.password`               | Password for the SMTP service.        | `""`       |
+| `smtp.authMechanism`          | SMTP authentication mechanism         | `Plain`    |
+| `smtp.acceptInvalidHostnames` | Accept Invalid Hostnames              | `false`    |
+| `smtp.acceptInvalidCerts`     | Accept Invalid Certificates           | `false`    |
+| `smtp.debug`                  | SMTP debugging                        | `false`    |
+
+
+### Storage Configuration
+
+| Name              | Description                                 | Value     |
+| ----------------- | ------------------------------------------- | --------- |
+| `storage.enabled` | Enable configuration for persistent storage | `false`   |
+| `storage.size`    | Storage size for /data                      | `15Gi`    |
+| `storage.class`   | Specify the storage class                   | `default` |
+| `storage.dataDir` | Specify the data directory                  | `/data`   |
+
+
+## Notes
+
+I initially built this Helm chart for the purposes of learning Helm chart development, brush on my my Kubernetes skills, and in general, learn how to better manage application releases in Kubernetes.
+
+Thus, I have to mention that this chart has to be tested more thoroughly before it is used in a production environment.
+
+Nevertheless, if you find any issues while using this chart, or have any suggestions, feel free to [submit an issue](https://github.com/guerzon/vaultwarden/issues/new).
+
+### Todo
+
+1. Implement more configuration options.
+2. Prometheus metrics scraping would be nice to have.
 
 ## License
 
@@ -156,3 +271,8 @@ helm uninstall $RELEASE_NAME
 ## Author
 
 This Helm chart was created and is being maintained by [Lester Guerzon](https://pidnull.io).
+
+### Credits
+
+- `vaultwarden` project can be found [here](https://github.com/dani-garcia/vaultwarden)
+- Further information about `Bitwarden` and 8bit Solutions LLC can be found [here](https://bitwarden.com/)

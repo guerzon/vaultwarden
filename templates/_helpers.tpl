@@ -13,3 +13,19 @@ Return a default application name.
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "dbPort" -}}
+{{- if .Values.database.port }}
+{{- printf "%s%s" ":" .Values.database.port }}
+{{- else }}
+{{- printf "%s" "" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Return the database string
+*/}}
+{{ define "dbString" }}
+{{- $var := print .Values.database.type "://" .Values.database.username ":" .Values.database.password "@" .Values.database.host (include "dbPort" . ) "/" .Values.database.dbName }}
+{{- printf "%s" $var }}
+{{- end -}}

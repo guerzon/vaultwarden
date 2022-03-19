@@ -1,25 +1,33 @@
 
-## @section General settings
+## @section Vaultwarden settings
 ##
-
-## @param vaultVersion vaultwarden version to deploy.
-## Ref: https://hub.docker.com/r/vaultwarden/server/tags
-##
-vaultVersion: "1.24.0"
-
+image:
+  ## @param image.registry Vaultwarden image registry
+  ##
+  registry: docker.io
+  ## @param image.repository Vaultwarden image repository
+  ##
+  repository: vaultwarden/server
+  ##
+  ## @param image.tag Vaultwarden image tag
+  ## Ref: https://hub.docker.com/r/vaultwarden/server/tags
+  ##
+  tag: "1.24.0"
+  ## @param image.pullPolicy Vaultwarden image pull policy
+  ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: IfNotPresent
+  ## @param image.pullSecrets Specify docker-registry secret names
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ## Example:
+  ## pullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  pullSecrets: []
 ## @param domain Domain name where the application is accessed
 ## Example: https://warden.contoso.com:8443
 ##
 domain: ""
-
-## @param adminToken The admin token
-##
-adminToken: "R@ndomToken$tring"
-
-## @param fullnameOverride String to override the application name.
-##
-fullnameOverride: ""
-
 ## @param websocket.enabled Enable websocket notifications
 ## @param websocket.address Websocket listen address
 ## @param websocket.port Websocket listen port
@@ -28,15 +36,41 @@ websocket:
   enabled: true
   address: "0.0.0.0"
   port: 3012
+## @param rocket.port Rocket port
+## @param rocket.workers Rocket number of workers
+##
+rocket:
+  port: "8080"
+  workers: "10"
+## @param webVaultEnabled Enable Web Vault
+##
+webVaultEnabled: "true"
 
+## @section Security settings
+##
+## @param adminToken The admin token used for /admin
+##
+adminToken: "R@ndomToken$tring"
+## @param signupDomains List of domain names for users allowed to register
+##
+signupDomains: "contoso.com"
+## @param signupsVerify Whether to require account verification for newly-registered users.
+##
+signupsVerify: "true"
+## @param showPassHint Whether a password hint should be shown in the page.
+##
+showPassHint: "false"
+## @param fullnameOverride String to override the application name.
+##
+fullnameOverride: ""
 ## @param serviceAccount.create Create a service account
 ## @param serviceAccount.name Name of the service account to create
-#
+##
 serviceAccount:
   create: true
   name: "vaultwarden-svc"
 
-## @section Exposure parameters
+## @section Exposure Parameters
 ##
 
 ## Ingress configuration
@@ -88,7 +122,33 @@ service:
   ##
   annotations: {}
 
-## @section SMTP configuration
+## @section Database Configuration
+##
+database:
+  ## @param database.type Database type, either mysql or postgresql
+  ## Default is a sqlite database.
+  ##
+  type: "default"
+  ## @param database.host Database hostname or IP address
+  ##
+  host: ""
+  ## @param database.port Database port
+  ## Default for MySQL is 3306, default for PostgreSQL is 5432
+  port: ""
+  ## @param database.username Database username
+  ##
+  username: ""
+  ## @param database.password Database password
+  ##
+  password: ""
+  ## @param database.dbName Database name
+  ##
+  dbName: ""
+  ## @param database.uriOverride Manually specify the DB connection string
+  ##
+  uriOverride: ""
+
+## @section SMTP Configuration
 ##
 smtp:
   ## @param smtp.host SMTP host
@@ -123,6 +183,28 @@ smtp:
   ## Multiple options need to be separated by a comma. (not tested)
   ##
   authMechanism: "Plain"
+  ## @param smtp.acceptInvalidHostnames Accept Invalid Hostnames
+  ##
+  acceptInvalidHostnames: "false"
+  ## @param smtp.acceptInvalidCerts Accept Invalid Certificates
+  ##
+  acceptInvalidCerts: "false"
   ## @param smtp.debug SMTP debugging
   ##
   debug: false
+
+## @section Storage Configuration
+##
+storage:
+  ## @param storage.enabled Enable configuration for persistent storage
+  ##
+  enabled: false
+  ## @param storage.size Storage size for /data
+  ##
+  size: "15Gi"
+  ## @param storage.class Specify the storage class
+  ##
+  class: "default"
+  ## @param storage.dataDir Specify the data directory
+  ##
+  dataDir: "/data"
