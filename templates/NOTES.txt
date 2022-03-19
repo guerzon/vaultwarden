@@ -1,0 +1,7 @@
+** Please be patient while the chart is being deployed **
+
+Thanks for installing {{ .Chart.Name }}.
+
+You have named your release: {{ .Release.Name }}.
+
+Vaultwarden is accessible here: {{ .Values.ingress.hostname }}

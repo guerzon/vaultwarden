@@ -1,0 +1,15 @@
+apiVersion: v2
+name: vaultwarden
+description: vaultwarden is an unofficial Bitwarden-compatibnle server written in Rust
+keywords:
+  - Rust
+  - vaultwarden
+sources:
+  - https://github.com/guerzon/vaultwarden-helm
+  - https://github.com/dani-garcia/vaultwarden
+appVersion: 1.24.0
+maintainers:
+  - name: Lester Guerzon
+    email: lester@pidnull.io
+    url: https://github.com/guerzon
+version: 0.2.0

@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "vaultwarden.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: vaultwarden
+data:
+  DOMAIN: {{ .Values.domain | quote }}
+  {{- if ne "default" .Values.database.type }}
+  {{- if .Values.database.uriOverride }}
+  DATABASE_URL: {{ .Values.database.uriOverride }}
+  {{- else }}
+  DATABASE_URL: {{ include "dbString" . | quote }}
+  {{- end }}
+  {{- end }}
+  {{- if and .Values.smtp.host .Values.smtp.from | quote }}
+  SMTP_HOST: {{ .Values.smtp.host | quote }}
+  SMTP_SECURITY: {{ .Values.smtp.security | quote }}
+  SMTP_PORT: {{ .Values.smtp.port | quote }}
+  SMTP_AUTH_MECHANISM: {{ .Values.smtp.authMechanism | quote }}
+  SMTP_FROM: {{ .Values.smtp.from | quote }}
+  SMTP_FROM_NAME: {{ default "Vaultwarden" .Values.smtp.fromName | quote }}
+  SMTP_DEBUG: {{ .Values.smtp.debug | quote }}
+  SMTP_ACCEPT_INVALID_HOSTNAMES: {{ .Values.smtp.acceptInvalidHostnames | quote }}
+  SMTP_ACCEPT_INVALID_CERTS: {{ .Values.smtp.acceptInvalidCerts | quote }}
+  {{- end }}
+  {{- if .Values.websocket.enabled }}
+  WEBSOCKET_ENABLED: "true"
+  WEBSOCKET_ADDRESS: {{ .Values.websocket.address | quote }}
+  WEBSOCKET_PORT: {{ .Values.websocket.port | quote }}
+  {{- end }}
+  DATA_FOLDER: {{ .Values.storage.dataDir | quote }}
+  ROCKET_PORT: {{ .Values.rocket.port | quote }}
+  ROCKET_WORKERS: {{ .Values.rocket.workers | quote }}
+  SHOW_PASSWORD_HINT: {{ .Values.showPassHint | quote }}
+  SIGNUPS_DOMAINS_WHITELIST: {{ .Values.signupDomains | quote }}
+  SIGNUPS_VERIFY: {{ .Values.signupsVerify | quote }}
+  WEB_VAULT_ENABLED: {{ .Values.webVaultEnabled | quote }}

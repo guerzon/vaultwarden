@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vaultwarden.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: vaultwarden
+  {{- if .Values.service.annotations }}
+  annotations:
+    {{- toYaml .Values.service.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type | quote }}
+  selector:
+    app.kubernetes.io/component: vaultwarden
+  ports:
+    - name: "http"
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    {{- if .Values.websocket.enabled }}
+    - name: "websocket"
+      port: 3012
+      protocol: TCP
+      targetPort: {{ .Values.websocket.port }}
+    {{- end }}

@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "vaultwarden.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: vaultwarden
+spec:
+  serviceName: vaultwarden
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vaultwarden
+      app.kubernetes.io/component: vaultwarden
+  template:
+    metadata:
+      labels:
+        app: vaultwarden
+        app.kubernetes.io/component: vaultwarden
+    spec:
+      containers:
+        - image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: vaultwarden
+          envFrom:
+            - configMapRef:
+                name: {{ include "vaultwarden.fullname" . }}
+          env:
+            - name: SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "vaultwarden.fullname" . }}
+                  key: SMTP_USERNAME
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "vaultwarden.fullname" . }}
+                  key: SMTP_PASSWORD
+            - name: ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "vaultwarden.fullname" . }}
+                  key: ADMIN_TOKEN
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: {{ .Values.websocket.port }}
+              name: websocket
+              protocol: TCP
+          {{- if .Values.storage.enabled }}
+          volumeMounts:
+            - name: vaultwarden-data
+              mountPath: {{ .Values.storage.dataDir }}
+          {{- end }}
+          resources:
+            limits:
+              cpu: 300m
+              memory: 1Gi
+            requests:
+              cpu: 50m
+              memory: 256Mi
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- end }}
+  {{- if .Values.storage.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: vaultwarden-data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
+        storageClassName: {{ default "default" .Values.storage.class }}
+  {{- end }}

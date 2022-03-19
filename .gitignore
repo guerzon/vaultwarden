@@ -1,0 +1,5 @@
+*.tgz
+/.idea/*
+.vscode
+.DS_Store
+testing-values.yaml
