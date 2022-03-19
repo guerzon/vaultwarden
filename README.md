@@ -1,4 +1,4 @@
-# vaultwarden-helm
+# Helm chart for vaultwarden
 
 [vaultwarden](https://github.com/dani-garcia/vaultwarden), formerly known as **Bitwarden_RS**, is an alternative implementation of the Bitwarden server API and is written in Rust.
 
@@ -49,6 +49,27 @@ helm upgrade -i \
   -n $NAMESPACE $RELEASE_NAME . \
   -f demo-values.yaml
 ```
+
+### General configuration
+
+This chart deploys `vaultwarden` from pre-built images on [Docker Hub](https://hub.docker.com/r/vaultwarden/server/tags): `vaultwarden/server`. The image can be defined by specifying the tag with `image.tag`.
+
+Example that uses the Alpine-based image `1.24.0-alpine` and an existing secret that contains registry credentials:
+
+```yaml
+image:
+  tag: "1.24.0-alpine"
+  pullSecrets:
+    - myRegKey
+```
+
+**Important**: specify the URL used by users with the `domain` variable, otherwise, some functionalities might not work:
+
+```yaml
+domain: "https://vaultwarden.contoso.com:9443/"
+```
+
+Detailed configuration options can be found in the [Vaultwarden settings](#vaultwarden-settings) section below.
 
 ### Database options
 
@@ -253,11 +274,11 @@ helm uninstall $RELEASE_NAME
 
 ## Notes
 
-I initially built this Helm chart for the purposes of learning Helm chart development, brush on my my Kubernetes skills, and in general, learn how to better manage application releases in Kubernetes.
+I initially built this Helm chart for the purposes of learning Helm chart development, brush up on my Kubernetes skills, and in general, learn how to better manage application releases in Kubernetes.
 
 Thus, I have to mention that this chart has to be tested more thoroughly before it is used in a production environment.
 
-Nevertheless, if you find any issues while using this chart, or have any suggestions, feel free to [submit an issue](https://github.com/guerzon/vaultwarden/issues/new).
+Nevertheless, if you find any issues while using this chart, or have any suggestions, I would appreciate it if you would [submit an issue](https://github.com/guerzon/vaultwarden/issues/new).
 
 ### Todo
 
@@ -274,5 +295,5 @@ This Helm chart was created and is being maintained by [Lester Guerzon](https://
 
 ### Credits
 
-- `vaultwarden` project can be found [here](https://github.com/dani-garcia/vaultwarden)
+- The `vaultwarden` project can be found [here](https://github.com/dani-garcia/vaultwarden)
 - Further information about `Bitwarden` and 8bit Solutions LLC can be found [here](https://bitwarden.com/)
