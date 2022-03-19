@@ -1,5 +1,8 @@
 # Helm chart for vaultwarden
 
+[![MIT Licensed](https://img.shields.io/github/license/guerzon/vaultwarden.svg)](https://github.com/guerzon/vaultwarden/blob/develop/LICENSE)
+[![Helm Release](https://img.shields.io/docker/v/vaultwarden/server/1.24.0)](https://img.shields.io/docker/v/vaultwarden/server/1.24.0)
+
 [vaultwarden](https://github.com/dani-garcia/vaultwarden), formerly known as **Bitwarden_RS**, is an alternative implementation of the Bitwarden server API and is written in Rust.
 
 ## TL;DR
@@ -314,6 +317,7 @@ Nevertheless, if you find any issues while using this chart, or have any suggest
 
 1. Implement more configuration options.
 2. Prometheus metrics scraping would be nice to have.
+3. Automated testing, CI
 
 ## License
 
