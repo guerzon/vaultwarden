@@ -29,7 +29,7 @@ To learn more about Vaultwarden, please visit the [wiki](https://github.com/dani
 
 ## Usage
 
-To install the chart with the release name `vaultwarden-release`:
+To deploy the chart with the release name `vaultwarden-release`:
 
 ```bash
 export NAMESPACE=vaultwarden
@@ -40,14 +40,14 @@ helm install vaultwarden-release . \
   --set "ingress.hostname=$DOMAIN_NAME"
 ```
 
-To install the chart in another namespace using custom values in the file `demo-values.yaml`:
+To deploy the chart to another namespace using custom values in the file `demo.yaml`:
 
 ```bash
 export NAMESPACE=vaultwarden-demo
 export RELEASE_NAME=vaultwarden-demo
 helm upgrade -i \
   -n $NAMESPACE $RELEASE_NAME . \
-  -f demo-values.yaml
+  -f demo.yaml
 ```
 
 ### General configuration
@@ -199,14 +199,6 @@ storage:
 
 Detailed configuration options can be found in the [Storage Configuration](#storage-configuration) section below.
 
-## Uninstalling the Chart
-
-To uninstall/delete the `vaultwarden-demo` release:
-
-```console
-export RELEASE_NAME=vaultwarden-demo
-helm uninstall $RELEASE_NAME
-```
 
 ## Parameters
 
@@ -299,6 +291,16 @@ helm uninstall $RELEASE_NAME
 | `storage.class`   | Specify the storage class                   | `default` |
 | `storage.dataDir` | Specify the data directory                  | `/data`   |
 
+
+## Uninstall
+
+To uninstall/delete the `vaultwarden-demo` release:
+
+```console
+export NAMESPACE=vaultwarden
+export RELEASE_NAME=vaultwarden-demo
+helm -n $NAMESPACE uninstall $RELEASE_NAME
+```
 
 ## Notes
 
