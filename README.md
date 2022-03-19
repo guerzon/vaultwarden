@@ -1,6 +1,6 @@
-# Helm chart for vaultwarden
+# Helm chart for Vaultwarden
 
-[![MIT Licensed](https://img.shields.io/github/license/guerzon/vaultwarden.svg)](https://github.com/guerzon/vaultwarden/blob/develop/LICENSE)
+[![MIT Licensed](https://img.shields.io/github/license/guerzon/vaultwarden)](https://github.com/guerzon/vaultwarden/blob/main/LICENSE)
 [![Helm Release](https://img.shields.io/docker/v/vaultwarden/server/1.24.0)](https://img.shields.io/docker/v/vaultwarden/server/1.24.0)
 
 [vaultwarden](https://github.com/dani-garcia/vaultwarden), formerly known as **Bitwarden_RS**, is an alternative implementation of the Bitwarden server API and is written in Rust.

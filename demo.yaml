@@ -1,5 +1,5 @@
 
-domain: "https://vaultwarden.constoso.com"
+domain: "https://vaultwarden.contoso.com"
 
 ingress:
   enabled: true
