@@ -1,6 +1,6 @@
 apiVersion: v2
 name: vaultwarden
-description: vaultwarden is an unofficial Bitwarden-compatibnle server written in Rust
+description: vaultwarden is an unofficial Bitwarden-compatible server written in Rust
 keywords:
   - Rust
   - vaultwarden
