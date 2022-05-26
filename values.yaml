@@ -81,11 +81,15 @@ ingress:
   ##
   enabled: false
   ## @param ingress.class Ingress resource class
-  ## To use ingress-nginx, set class to "nginx", or "alb" for AWS LB controller.
+  ## The Ingress class to use, e. g. "nginx" for a nginx ingress controller or "alb" for a AWS LB controller.
   #
   class: "nginx"
-  ## @param ingress.additionalAnnotations Additional annotations for the ingress resource.
+  ## @param ingress.nginxIngressAnnotations Add nginx specific ingress annotations
+  ## This annotations are only makes sense for the kubernetes nginx ingress controller (https://kubernetes.github.io/ingress-nginx/)
   ##
+  nginxIngressAnnotations: true
+  ## @param ingress.additionalAnnotations Additional annotations for the ingress resource.
+  ## 
   additionalAnnotations: {}
   ## @param ingress.tls Enable TLS on the ingress resource.
   ##
