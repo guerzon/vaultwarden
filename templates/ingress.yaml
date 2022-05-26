@@ -19,7 +19,7 @@ metadata:
     {{- if .Values.ingress.additionalAnnotations }}
     {{- toYaml .Values.ingress.additionalAnnotations | nindent 4 }}
     {{- end }}
-    {{- if eq "nginx" .Values.ingress.class }}
+    {{- if .Values.ingress.nginxIngressAnnotations }}
     nginx.ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "Request-Id: $req_id";
     nginx.ingress.kubernetes.io/connection-proxy-header: "keep-alive"
