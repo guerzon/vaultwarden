@@ -32,7 +32,9 @@ data:
   SHOW_PASSWORD_HINT: {{ .Values.showPassHint | quote }}
   SIGNUPS_ALLOWED: {{ .Values.signupsAllowed | quote }}
   INVITATIONS_ALLOWED: {{ .Values.invitationsAllowed | quote }}
+  {{- if .Values.signupDomains }}
   SIGNUPS_DOMAINS_WHITELIST: {{ .Values.signupDomains | quote }}
+  {{- end }}
   SIGNUPS_VERIFY: {{ .Values.signupsVerify | quote }}
   WEB_VAULT_ENABLED: {{ .Values.webVaultEnabled | quote }}
   {{- if .Values.logging.enabled }}
@@ -41,3 +43,6 @@ data:
   {{- end }}
   DB_CONNECTION_RETRIES: {{ .Values.database.connectionRetries | quote }}
   DATABASE_MAX_CONNS: {{ .Values.database.maxConnections | quote }}
+  INVITATION_ORG_NAME: {{ .Values.invitationOrgName | quote }}
+  ICON_BLACKLIST_NON_GLOBAL_IPS: {{ .Values.iconBlacklistNonGlobalIps | quote }}
+  IP_HEADER: {{ .Values.ipHeader | quote }}
