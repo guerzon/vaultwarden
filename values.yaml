@@ -89,7 +89,7 @@ ingress:
   ##
   nginxIngressAnnotations: true
   ## @param ingress.additionalAnnotations Additional annotations for the ingress resource.
-  ## 
+  ##
   additionalAnnotations: {}
   ## @param ingress.tls Enable TLS on the ingress resource.
   ##
@@ -217,3 +217,14 @@ storage:
   ## @param storage.dataDir Specify the data directory
   ##
   dataDir: "/data"
+
+## @section Extra containers Configuration
+##
+
+## @param initContainers extra init containers for initializing the vaultwarden instance
+##
+initContainers: []
+
+## @param sidecars extra containers running alongside the vaultwarden instance
+##
+sidecars: []
