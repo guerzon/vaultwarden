@@ -296,6 +296,14 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | `storage.dataDir` | Specify the data directory                  | `/data`   |
 
 
+### Extra containers Configuration
+
+| Name             | Description                                                     | Value |
+| ---------------- | --------------------------------------------------------------- | ----- |
+| `initContainers` | extra init containers for initializing the vaultwarden instance | `[]`  |
+| `sidecars`       | extra containers running alongside the vaultwarden instance     | `[]`  |
+
+
 ## Uninstall
 
 To uninstall/delete the `vaultwarden-demo` release:

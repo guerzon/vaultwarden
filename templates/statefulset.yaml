@@ -18,6 +18,10 @@ spec:
         app: vaultwarden
         app.kubernetes.io/component: vaultwarden
     spec:
+      initContainers:
+        {{- if .Values.initContainers }}
+        {{- toYaml .Values.initContainers | nindent 8 }}
+        {{- end }}
       containers:
         - image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -60,6 +64,9 @@ spec:
             requests:
               cpu: 50m
               memory: 256Mi
+        {{- if .Values.sidecars }}
+        {{- toYaml .Values.sidecars | nindent 8 }}
+        {{- end }}
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- end }}
