@@ -51,6 +51,19 @@ webVaultEnabled: "true"
 ## @param adminToken The admin token used for /admin
 ##
 adminToken: "R@ndomToken$tring"
+## @param signupsAllowed By default, anyone who can access your instance can register for a new account.
+## To disable this, set this parameter to false. Even when signupsAllowed=false, an existing user who is
+## an organization owner or admin can still invite new users. If you want to disable this as well, set
+## invitationsAllowed to false. The vaultwarden admin can invite anyone via the admin page, regardless
+## of any of the restrictions above
+##
+## If signupDomains is set, then the value of signupsAllowed is ignored
+signupsAllowed: true
+## @param invitationsAllowed Even when registration is disabled, organization administrators or owners can
+## invite users to join organization. After they are invited, they can register with the invited email even
+## if signupsAllowed is actually set to false. You can disable this functionality completely by setting
+## invitationsAllowed env variable to false
+invitationsAllowed: true
 ## @param signupDomains List of domain names for users allowed to register
 ##
 signupDomains: "contoso.com"
