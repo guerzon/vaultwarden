@@ -103,6 +103,14 @@ serviceAccount:
   name: "vaultwarden-svc"
 
 
+## @param runAsUser user ID for VaultWarden and backup run with
+##
+runAsUser: 1100
+
+## @param runAsGroup group ID for VaultWarden and backup run with
+## Same as default user for vaultwarden-backup
+runAsGroup: 1100
+
 ## @section Exposure Parameters
 ##
 
