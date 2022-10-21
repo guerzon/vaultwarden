@@ -34,6 +34,8 @@ data:
   ROCKET_PORT: {{ .Values.rocket.port | quote }}
   ROCKET_WORKERS: {{ .Values.rocket.workers | quote }}
   SHOW_PASSWORD_HINT: {{ .Values.showPassHint | quote }}
+  SIGNUPS_ALLOWED: {{ .Values.signupsAllowed | quote }}
+  INVITATIONS_ALLOWED: {{ .Values.invitationsAllowed | quote }}
   SIGNUPS_DOMAINS_WHITELIST: {{ .Values.signupDomains | quote }}
   SIGNUPS_VERIFY: {{ .Values.signupsVerify | quote }}
   WEB_VAULT_ENABLED: {{ .Values.webVaultEnabled | quote }}
