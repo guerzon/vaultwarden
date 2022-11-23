@@ -231,6 +231,16 @@ storage:
   ##
   dataDir: "/data"
 
+## @section Logging Configuration
+##
+logging:
+  ## @param logging.logfile Specify logfile path for output log
+  ##
+  logfile: "/data/vaultwarden.log"
+  ## @param logging.loglevel Specify the log level
+  ##
+  loglevel: "warn"
+
 ## @section Extra containers Configuration
 ##
 
