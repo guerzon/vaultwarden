@@ -7,7 +7,7 @@ keywords:
 sources:
   - https://github.com/guerzon/vaultwarden
   - https://github.com/dani-garcia/vaultwarden
-appVersion: 1.24.0
+appVersion: 1.25.0
 maintainers:
   - name: Lester Guerzon
     email: lester@pidnull.io
