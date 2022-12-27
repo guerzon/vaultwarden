@@ -1,7 +1,7 @@
 # Helm chart for Vaultwarden
 
 [![MIT Licensed](https://img.shields.io/github/license/guerzon/vaultwarden)](https://github.com/guerzon/vaultwarden/blob/main/LICENSE)
-[![Helm Release](https://img.shields.io/docker/v/vaultwarden/server/1.24.0)](https://img.shields.io/docker/v/vaultwarden/server/1.24.0)
+[![Helm Release](https://img.shields.io/docker/v/vaultwarden/server/1.27.0)](https://img.shields.io/docker/v/vaultwarden/server/1.27.0)
 
 [Vaultwarden](https://github.com/dani-garcia/vaultwarden), formerly known as **Bitwarden_RS**, is an "alternative implementation of the Bitwarden server API written in Rust and compatible with [upstream Bitwarden clients](https://bitwarden.com/download/), perfect for self-hosted deployment where running the official resource-heavy service might not be ideal."
 
@@ -57,11 +57,11 @@ helm upgrade -i \
 
 This chart deploys `vaultwarden` from pre-built images on [Docker Hub](https://hub.docker.com/r/vaultwarden/server/tags): `vaultwarden/server`. The image can be defined by specifying the tag with `image.tag`.
 
-Example that uses the Alpine-based image `1.24.0-alpine` and an existing secret that contains registry credentials:
+Example that uses the Alpine-based image `1.27.0-alpine` and an existing secret that contains registry credentials:
 
 ```yaml
 image:
-  tag: "1.24.0-alpine"
+  tag: "1.27.0-alpine"
   pullSecrets:
     - myRegKey
 ```
@@ -211,7 +211,7 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | ------------------- | --------------------------------------------- | -------------------- |
 | `image.registry`    | Vaultwarden image registry                    | `docker.io`          |
 | `image.repository`  | Vaultwarden image repository                  | `vaultwarden/server` |
-| `image.tag`         | Vaultwarden image tag                         | `1.24.0`             |
+| `image.tag`         | Vaultwarden image tag                         | `1.27.0`             |
 | `image.pullPolicy`  | Vaultwarden image pull policy                 | `IfNotPresent`       |
 | `image.pullSecrets` | Specify docker-registry secret names          | `[]`                 |
 | `domain`            | Domain name where the application is accessed | `""`                 |
