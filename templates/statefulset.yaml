@@ -71,6 +71,9 @@ spec:
       serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- end }}
   {{- if .Values.storage.enabled }}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: vaultwarden-data
