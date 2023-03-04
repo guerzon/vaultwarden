@@ -10,6 +10,6 @@ sources:
 appVersion: 1.24.0
 maintainers:
   - name: Lester Guerzon
-    email: lester@pidnull.io
+    email: lester.guerzon@gmail.com
     url: https://github.com/guerzon
-version: 0.6.0
+version: 0.7.0
