@@ -308,6 +308,14 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | `sidecars`       | extra containers running alongside the vaultwarden instance     | `[]`  |
 
 
+### Extra Configuration
+
+| Name             | Description                                                     | Value |
+| ---------------- | --------------------------------------------------------------- | ----- |
+| `nodeSelector`   | Node labels for pod assignment                                  | `{}`  |
+| `tolerations`    | Tolerations for pod assignment                                  | `[]`  |
+| `affinity`       | Affinity for pod assignment                                     | `{}`  |
+
 ## Uninstall
 
 To uninstall/delete the `vaultwarden-demo` release:

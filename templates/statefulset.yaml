@@ -17,7 +17,22 @@ spec:
       labels:
         app: vaultwarden
         app.kubernetes.io/component: vaultwarden
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha1sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha1sum }}
     spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.affinity }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      {{- end }}
       initContainers:
         {{- if .Values.initContainers }}
         {{- toYaml .Values.initContainers | nindent 8 }}

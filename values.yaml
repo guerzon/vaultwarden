@@ -254,3 +254,21 @@ initContainers: []
 ## @param sidecars extra containers running alongside the vaultwarden instance
 ##
 sidecars: []
+
+## @section Extra Configuration
+##
+
+## @param nodeSelector Node labels for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+##
+nodeSelector: {}
+
+## @param affinity Affinity for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+##
+affinity: {}
+
+## @param tolerations Tolerations for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: []
