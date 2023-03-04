@@ -222,21 +222,19 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | `rocket.workers`    | Rocket number of workers                      | `10`                 |
 | `webVaultEnabled`   | Enable Web Vault                              | `true`               |
 
-
 ### Security settings
 
-| Name                    | Description                                                            | Value               |
-| ----------------------- | ---------------------------------------------------------------------- | ------------------- |
-| `adminToken`            | The admin token used for /admin                                        | `R@ndomToken$tring` |
-| `signupsAllowed`        | Whether new users can register via the web interface                   | true                |
-| `invitationsAllowed`    | Whether organization admins can send invitations to register new users | true                |
-| `signupDomains`         | List of domain names for users allowed to register                     | `contoso.com`       |
-| `signupsVerify`         | Whether to require account verification for newly-registered users.    | `true`              |
-| `showPassHint`          | Whether a password hint should be shown in the page.                   | `false`             |
-| `fullnameOverride`      | String to override the application name.                               | `""`                |
-| `serviceAccount.create` | Create a service account                                               | `true`              |
-| `serviceAccount.name`   | Name of the service account to create                                  | `vaultwarden-svc`   |
-
+| Name                    | Description                                                                     | Value               |
+| ----------------------- | ------------------------------------------------------------------------------- | ------------------- |
+| `adminToken`            | The admin token used for /admin                                                 | `R@ndomToken$tring` |
+| `signupsAllowed`        | By default, anyone who can access your instance can register for a new account. | `true`              |
+| `invitationsAllowed`    | Even when registration is disabled, organization administrators or owners can   | `true`              |
+| `signupDomains`         | List of domain names for users allowed to register                              | `contoso.com`       |
+| `signupsVerify`         | Whether to require account verification for newly-registered users.             | `true`              |
+| `showPassHint`          | Whether a password hint should be shown in the page.                            | `false`             |
+| `fullnameOverride`      | String to override the application name.                                        | `""`                |
+| `serviceAccount.create` | Create a service account                                                        | `true`              |
+| `serviceAccount.name`   | Name of the service account to create                                           | `vaultwarden-svc`   |
 
 ### Exposure Parameters
 
@@ -257,7 +255,6 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | `service.type`                    | Service type                                                                   | `ClusterIP`              |
 | `service.annotations`             | Additional annotations for the vaultwarden service                             | `{}`                     |
 
-
 ### Database Configuration
 
 | Name                   | Description                               | Value     |
@@ -269,7 +266,6 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | `database.password`    | Database password                         | `""`      |
 | `database.dbName`      | Database name                             | `""`      |
 | `database.uriOverride` | Manually specify the DB connection string | `""`      |
-
 
 ### SMTP Configuration
 
@@ -287,7 +283,6 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | `smtp.acceptInvalidCerts`     | Accept Invalid Certificates           | `false`    |
 | `smtp.debug`                  | SMTP debugging                        | `false`    |
 
-
 ### Storage Configuration
 
 | Name              | Description                                 | Value     |
@@ -297,6 +292,13 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | `storage.class`   | Specify the storage class                   | `default` |
 | `storage.dataDir` | Specify the data directory                  | `/data`   |
 
+### Logging Configuration
+
+| Name               | Description                         | Value                   |
+| ------------------ | ----------------------------------- | ----------------------- |
+| `logging.enabled`  | Enable logging to a file            | `false`                 |
+| `logging.logfile`  | Specify logfile path for output log | `/data/vaultwarden.log` |
+| `logging.loglevel` | Specify the log level               | `warn`                  |
 
 ### Extra containers Configuration
 
