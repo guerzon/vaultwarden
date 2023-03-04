@@ -39,5 +39,7 @@ data:
   SIGNUPS_DOMAINS_WHITELIST: {{ .Values.signupDomains | quote }}
   SIGNUPS_VERIFY: {{ .Values.signupsVerify | quote }}
   WEB_VAULT_ENABLED: {{ .Values.webVaultEnabled | quote }}
+  {{- if .Values.logging.enabled }}
   LOG_FILE: {{ .Values.logging.logfile | quote }}
   LOG_LEVEL: {{ .Values.logging.loglevel | quote }}
+  {{- end }}
