@@ -92,6 +92,10 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: vaultwarden-data
+        {{- if .Values.storage.annotations }}
+        annotations:
+          {{- toYaml .Values.storage.annotations | nindent 12 }}
+        {{- end }}
       spec:
         accessModes:
           - "ReadWriteOnce"
