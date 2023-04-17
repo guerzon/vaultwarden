@@ -46,6 +46,15 @@ rocket:
 ##
 webVaultEnabled: "true"
 
+## @section Pod configuration
+##
+## @param podAnnotations Add extra annotations to the pod
+##
+podAnnotations: {}
+## @param podLabels Add extra labels to the pod
+##
+podLabels: {}
+
 ## @section Security settings
 ##
 ## @param adminToken The admin token used for /admin
@@ -82,6 +91,7 @@ fullnameOverride: ""
 serviceAccount:
   create: true
   name: "vaultwarden-svc"
+
 
 ## @section Exposure Parameters
 ##
