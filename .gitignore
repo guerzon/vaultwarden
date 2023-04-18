@@ -3,3 +3,4 @@
 .vscode
 .DS_Store
 testing-values.yaml
+readme-generator-for-helm

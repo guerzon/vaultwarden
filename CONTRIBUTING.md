@@ -14,20 +14,8 @@ When submitting a pull request, please ensure that:
 - Any change to a chart requires a version bump following [semver](https://semver.org/) principles.
 - The tables of parameters are generated based on the metadata information from the `values.yaml` file, by using [this tool](https://github.com/bitnami-labs/readme-generator-for-helm).
 
-  A quick way to do this is to run the tool via Docker:
+  A quick way to do this is to run the tool via Docker and the script [generate-readme.sh](generate-readme.sh):
 
   ```bash
-  # Clone and build:
-  git clone https://github.com/bitnami-labs/readme-generator-for-helm
-  cd readme-generator-for-helm/
-  docker build -t readme-gen .
-
-  # Run the tool and mount the current project directory.
-  cd <this-project-dir>
-  docker run --rm -d -it --name readmegen -v $(pwd):/mnt readme-gen bash
-  docker exec -it readmegen bash
-
-  # Update the values documentation
-  cd /mnt
-  readme-generator -v values.yaml -r README.md
+  ./generate-readme.sh
   ```
