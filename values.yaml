@@ -131,9 +131,9 @@ ingress:
   ##
   nginxAllowList: ""
   ## TODO:
-  ##   - Add support for using cert-manager.
-  ##   - Support for multiple TLS hostnames.
-  ##
+##   - Add support for using cert-manager.
+##   - Support for multiple TLS hostnames.
+##
 
 ## Service configuration
 service:
@@ -218,9 +218,16 @@ smtp:
 ## @section Storage Configuration
 ##
 storage:
+  ## @param storage.existingVolumeClaim Name of an existing volume claim created separately, which the statefulset will use instead of creating its own
+  ## If this is not an empty string, the other values below are ignored
+  ##
+  existingVolumeClaim: ""
   ## @param storage.enabled Enable configuration for persistent storage
   ##
   enabled: false
+  ## @param storage.enabled Enable configuration for persistent storage
+  ##
+  accessModes: ["ReadWriteOnce"]
   ## @param storage.size Storage size for /data
   ##
   size: "15Gi"

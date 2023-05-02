@@ -67,10 +67,16 @@ spec:
         {{- if .Values.sidecars }}
         {{- toYaml .Values.sidecars | nindent 8 }}
         {{- end }}
+      {{- if .Values.storage.existingVolumeClaim }}
+      volumes:
+        - name: vaultwarden-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.storage.existingVolumeClaim }}
+      {{- end }}
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- end }}
-  {{- if .Values.storage.enabled }}
+  {{- if and .Values.storage.enabled (not .Values.storage.existingVolumeClaim) }}
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Retain
     whenScaled: Retain
@@ -79,7 +85,9 @@ spec:
         name: vaultwarden-data
       spec:
         accessModes:
-          - "ReadWriteOnce"
+        {{- range .Values.storage.accessModes }}
+          - {{ . }}
+        {{- end }}
         resources:
           requests:
             storage: {{ .Values.storage.size }}
