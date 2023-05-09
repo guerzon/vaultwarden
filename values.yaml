@@ -50,7 +50,10 @@ webVaultEnabled: "true"
 ##
 ## @param adminToken The admin token used for /admin
 ##
-adminToken: "R@ndomToken$tring"
+adminToken:
+  #existingSecret: vaultwarden
+  existingSecretKey: ADMIN_TOKEN
+  value: "R@ndomToken$tring"
 ## @param signupsAllowed By default, anyone who can access your instance can register for a new account.
 ## To disable this, set this parameter to false. Even when signupsAllowed=false, an existing user who is
 ## an organization owner or admin can still invite new users. If you want to disable this as well, set
@@ -173,6 +176,7 @@ database:
 ## @section SMTP Configuration
 ##
 smtp:
+  #existingSecret: vaultwarden
   ## @param smtp.host SMTP host
   ##
   host: ""
@@ -196,10 +200,14 @@ smtp:
   ## @param smtp.username Username for the SMTP authentication.
   ## Example: juan
   ##
-  username: ""
+  username:
+    existingSecretKey: SMTP_USERNAME
+    value: ""
   ## @param smtp.password Password for the SMTP service.
   ##
-  password: ""
+  password:
+    existingSecretKey: SMTP_PASSWORD
+    value: ""
   ## @param smtp.authMechanism SMTP authentication mechanism
   ## Possible values: "Plain", "Login", "Xoauth2"
   ## Multiple options need to be separated by a comma. (not tested)

@@ -48,18 +48,18 @@ spec:
             - name: SMTP_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "vaultwarden.fullname" . }}
-                  key: SMTP_USERNAME
+                  name: {{ default (include "vaultwarden.fullname" .) .Values.smtp.existingSecret }}
+                  key: {{ default "SMTP_USERNAME" .Values.smtp.username.existingSecretKey }}
             - name: SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "vaultwarden.fullname" . }}
-                  key: SMTP_PASSWORD
+                  name: {{ default (include "vaultwarden.fullname" .) .Values.smtp.existingSecret }}
+                  key: {{ default "SMTP_PASSWORD" .Values.smtp.password.existingSecretKey }}
             - name: ADMIN_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "vaultwarden.fullname" . }}
-                  key: ADMIN_TOKEN
+                  name: {{ default (include "vaultwarden.fullname" .) .Values.adminToken.existingSecret }}
+                  key: {{ default "ADMIN_TOKEN" .Values.adminToken.existingSecretKey }}
           ports:
             - containerPort: 8080
               name: http
