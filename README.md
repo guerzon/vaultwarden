@@ -222,6 +222,13 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | `rocket.workers`    | Rocket number of workers                      | `10`                 |
 | `webVaultEnabled`   | Enable Web Vault                              | `true`               |
 
+### Pod configuration
+
+| Name             | Description                      | Value |
+| ---------------- | -------------------------------- | ----- |
+| `podAnnotations` | Add extra annotations to the pod | `{}`  |
+| `podLabels`      | Add extra labels to the pod      | `{}`  |
+
 ### Security settings
 
 | Name                    | Description                                                                     | Value               |
@@ -307,14 +314,13 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | `initContainers` | extra init containers for initializing the vaultwarden instance | `[]`  |
 | `sidecars`       | extra containers running alongside the vaultwarden instance     | `[]`  |
 
-
 ### Extra Configuration
 
-| Name             | Description                                                     | Value |
-| ---------------- | --------------------------------------------------------------- | ----- |
-| `nodeSelector`   | Node labels for pod assignment                                  | `{}`  |
-| `tolerations`    | Tolerations for pod assignment                                  | `[]`  |
-| `affinity`       | Affinity for pod assignment                                     | `{}`  |
+| Name           | Description                    | Value |
+| -------------- | ------------------------------ | ----- |
+| `nodeSelector` | Node labels for pod assignment | `{}`  |
+| `affinity`     | Affinity for pod assignment    | `{}`  |
+| `tolerations`  | Tolerations for pod assignment | `[]`  |
 
 ## Uninstall
 
