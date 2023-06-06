@@ -1,7 +1,7 @@
 # Helm chart for Vaultwarden
 
 [![MIT Licensed](https://img.shields.io/github/license/guerzon/vaultwarden)](https://github.com/guerzon/vaultwarden/blob/main/LICENSE)
-[![Helm Release](https://img.shields.io/docker/v/vaultwarden/server/1.24.0)](https://img.shields.io/docker/v/vaultwarden/server/1.24.0)
+[![Helm Release](https://img.shields.io/docker/v/vaultwarden/server/1.28.1)](https://img.shields.io/docker/v/vaultwarden/server/1.28.1)
 
 [Vaultwarden](https://github.com/dani-garcia/vaultwarden), formerly known as **Bitwarden_RS**, is an "alternative implementation of the Bitwarden server API written in Rust and compatible with [upstream Bitwarden clients](https://bitwarden.com/download/), perfect for self-hosted deployment where running the official resource-heavy service might not be ideal."
 
@@ -211,7 +211,7 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | ------------------- | --------------------------------------------- | -------------------- |
 | `image.registry`    | Vaultwarden image registry                    | `docker.io`          |
 | `image.repository`  | Vaultwarden image repository                  | `vaultwarden/server` |
-| `image.tag`         | Vaultwarden image tag                         | `1.24.0`             |
+| `image.tag`         | Vaultwarden image tag                         | `1.28.1`             |
 | `image.pullPolicy`  | Vaultwarden image pull policy                 | `IfNotPresent`       |
 | `image.pullSecrets` | Specify docker-registry secret names          | `[]`                 |
 | `domain`            | Domain name where the application is accessed | `""`                 |
@@ -231,17 +231,19 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 
 ### Security settings
 
-| Name                    | Description                                                                     | Value               |
-| ----------------------- | ------------------------------------------------------------------------------- | ------------------- |
-| `adminToken`            | The admin token used for /admin                                                 | `R@ndomToken$tring` |
-| `signupsAllowed`        | By default, anyone who can access your instance can register for a new account. | `true`              |
-| `invitationsAllowed`    | Even when registration is disabled, organization administrators or owners can   | `true`              |
-| `signupDomains`         | List of domain names for users allowed to register                              | `contoso.com`       |
-| `signupsVerify`         | Whether to require account verification for newly-registered users.             | `true`              |
-| `showPassHint`          | Whether a password hint should be shown in the page.                            | `false`             |
-| `fullnameOverride`      | String to override the application name.                                        | `""`                |
-| `serviceAccount.create` | Create a service account                                                        | `true`              |
-| `serviceAccount.name`   | Name of the service account to create                                           | `vaultwarden-svc`   |
+| Name                           | Description                                                                                              | Value               |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------- |
+| `adminToken.existingSecret`    | Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey. | `""`                |
+| `adminToken.existingSecretKey` | When using adminToken.existingSecret, specify the key containing the token.                              | `""`                |
+| `adminToken.value`             | Plain string containing the admin token.                                                                 | `R@ndomToken$tring` |
+| `signupsAllowed`               | By default, anyone who can access your instance can register for a new account.                          | `true`              |
+| `invitationsAllowed`           | Even when registration is disabled, organization administrators or owners can                            | `true`              |
+| `signupDomains`                | List of domain names for users allowed to register                                                       | `contoso.com`       |
+| `signupsVerify`                | Whether to require account verification for newly-registered users.                                      | `true`              |
+| `showPassHint`                 | Whether a password hint should be shown in the page.                                                     | `false`             |
+| `fullnameOverride`             | String to override the application name.                                                                 | `""`                |
+| `serviceAccount.create`        | Create a service account                                                                                 | `true`              |
+| `serviceAccount.name`          | Name of the service account to create                                                                    | `vaultwarden-svc`   |
 
 ### Exposure Parameters
 
@@ -276,19 +278,22 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 
 ### SMTP Configuration
 
-| Name                          | Description                           | Value      |
-| ----------------------------- | ------------------------------------- | ---------- |
-| `smtp.host`                   | SMTP host                             | `""`       |
-| `smtp.security`               | SMTP Encryption method                | `starttls` |
-| `smtp.port`                   | SMTP port                             | `25`       |
-| `smtp.from`                   | SMTP sender email address             | `""`       |
-| `smtp.fromName`               | SMTP sender FROM                      | `""`       |
-| `smtp.username`               | Username for the SMTP authentication. | `""`       |
-| `smtp.password`               | Password for the SMTP service.        | `""`       |
-| `smtp.authMechanism`          | SMTP authentication mechanism         | `Plain`    |
-| `smtp.acceptInvalidHostnames` | Accept Invalid Hostnames              | `false`    |
-| `smtp.acceptInvalidCerts`     | Accept Invalid Certificates           | `false`    |
-| `smtp.debug`                  | SMTP debugging                        | `false`    |
+| Name                              | Description                                                                                                                                         | Value      |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| `smtp.existingSecret`             | Name of an existing secret containing the SMTP username and password. Also set smtp.username.existingSecretKey and smtp.password.existingSecretKey. | `""`       |
+| `smtp.host`                       | SMTP host                                                                                                                                           | `""`       |
+| `smtp.security`                   | SMTP Encryption method                                                                                                                              | `starttls` |
+| `smtp.port`                       | SMTP port                                                                                                                                           | `25`       |
+| `smtp.from`                       | SMTP sender email address                                                                                                                           | `""`       |
+| `smtp.fromName`                   | SMTP sender FROM                                                                                                                                    | `""`       |
+| `smtp.username.value`             | Username string for the SMTP authentication.                                                                                                        | `""`       |
+| `smtp.username.existingSecretKey` | When using an existing secret, specify the key which contains the username.                                                                         | `""`       |
+| `smtp.password.value`             | Password string for the SMTP authentication.                                                                                                        | `""`       |
+| `smtp.password.existingSecretKey` | When using an existing secret, specify the key which contains the password.                                                                         | `""`       |
+| `smtp.authMechanism`              | SMTP authentication mechanism                                                                                                                       | `Plain`    |
+| `smtp.acceptInvalidHostnames`     | Accept Invalid Hostnames                                                                                                                            | `false`    |
+| `smtp.acceptInvalidCerts`         | Accept Invalid Certificates                                                                                                                         | `false`    |
+| `smtp.debug`                      | SMTP debugging                                                                                                                                      | `false`    |
 
 ### Storage Configuration
 
