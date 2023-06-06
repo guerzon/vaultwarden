@@ -57,11 +57,18 @@ podLabels: {}
 
 ## @section Security settings
 ##
-## @param adminToken The admin token used for /admin
-##
 adminToken:
-  #existingSecret: vaultwarden
-  existingSecretKey: ADMIN_TOKEN
+  ## @param adminToken.existingSecret Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey.
+  ## Example: admincreds_secret
+  ##
+  existingSecret: ""
+  ## @param adminToken.existingSecretKey When using adminToken.existingSecret, specify the key containing the token.
+  ## Example: ADMIN_TOKEN
+  ##
+  existingSecretKey: ""
+  ## @param adminToken.value Plain string containing the admin token.
+  ## Example: ADMIN_TOKEN
+  ##
   value: "R@ndomToken$tring"
 ## @param signupsAllowed By default, anyone who can access your instance can register for a new account.
 ## To disable this, set this parameter to false. Even when signupsAllowed=false, an existing user who is
@@ -186,7 +193,9 @@ database:
 ## @section SMTP Configuration
 ##
 smtp:
-  #existingSecret: vaultwarden
+  ## @param smtp.existingSecret Name of an existing secret containing the SMTP username and password. Also set smtp.username.existingSecretKey and smtp.password.existingSecretKey.
+  ##
+  existingSecret: ""
   ## @param smtp.host SMTP host
   ##
   host: ""
@@ -207,17 +216,30 @@ smtp:
   ## @param smtp.fromName SMTP sender FROM
   ##
   fromName: ""
-  ## @param smtp.username Username for the SMTP authentication.
-  ## Example: juan
+  ## Username for SMTP authentication.
   ##
   username:
-    existingSecretKey: SMTP_USERNAME
+    ## @param smtp.username.value Username string for the SMTP authentication.
+    ## Example: juan
+    ##
     value: ""
-  ## @param smtp.password Password for the SMTP service.
+    ## @param smtp.username.existingSecretKey When using an existing secret, specify the key which contains the username.
+    ## Example: SMTP_USERNAME
+    ##
+    existingSecretKey: ""
+
+  ## Password for SMTP authentication.
   ##
   password:
-    existingSecretKey: SMTP_PASSWORD
+    ## @param smtp.password.value Password string for the SMTP authentication.
+    ## Example: Sup3rsecurepa$$word
+    ##
     value: ""
+    ## @param smtp.password.existingSecretKey When using an existing secret, specify the key which contains the password.
+    ## Example: SMTP_PASSWORD
+    ##
+    existingSecretKey: ""
+
   ## @param smtp.authMechanism SMTP authentication mechanism
   ## Possible values: "Plain", "Login", "Xoauth2"
   ## Multiple options need to be separated by a comma. (not tested)

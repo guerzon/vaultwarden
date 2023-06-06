@@ -231,17 +231,19 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 
 ### Security settings
 
-| Name                    | Description                                                                     | Value               |
-| ----------------------- | ------------------------------------------------------------------------------- | ------------------- |
-| `adminToken`            | The admin token used for /admin                                                 | `R@ndomToken$tring` |
-| `signupsAllowed`        | By default, anyone who can access your instance can register for a new account. | `true`              |
-| `invitationsAllowed`    | Even when registration is disabled, organization administrators or owners can   | `true`              |
-| `signupDomains`         | List of domain names for users allowed to register                              | `contoso.com`       |
-| `signupsVerify`         | Whether to require account verification for newly-registered users.             | `true`              |
-| `showPassHint`          | Whether a password hint should be shown in the page.                            | `false`             |
-| `fullnameOverride`      | String to override the application name.                                        | `""`                |
-| `serviceAccount.create` | Create a service account                                                        | `true`              |
-| `serviceAccount.name`   | Name of the service account to create                                           | `vaultwarden-svc`   |
+| Name                           | Description                                                                                              | Value               |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------- |
+| `adminToken.existingSecret`    | Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey. | `""`                |
+| `adminToken.existingSecretKey` | When using adminToken.existingSecret, specify the key containing the token.                              | `""`                |
+| `adminToken.value`             | Plain string containing the admin token.                                                                 | `R@ndomToken$tring` |
+| `signupsAllowed`               | By default, anyone who can access your instance can register for a new account.                          | `true`              |
+| `invitationsAllowed`           | Even when registration is disabled, organization administrators or owners can                            | `true`              |
+| `signupDomains`                | List of domain names for users allowed to register                                                       | `contoso.com`       |
+| `signupsVerify`                | Whether to require account verification for newly-registered users.                                      | `true`              |
+| `showPassHint`                 | Whether a password hint should be shown in the page.                                                     | `false`             |
+| `fullnameOverride`             | String to override the application name.                                                                 | `""`                |
+| `serviceAccount.create`        | Create a service account                                                                                 | `true`              |
+| `serviceAccount.name`          | Name of the service account to create                                                                    | `vaultwarden-svc`   |
 
 ### Exposure Parameters
 
@@ -276,19 +278,22 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 
 ### SMTP Configuration
 
-| Name                          | Description                           | Value      |
-| ----------------------------- | ------------------------------------- | ---------- |
-| `smtp.host`                   | SMTP host                             | `""`       |
-| `smtp.security`               | SMTP Encryption method                | `starttls` |
-| `smtp.port`                   | SMTP port                             | `25`       |
-| `smtp.from`                   | SMTP sender email address             | `""`       |
-| `smtp.fromName`               | SMTP sender FROM                      | `""`       |
-| `smtp.username`               | Username for the SMTP authentication. | `""`       |
-| `smtp.password`               | Password for the SMTP service.        | `""`       |
-| `smtp.authMechanism`          | SMTP authentication mechanism         | `Plain`    |
-| `smtp.acceptInvalidHostnames` | Accept Invalid Hostnames              | `false`    |
-| `smtp.acceptInvalidCerts`     | Accept Invalid Certificates           | `false`    |
-| `smtp.debug`                  | SMTP debugging                        | `false`    |
+| Name                              | Description                                                                                                                                         | Value      |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| `smtp.existingSecret`             | Name of an existing secret containing the SMTP username and password. Also set smtp.username.existingSecretKey and smtp.password.existingSecretKey. | `""`       |
+| `smtp.host`                       | SMTP host                                                                                                                                           | `""`       |
+| `smtp.security`                   | SMTP Encryption method                                                                                                                              | `starttls` |
+| `smtp.port`                       | SMTP port                                                                                                                                           | `25`       |
+| `smtp.from`                       | SMTP sender email address                                                                                                                           | `""`       |
+| `smtp.fromName`                   | SMTP sender FROM                                                                                                                                    | `""`       |
+| `smtp.username.value`             | Username string for the SMTP authentication.                                                                                                        | `""`       |
+| `smtp.username.existingSecretKey` | When using an existing secret, specify the key which contains the username.                                                                         | `""`       |
+| `smtp.password.value`             | Password string for the SMTP authentication.                                                                                                        | `""`       |
+| `smtp.password.existingSecretKey` | When using an existing secret, specify the key which contains the password.                                                                         | `""`       |
+| `smtp.authMechanism`              | SMTP authentication mechanism                                                                                                                       | `Plain`    |
+| `smtp.acceptInvalidHostnames`     | Accept Invalid Hostnames                                                                                                                            | `false`    |
+| `smtp.acceptInvalidCerts`         | Accept Invalid Certificates                                                                                                                         | `false`    |
+| `smtp.debug`                      | SMTP debugging                                                                                                                                      | `false`    |
 
 ### Storage Configuration
 
