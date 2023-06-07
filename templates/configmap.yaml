@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/component: vaultwarden
+    {{- include "vaultwarden.labels" . | nindent 4 }}
 data:
   DOMAIN: {{ .Values.domain | quote }}
   {{- if ne "default" .Values.database.type }}

@@ -5,18 +5,22 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/component: vaultwarden
+    {{- include "vaultwarden.labels" . | nindent 4 }}
+    {{- range $key, $value := .Values.statefulsetlabels }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
 spec:
   serviceName: vaultwarden
   replicas: 1
   selector:
     matchLabels:
-      app: vaultwarden
       app.kubernetes.io/component: vaultwarden
+      {{- include "vaultwarden.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: vaultwarden
         app.kubernetes.io/component: vaultwarden
+        {{- include "vaultwarden.selectorLabels" . | nindent 8 }}
       {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -67,7 +71,7 @@ spec:
                   name: {{ default (include "vaultwarden.fullname" .) .Values.adminToken.existingSecret }}
                   key: {{ default "ADMIN_TOKEN" .Values.adminToken.existingSecretKey }}
           ports:
-            - containerPort: 8080
+            - containerPort: 80
               name: http
               protocol: TCP
             - containerPort: {{ .Values.websocket.port }}

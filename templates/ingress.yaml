@@ -1,4 +1,5 @@
-{{- if .Values.ingress.enabled }}
+{{- $ingress := .Values.ingress -}}
+{{- if $ingress.enabled }}
 {{- $newAPIversion := .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
 {{- if $newAPIversion }}
 apiVersion: networking.k8s.io/v1
@@ -11,15 +12,19 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/component: vaultwarden
+    {{- include "vaultwarden.labels" . | nindent 4 }}
+    {{- range $key, $value := $ingress.labels }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
   annotations:
     ingress.kubernetes.io/rewrite-target: /
-    {{- if .Values.ingress.tls }}
+    {{- if $ingress.tls }}
     ingress.kubernetes.io/ssl-redirect: "true"
     {{- end }}
-    {{- if .Values.ingress.additionalAnnotations }}
-    {{- toYaml .Values.ingress.additionalAnnotations | nindent 4 }}
+    {{- if $ingress.additionalAnnotations }}
+    {{- toYaml $ingress.additionalAnnotations | nindent 4 }}
     {{- end }}
-    {{- if .Values.ingress.nginxIngressAnnotations }}
+    {{- if $ingress.nginxIngressAnnotations }}
     nginx.ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "Request-Id: $req_id";
     nginx.ingress.kubernetes.io/connection-proxy-header: "keep-alive"
@@ -32,34 +37,34 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
-    {{- if .Values.ingress.nginxAllowList }}
-    nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingress.nginxAllowList }}
+    {{- if $ingress.nginxAllowList }}
+    nginx.ingress.kubernetes.io/whitelist-source-range: {{ $ingress.nginxAllowList }}
     {{- end }}
     {{- end }}
 spec:
-  {{- if .Values.ingress.class }}
-  ingressClassName: {{ .Values.ingress.class | quote }}
+  {{- if $ingress.class }}
+  ingressClassName: {{ $ingress.class | quote }}
   {{- end }}
-  {{- if .Values.ingress.tls }}
+  {{- if $ingress.tls }}
   tls:
     - hosts:
-        - {{ .Values.ingress.hostname | quote }}
-      secretName: {{ .Values.ingress.tlsSecret }}
+        - {{ $ingress.hostname | quote }}
+      secretName: {{ $ingress.tlsSecret }}
   {{- end }}
   rules:
-    - host: {{ .Values.ingress.hostname | quote }}
+    - host: {{ $ingress.hostname | quote }}
       http:
         paths:
-        - path: {{ .Values.ingress.path }}
-          pathType: {{ .Values.ingress.pathType }}
+        - path: {{ $ingress.path }}
+          pathType: {{ $ingress.pathType }}
           backend:
             service:
               name: {{ include "vaultwarden.fullname" . }}
               port:
                 name: "http"
         {{- if .Values.websocket.enabled }}
-        - path: {{ .Values.ingress.pathWs }}
-          pathType: {{ .Values.ingress.pathTypeWs }}
+        - path: {{ $ingress.pathWs }}
+          pathType: {{ $ingress.pathTypeWs }}
           backend:
             service:
               name: {{ include "vaultwarden.fullname" . }}

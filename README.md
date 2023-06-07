@@ -253,6 +253,7 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | `ingress.class`                   | Ingress resource class                                                         | `nginx`                  |
 | `ingress.nginxIngressAnnotations` | Add nginx specific ingress annotations                                         | `true`                   |
 | `ingress.additionalAnnotations`   | Additional annotations for the ingress resource.                               | `{}`                     |
+| `ingress.labels`                  | Additional labels for the ingress resource.                                    | `{}`                     |
 | `ingress.tls`                     | Enable TLS on the ingress resource.                                            | `true`                   |
 | `ingress.hostname`                | Hostname for the ingress.                                                      | `warden.contoso.com`     |
 | `ingress.path`                    | Default application path for the ingress                                       | `/`                      |
@@ -263,6 +264,7 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 | `ingress.nginxAllowList`          | Comma-separated list of IP addresses and subnets to allow.                     | `""`                     |
 | `service.type`                    | Service type                                                                   | `ClusterIP`              |
 | `service.annotations`             | Additional annotations for the vaultwarden service                             | `{}`                     |
+| `service.labels`                  | Additional labels for the service                                              | `{}`                     |
 
 ### Database Configuration
 
@@ -321,11 +323,12 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 
 ### Extra Configuration
 
-| Name           | Description                    | Value |
-| -------------- | ------------------------------ | ----- |
-| `nodeSelector` | Node labels for pod assignment | `{}`  |
-| `affinity`     | Affinity for pod assignment    | `{}`  |
-| `tolerations`  | Tolerations for pod assignment | `[]`  |
+| Name                | Description                           | Value |
+| ------------------- | ------------------------------------- | ----- |
+| `nodeSelector`      | Node labels for pod assignment        | `{}`  |
+| `affinity`          | Affinity for pod assignment           | `{}`  |
+| `tolerations`       | Tolerations for pod assignment        | `[]`  |
+| `statefulsetlabels` | Additional labels for the statefulset | `{}`  |
 
 ## Uninstall
 
