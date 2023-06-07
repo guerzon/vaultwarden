@@ -142,11 +142,11 @@ ingress:
   ## @param ingress.pathType Path type for the ingress
   ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
   ##
-  pathType: "ImplementationSpecific"
+  pathType: "Prefix"
   ## @param ingress.pathTypeWs Path type for the ingress
   ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
   ##
-  pathTypeWs: "ImplementationSpecific"
+  pathTypeWs: "Exact"
   ## @param ingress.tlsSecret Kubernetes secret containing the SSL certificate when using the "nginx" class.
   ##
   tlsSecret: ""
