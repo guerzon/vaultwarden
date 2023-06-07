@@ -19,7 +19,9 @@ data:
   SMTP_HOST: {{ .Values.smtp.host | quote }}
   SMTP_SECURITY: {{ .Values.smtp.security | quote }}
   SMTP_PORT: {{ .Values.smtp.port | quote }}
+  {{- if .Values.smtp.authMechanism }}
   SMTP_AUTH_MECHANISM: {{ .Values.smtp.authMechanism | quote }}
+  {{- end }}
   SMTP_FROM: {{ .Values.smtp.from | quote }}
   SMTP_FROM_NAME: {{ default "Vaultwarden" .Values.smtp.fromName | quote }}
   SMTP_DEBUG: {{ .Values.smtp.debug | quote }}

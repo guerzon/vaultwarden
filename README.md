@@ -247,24 +247,24 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 
 ### Exposure Parameters
 
-| Name                              | Description                                                                    | Value                    |
-| --------------------------------- | ------------------------------------------------------------------------------ | ------------------------ |
-| `ingress.enabled`                 | Deploy an ingress resource.                                                    | `false`                  |
-| `ingress.class`                   | Ingress resource class                                                         | `nginx`                  |
-| `ingress.nginxIngressAnnotations` | Add nginx specific ingress annotations                                         | `true`                   |
-| `ingress.additionalAnnotations`   | Additional annotations for the ingress resource.                               | `{}`                     |
-| `ingress.labels`                  | Additional labels for the ingress resource.                                    | `{}`                     |
-| `ingress.tls`                     | Enable TLS on the ingress resource.                                            | `true`                   |
-| `ingress.hostname`                | Hostname for the ingress.                                                      | `warden.contoso.com`     |
-| `ingress.path`                    | Default application path for the ingress                                       | `/`                      |
-| `ingress.pathWs`                  | Path for the websocket ingress                                                 | `/notifications/hub`     |
-| `ingress.pathType`                | Path type for the ingress                                                      | `ImplementationSpecific` |
-| `ingress.pathTypeWs`              | Path type for the ingress                                                      | `ImplementationSpecific` |
-| `ingress.tlsSecret`               | Kubernetes secret containing the SSL certificate when using the "nginx" class. | `""`                     |
-| `ingress.nginxAllowList`          | Comma-separated list of IP addresses and subnets to allow.                     | `""`                     |
-| `service.type`                    | Service type                                                                   | `ClusterIP`              |
-| `service.annotations`             | Additional annotations for the vaultwarden service                             | `{}`                     |
-| `service.labels`                  | Additional labels for the service                                              | `{}`                     |
+| Name                              | Description                                                                    | Value                |
+| --------------------------------- | ------------------------------------------------------------------------------ | -------------------- |
+| `ingress.enabled`                 | Deploy an ingress resource.                                                    | `false`              |
+| `ingress.class`                   | Ingress resource class                                                         | `nginx`              |
+| `ingress.nginxIngressAnnotations` | Add nginx specific ingress annotations                                         | `true`               |
+| `ingress.additionalAnnotations`   | Additional annotations for the ingress resource.                               | `{}`                 |
+| `ingress.labels`                  | Additional labels for the ingress resource.                                    | `{}`                 |
+| `ingress.tls`                     | Enable TLS on the ingress resource.                                            | `true`               |
+| `ingress.hostname`                | Hostname for the ingress.                                                      | `warden.contoso.com` |
+| `ingress.path`                    | Default application path for the ingress                                       | `/`                  |
+| `ingress.pathWs`                  | Path for the websocket ingress                                                 | `/notifications/hub` |
+| `ingress.pathType`                | Path type for the ingress                                                      | `Prefix`             |
+| `ingress.pathTypeWs`              | Path type for the ingress                                                      | `Exact`              |
+| `ingress.tlsSecret`               | Kubernetes secret containing the SSL certificate when using the "nginx" class. | `""`                 |
+| `ingress.nginxAllowList`          | Comma-separated list of IP addresses and subnets to allow.                     | `""`                 |
+| `service.type`                    | Service type                                                                   | `ClusterIP`          |
+| `service.annotations`             | Additional annotations for the vaultwarden service                             | `{}`                 |
+| `service.labels`                  | Additional labels for the service                                              | `{}`                 |
 
 ### Database Configuration
 
