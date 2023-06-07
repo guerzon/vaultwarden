@@ -10,20 +10,14 @@
 ```bash
 git clone https://github.com/guerzon/vaultwarden
 cd vaultwarden
-helm install my-vaultwarden-release .
+helm install my-vaultwarden-release charts/vaultwarden/
 ```
 
 ## Description
 
-### Short intro
+This [Helm](https://helm.sh/docs/) chart is used to deploy `vaultwarden` with a stable configuration to Kubernetes clusters.
 
-In 2020, I built a simple project for deploying **Bitwarden_RS** to Kubernetes, which can be found [here](https://github.com/guerzon/bitwarden-kubernetes). That project is made up of various YAML files which have to be edited manually when adding required customizations.
-
-The aim of this project is to deploy `vaultwarden` with a stable configuration to Kubernetes clusters using [Helm](https://helm.sh/docs/).
-
-The upstream repository for the `vaultwarden` project can be found [here](https://github.com/dani-garcia/vaultwarden).
-
-To learn more about Vaultwarden, please visit the [wiki](https://github.com/dani-garcia/vaultwarden/wiki).
+The upstream repository for the `vaultwarden` project can be found [here](https://github.com/dani-garcia/vaultwarden). To learn more about Vaultwarden, please visit the [wiki](https://github.com/dani-garcia/vaultwarden/wiki).
 
 ## Prerequisites
 
@@ -37,7 +31,7 @@ To deploy the chart with the release name `vaultwarden-release`:
 ```bash
 export NAMESPACE=vaultwarden
 export DOMAIN_NAME=pass.company.com
-helm install vaultwarden-release . \
+helm install vaultwarden-release charts/vaultwarden/ \
   --namespace $NAMESPACE \
   --set "ingress.enabled=true" \
   --set "ingress.hostname=$DOMAIN_NAME"
@@ -49,7 +43,7 @@ To deploy the chart to another namespace using custom values in the file `demo.y
 export NAMESPACE=vaultwarden-demo
 export RELEASE_NAME=vaultwarden-demo
 helm upgrade -i \
-  -n $NAMESPACE $RELEASE_NAME . \
+  -n $NAMESPACE $RELEASE_NAME charts/vaultwarden/ \
   -f demo.yaml
 ```
 
@@ -72,7 +66,7 @@ image:
 domain: "https://vaultwarden.contoso.com:9443/"
 ```
 
-Detailed configuration options can be found in the [Vaultwarden settings](#vaultwarden-settings) section below.
+Detailed configuration options can be found in the [Vaultwarden settings](./charts/vaultwarden/README.md#vaultwarden-settings) section.
 
 ### Database options
 
@@ -115,7 +109,7 @@ database:
   existingSecretKey: "secret-uri"
 ```
 
-Detailed configuration options can be found in the [Database Configuration](#database-configuration) section below.
+Detailed configuration options can be found in the [Database Configuration](./charts/vaultwarden/README.md#database-configuration) section.
 
 ### SSL and Ingress
 
@@ -161,13 +155,11 @@ ingress:
     alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:eu-central-1:ACCOUNT:certificate/LONGID"
 ```
 
-Detailed configuration options can be found in the [Exposure Parameters](#exposure-parameters) section below.
+Detailed configuration options can be found in the [Exposure Parameters](./charts/vaultwarden/README.md#exposure-parameters) section.
 
 ### Security
 
 An admin token can be generated with: `openssl rand -base64 48`.
-
-Detailed configuration options can be found in the [Security Settings](#security-settings) section below.
 
 By default, the chart deploys a [service account](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/) called `vaultwarden-svc`.
 
@@ -177,7 +169,7 @@ serviceAccount:
   name: "vaultwarden-svc"
 ```
 
-Detailed configuration options can be found in the [Security settings](#security-settings) section below.
+Detailed configuration options can be found in the [Security settings](./charts/vaultwarden/README.md#security-settings) section.
 
 ### Mail settings
 
@@ -194,7 +186,7 @@ smtp:
   acceptInvalidCerts: "true"
 ```
 
-Detailed configuration options can be found in the [SMTP Configuration](#smtp-configuration) section below.
+Detailed configuration options can be found in the [SMTP Configuration](./charts/vaultwarden/README.md#smtp-configuration) section.
 
 ### Storage
 
@@ -216,139 +208,11 @@ storage:
   class: "gp2"
 ```
 
-Detailed configuration options can be found in the [Storage Configuration](#storage-configuration) section below.
-
+Detailed configuration options can be found in the [Storage Configuration](./charts/vaultwarden/README.md#storage-configuration) section.
 
 ## Parameters
 
-### Vaultwarden settings
-
-| Name                | Description                                   | Value                |
-| ------------------- | --------------------------------------------- | -------------------- |
-| `image.registry`    | Vaultwarden image registry                    | `docker.io`          |
-| `image.repository`  | Vaultwarden image repository                  | `vaultwarden/server` |
-| `image.tag`         | Vaultwarden image tag                         | `1.28.1`             |
-| `image.pullPolicy`  | Vaultwarden image pull policy                 | `IfNotPresent`       |
-| `image.pullSecrets` | Specify docker-registry secret names          | `[]`                 |
-| `domain`            | Domain name where the application is accessed | `""`                 |
-| `websocket.enabled` | Enable websocket notifications                | `true`               |
-| `websocket.address` | Websocket listen address                      | `0.0.0.0`            |
-| `websocket.port`    | Websocket listen port                         | `3012`               |
-| `rocket.port`       | Rocket port                                   | `8080`               |
-| `rocket.workers`    | Rocket number of workers                      | `10`                 |
-| `webVaultEnabled`   | Enable Web Vault                              | `true`               |
-
-### Pod configuration
-
-| Name             | Description                      | Value |
-| ---------------- | -------------------------------- | ----- |
-| `podAnnotations` | Add extra annotations to the pod | `{}`  |
-| `podLabels`      | Add extra labels to the pod      | `{}`  |
-
-### Security settings
-
-| Name                           | Description                                                                                              | Value               |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------- |
-| `adminToken.existingSecret`    | Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey. | `""`                |
-| `adminToken.existingSecretKey` | When using adminToken.existingSecret, specify the key containing the token.                              | `""`                |
-| `adminToken.value`             | Plain string containing the admin token.                                                                 | `R@ndomToken$tring` |
-| `signupsAllowed`               | By default, anyone who can access your instance can register for a new account.                          | `true`              |
-| `invitationsAllowed`           | Even when registration is disabled, organization administrators or owners can                            | `true`              |
-| `signupDomains`                | List of domain names for users allowed to register                                                       | `contoso.com`       |
-| `signupsVerify`                | Whether to require account verification for newly-registered users.                                      | `true`              |
-| `showPassHint`                 | Whether a password hint should be shown in the page.                                                     | `false`             |
-| `fullnameOverride`             | String to override the application name.                                                                 | `""`                |
-| `serviceAccount.create`        | Create a service account                                                                                 | `true`              |
-| `serviceAccount.name`          | Name of the service account to create                                                                    | `vaultwarden-svc`   |
-
-### Exposure Parameters
-
-| Name                              | Description                                                                    | Value                |
-| --------------------------------- | ------------------------------------------------------------------------------ | -------------------- |
-| `ingress.enabled`                 | Deploy an ingress resource.                                                    | `false`              |
-| `ingress.class`                   | Ingress resource class                                                         | `nginx`              |
-| `ingress.nginxIngressAnnotations` | Add nginx specific ingress annotations                                         | `true`               |
-| `ingress.additionalAnnotations`   | Additional annotations for the ingress resource.                               | `{}`                 |
-| `ingress.labels`                  | Additional labels for the ingress resource.                                    | `{}`                 |
-| `ingress.tls`                     | Enable TLS on the ingress resource.                                            | `true`               |
-| `ingress.hostname`                | Hostname for the ingress.                                                      | `warden.contoso.com` |
-| `ingress.path`                    | Default application path for the ingress                                       | `/`                  |
-| `ingress.pathWs`                  | Path for the websocket ingress                                                 | `/notifications/hub` |
-| `ingress.pathType`                | Path type for the ingress                                                      | `Prefix`             |
-| `ingress.pathTypeWs`              | Path type for the ingress                                                      | `Exact`              |
-| `ingress.tlsSecret`               | Kubernetes secret containing the SSL certificate when using the "nginx" class. | `""`                 |
-| `ingress.nginxAllowList`          | Comma-separated list of IP addresses and subnets to allow.                     | `""`                 |
-| `service.type`                    | Service type                                                                   | `ClusterIP`          |
-| `service.annotations`             | Additional annotations for the vaultwarden service                             | `{}`                 |
-| `service.labels`                  | Additional labels for the service                                              | `{}`                 |
-
-### Database Configuration
-
-| Name                         | Description                                                                                                                              | Value     |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| `database.type`              | Database type, either mysql or postgresql                                                                                                | `default` |
-| `database.host`              | Database hostname or IP address                                                                                                          | `""`      |
-| `database.port`              | Database port                                                                                                                            | `""`      |
-| `database.username`          | Database username                                                                                                                        | `""`      |
-| `database.password`          | Database password                                                                                                                        | `""`      |
-| `database.dbName`            | Database name                                                                                                                            | `""`      |
-| `database.uriOverride`       | Manually specify the DB connection string                                                                                                | `""`      |
-| `database.existingSecret`    | Name of an existing secret containing the database URI                                                                                   | `""`      |
-| `database.existingSecretKey` | Key in the existing secret                                                                                                               | `""`      |
-| `database.connectionRetries` | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`      |
-| `database.maxConnections`    | Define the size of the connection pool used for connecting to the database.                                                              | `10`      |
-
-### SMTP Configuration
-
-| Name                              | Description                                                                                                                                         | Value      |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| `smtp.existingSecret`             | Name of an existing secret containing the SMTP username and password. Also set smtp.username.existingSecretKey and smtp.password.existingSecretKey. | `""`       |
-| `smtp.host`                       | SMTP host                                                                                                                                           | `""`       |
-| `smtp.security`                   | SMTP Encryption method                                                                                                                              | `starttls` |
-| `smtp.port`                       | SMTP port                                                                                                                                           | `25`       |
-| `smtp.from`                       | SMTP sender email address                                                                                                                           | `""`       |
-| `smtp.fromName`                   | SMTP sender FROM                                                                                                                                    | `""`       |
-| `smtp.username.value`             | Username string for the SMTP authentication.                                                                                                        | `""`       |
-| `smtp.username.existingSecretKey` | When using an existing secret, specify the key which contains the username.                                                                         | `""`       |
-| `smtp.password.value`             | Password string for the SMTP authentication.                                                                                                        | `""`       |
-| `smtp.password.existingSecretKey` | When using an existing secret, specify the key which contains the password.                                                                         | `""`       |
-| `smtp.authMechanism`              | SMTP authentication mechanism                                                                                                                       | `Plain`    |
-| `smtp.acceptInvalidHostnames`     | Accept Invalid Hostnames                                                                                                                            | `false`    |
-| `smtp.acceptInvalidCerts`         | Accept Invalid Certificates                                                                                                                         | `false`    |
-| `smtp.debug`                      | SMTP debugging                                                                                                                                      | `false`    |
-
-### Storage Configuration
-
-| Name              | Description                                 | Value     |
-| ----------------- | ------------------------------------------- | --------- |
-| `storage.enabled` | Enable configuration for persistent storage | `false`   |
-| `storage.size`    | Storage size for /data                      | `15Gi`    |
-| `storage.class`   | Specify the storage class                   | `default` |
-| `storage.dataDir` | Specify the data directory                  | `/data`   |
-
-### Logging Configuration
-
-| Name               | Description                         | Value                   |
-| ------------------ | ----------------------------------- | ----------------------- |
-| `logging.enabled`  | Enable logging to a file            | `false`                 |
-| `logging.logfile`  | Specify logfile path for output log | `/data/vaultwarden.log` |
-| `logging.loglevel` | Specify the log level               | `warn`                  |
-
-### Extra containers Configuration
-
-| Name             | Description                                                     | Value |
-| ---------------- | --------------------------------------------------------------- | ----- |
-| `initContainers` | extra init containers for initializing the vaultwarden instance | `[]`  |
-| `sidecars`       | extra containers running alongside the vaultwarden instance     | `[]`  |
-
-### Extra Configuration
-
-| Name                | Description                           | Value |
-| ------------------- | ------------------------------------- | ----- |
-| `nodeSelector`      | Node labels for pod assignment        | `{}`  |
-| `affinity`          | Affinity for pod assignment           | `{}`  |
-| `tolerations`       | Tolerations for pod assignment        | `[]`  |
-| `statefulsetlabels` | Additional labels for the statefulset | `{}`  |
+Refer to the detailed parameter documentation [here](./charts/vaultwarden/README.md).
 
 ## Uninstall
 
@@ -360,19 +224,11 @@ export RELEASE_NAME=vaultwarden-demo
 helm -n $NAMESPACE uninstall $RELEASE_NAME
 ```
 
-## Notes
+## Disclaimer
 
-I initially built this Helm chart for the purposes of learning Helm chart development, brush up on my Kubernetes skills, and in general, learn how to better manage application releases in Kubernetes.
+Please do your due-diligence before using this chart for a production deployment.
 
-Thus, I have to mention that this chart has to be tested more thoroughly before it is used in a production environment.
-
-Nevertheless, if you find any issues while using this chart, or have any suggestions, I would appreciate it if you would [submit an issue](https://github.com/guerzon/vaultwarden/issues/new).
-
-### Todo
-
-1. Implement more configuration options.
-2. Prometheus metrics scraping would be nice to have.
-3. Automated testing, CI
+Nevertheless, if you find any issues while using this chart, or have any suggestions, I would appreciate it if you would [submit an issue](https://github.com/guerzon/vaultwarden/issues/new). Alternatively, PRs are appreciated!
 
 ## License
 
