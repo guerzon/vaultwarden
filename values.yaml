@@ -195,6 +195,18 @@ database:
   ## @param database.uriOverride Manually specify the DB connection string
   ##
   uriOverride: ""
+  ## @param database.existingSecret Name of an existing secret containing the database URI
+  ##
+  existingSecret: ""
+  ## @param database.existingSecretKey Key in the existing secret
+  ##
+  existingSecretKey: ""
+  ## @param database.connectionRetries Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely.
+  ##
+  connectionRetries: 15
+  ## @param database.maxConnections Define the size of the connection pool used for connecting to the database.
+  ##
+  maxConnections: 10
 
 ## @section SMTP Configuration
 ##

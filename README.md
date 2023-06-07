@@ -99,6 +99,22 @@ database:
   uriOverride: "postgresql://appuser:apppassword@pg.contoso.eu:5433/qualdb"
 ```
 
+Alternatively, you could create a Kubernetes secret containing the database URI:
+
+```bash
+DB_STRING_B64=$(echo -n 'postgresql://appuser:apppassword@pg.contoso.eu:5433/qualdb' | base64 -w 0)
+kubectl -n vaultwarden create secret generic prod-db-creds --from-literal=secret-uri=$DB_STRING_B64
+```
+
+Then pass the name of the secret and the key to the chart:
+
+```yaml
+database:
+  type: postgresql
+  existingSecret: "prod-db-creds"
+  existingSecretKey: "secret-uri"
+```
+
 Detailed configuration options can be found in the [Database Configuration](#database-configuration) section below.
 
 ### SSL and Ingress
@@ -268,15 +284,19 @@ Detailed configuration options can be found in the [Storage Configuration](#stor
 
 ### Database Configuration
 
-| Name                   | Description                               | Value     |
-| ---------------------- | ----------------------------------------- | --------- |
-| `database.type`        | Database type, either mysql or postgresql | `default` |
-| `database.host`        | Database hostname or IP address           | `""`      |
-| `database.port`        | Database port                             | `""`      |
-| `database.username`    | Database username                         | `""`      |
-| `database.password`    | Database password                         | `""`      |
-| `database.dbName`      | Database name                             | `""`      |
-| `database.uriOverride` | Manually specify the DB connection string | `""`      |
+| Name                         | Description                                                                                                                              | Value     |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| `database.type`              | Database type, either mysql or postgresql                                                                                                | `default` |
+| `database.host`              | Database hostname or IP address                                                                                                          | `""`      |
+| `database.port`              | Database port                                                                                                                            | `""`      |
+| `database.username`          | Database username                                                                                                                        | `""`      |
+| `database.password`          | Database password                                                                                                                        | `""`      |
+| `database.dbName`            | Database name                                                                                                                            | `""`      |
+| `database.uriOverride`       | Manually specify the DB connection string                                                                                                | `""`      |
+| `database.existingSecret`    | Name of an existing secret containing the database URI                                                                                   | `""`      |
+| `database.existingSecretKey` | Key in the existing secret                                                                                                               | `""`      |
+| `database.connectionRetries` | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`      |
+| `database.maxConnections`    | Define the size of the connection pool used for connecting to the database.                                                              | `10`      |
 
 ### SMTP Configuration
 

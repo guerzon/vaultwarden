@@ -8,13 +8,6 @@ metadata:
     {{- include "vaultwarden.labels" . | nindent 4 }}
 data:
   DOMAIN: {{ .Values.domain | quote }}
-  {{- if ne "default" .Values.database.type }}
-  {{- if .Values.database.uriOverride }}
-  DATABASE_URL: {{ .Values.database.uriOverride }}
-  {{- else }}
-  DATABASE_URL: {{ include "dbString" . | quote }}
-  {{- end }}
-  {{- end }}
   {{- if and .Values.smtp.host .Values.smtp.from | quote }}
   SMTP_HOST: {{ .Values.smtp.host | quote }}
   SMTP_SECURITY: {{ .Values.smtp.security | quote }}
@@ -46,3 +39,5 @@ data:
   LOG_FILE: {{ .Values.logging.logfile | quote }}
   LOG_LEVEL: {{ .Values.logging.loglevel | quote }}
   {{- end }}
+  DB_CONNECTION_RETRIES: {{ .Values.database.connectionRetries }}
+  DATABASE_MAX_CONNS: {{ .Values.database.maxConnections }}

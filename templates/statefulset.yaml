@@ -74,6 +74,21 @@ spec:
                 secretKeyRef:
                   name: {{ default (include "vaultwarden.fullname" .) .Values.adminToken.existingSecret }}
                   key: {{ default "ADMIN_TOKEN" .Values.adminToken.existingSecretKey }}
+            {{- if ne "default" .Values.database.type }}
+            - name: DATABASE_URL
+              {{- if .Values.database.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.existingSecret }}
+                  key: {{ .Values.database.existingSecretKey }}
+              {{- else }}
+              {{- if .Values.database.uriOverride }}
+              value: {{ .Values.database.uriOverride }}
+              {{- else }}
+              value: {{ include "dbString" . | quote }}
+              {{- end }}
+              {{- end }}
+            {{- end }}
           ports:
             - containerPort: 8080
               name: http
