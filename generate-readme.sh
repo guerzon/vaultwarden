@@ -9,4 +9,4 @@ docker build -t readme-gen .
 cd ..
 
 # Run the tool and mount the current project directory.
-docker run --rm -v $(pwd):/mnt -w /mnt readme-gen readme-generator -v values.yaml -r README.md 
+docker run --rm -v $(pwd):/mnt -w /mnt readme-gen readme-generator -v charts/vaultwarden/values.yaml -r charts/vaultwarden/README.md 
