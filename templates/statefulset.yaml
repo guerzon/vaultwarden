@@ -71,7 +71,7 @@ spec:
                   name: {{ default (include "vaultwarden.fullname" .) .Values.adminToken.existingSecret }}
                   key: {{ default "ADMIN_TOKEN" .Values.adminToken.existingSecretKey }}
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               name: http
               protocol: TCP
             - containerPort: {{ .Values.websocket.port }}
@@ -102,6 +102,8 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: vaultwarden-data
+        labels:
+          {{- include "vaultwarden.labels" . | nindent 10 }}
       spec:
         accessModes:
           - "ReadWriteOnce"
