@@ -233,7 +233,6 @@ smtp:
     ## Example: SMTP_USERNAME
     ##
     existingSecretKey: ""
-
   ## Password for SMTP authentication.
   ##
   password:
@@ -245,7 +244,6 @@ smtp:
     ## Example: SMTP_PASSWORD
     ##
     existingSecretKey: ""
-
   ## @param smtp.authMechanism SMTP authentication mechanism
   ## Possible values: "Plain", "Login", "Xoauth2"
   ## Multiple options need to be separated by a comma. (not tested)

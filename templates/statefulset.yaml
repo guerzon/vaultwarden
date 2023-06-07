@@ -55,16 +55,20 @@ spec:
             - configMapRef:
                 name: {{ include "vaultwarden.fullname" . }}
           env:
+            {{- if or (.Values.smtp.username.value) (.Values.smtp.username.existingSecretKey )}}
             - name: SMTP_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: {{ default (include "vaultwarden.fullname" .) .Values.smtp.existingSecret }}
                   key: {{ default "SMTP_USERNAME" .Values.smtp.username.existingSecretKey }}
+            {{- end }}
+            {{- if or (.Values.smtp.password.value) (.Values.smtp.password.existingSecretKey )}}
             - name: SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ default (include "vaultwarden.fullname" .) .Values.smtp.existingSecret }}
                   key: {{ default "SMTP_PASSWORD" .Values.smtp.password.existingSecretKey }}
+            {{- end }}
             - name: ADMIN_TOKEN
               valueFrom:
                 secretKeyRef:
