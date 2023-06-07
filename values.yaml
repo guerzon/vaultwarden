@@ -124,6 +124,9 @@ ingress:
   ## @param ingress.additionalAnnotations Additional annotations for the ingress resource.
   ##
   additionalAnnotations: {}
+  ## @param ingress.labels Additional labels for the ingress resource.
+  ##
+  labels: {}
   ## @param ingress.tls Enable TLS on the ingress resource.
   ##
   tls: true
@@ -163,6 +166,9 @@ service:
   ## @param service.annotations Additional annotations for the vaultwarden service
   ##
   annotations: {}
+  ## @param service.labels Additional labels for the service
+  ##
+  labels: {}
 
 ## @section Database Configuration
 ##
@@ -312,3 +318,7 @@ affinity: {}
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 ##
 tolerations: []
+
+## @param statefulsetlabels Additional labels for the statefulset
+##
+statefulsetlabels: {}
