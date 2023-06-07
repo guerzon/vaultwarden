@@ -111,6 +111,9 @@ spec:
         {{- if .Values.sidecars }}
         {{- toYaml .Values.sidecars | nindent 8 }}
         {{- end }}
+        {{- if .Values.additionalVolumes }}
+        {{- toYaml .Values.additionalVolumes | nindent 6 }}
+        {{- end }}
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- end }}
