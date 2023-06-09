@@ -96,8 +96,8 @@ database:
 Alternatively, you could create a Kubernetes secret containing the database URI:
 
 ```bash
-DB_STRING_B64=$(echo -n 'postgresql://appuser:apppassword@pg.contoso.eu:5433/qualdb' | base64 -w 0)
-kubectl -n vaultwarden create secret generic prod-db-creds --from-literal=secret-uri=$DB_STRING_B64
+DB_STRING="postgresql://appuser:apppassword@pg.contoso.eu:5433/qualdb"
+kubectl -n vaultwarden create secret generic prod-db-creds --from-literal=secret-uri=$DB_STRING
 ```
 
 Then pass the name of the secret and the key to the chart:
