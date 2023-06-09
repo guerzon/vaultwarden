@@ -39,5 +39,5 @@ data:
   LOG_FILE: {{ .Values.logging.logfile | quote }}
   LOG_LEVEL: {{ .Values.logging.loglevel | quote }}
   {{- end }}
-  DB_CONNECTION_RETRIES: {{ .Values.database.connectionRetries }}
-  DATABASE_MAX_CONNS: {{ .Values.database.maxConnections }}
+  DB_CONNECTION_RETRIES: {{ .Values.database.connectionRetries | quote }}
+  DATABASE_MAX_CONNS: {{ .Values.database.maxConnections | quote }}
