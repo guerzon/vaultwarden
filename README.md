@@ -210,6 +210,10 @@ storage:
 
 Detailed configuration options can be found in the [Storage Configuration](./charts/vaultwarden/README.md#storage-configuration) section.
 
+## Deployment in GKE
+
+I have written a detailed post about deploying Vaultwarden in Google Kubernetes Engine [here](https://medium.com/@sreafterhours/terraform-helm-external-dns-cert-manager-nginx-and-vaultwarden-on-gke-5080f3b4909f).
+
 ## Parameters
 
 Refer to the detailed parameter documentation [here](./charts/vaultwarden/README.md).
