@@ -282,7 +282,7 @@ storage:
   size: "15Gi"
   ## @param storage.class Specify the storage class
   ##
-  class: "default"
+  class: ""
   ## @param storage.dataDir Specify the data directory
   ##
   dataDir: "/data"
