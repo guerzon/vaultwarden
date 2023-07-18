@@ -332,3 +332,7 @@ tolerations: []
 ## @param statefulsetlabels Additional labels for the statefulset
 ##
 statefulsetlabels: {}
+
+## @param topologySpreadConstraints topology spread constrains
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+topologySpreadConstraints: []

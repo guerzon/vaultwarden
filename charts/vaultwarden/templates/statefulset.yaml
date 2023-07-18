@@ -43,6 +43,10 @@ spec:
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
       {{- end }}
+      {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints: 
+        {{- toYaml .Values.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
       initContainers:
         {{- if .Values.initContainers }}
         {{- toYaml .Values.initContainers | nindent 8 }}
