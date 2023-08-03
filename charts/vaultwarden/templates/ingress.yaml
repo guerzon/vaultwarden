@@ -59,7 +59,7 @@ spec:
           pathType: {{ $ingress.pathType }}
           backend:
             service:
-              name: {{ include "vaultwarden.fullname" . }}
+              name: {{ .Values.service.name }}
               port:
                 name: "http"
         {{- if .Values.websocket.enabled }}
@@ -67,7 +67,7 @@ spec:
           pathType: {{ $ingress.pathTypeWs }}
           backend:
             service:
-              name: {{ include "vaultwarden.fullname" . }}
+              name: {{ .Values.service.name }}
               port:
                 name: "websocket"
         {{- end }}
