@@ -1,50 +1,104 @@
 
 ## Parameters
 
-### Vaultwarden settings
+### chart settings
 
-| Name                | Description                                   | Value                |
-| ------------------- | --------------------------------------------- | -------------------- |
-| `image.registry`    | Vaultwarden image registry                    | `docker.io`          |
-| `image.repository`  | Vaultwarden image repository                  | `vaultwarden/server` |
-| `image.tag`         | Vaultwarden image tag                         | `1.28.1`             |
-| `image.pullPolicy`  | Vaultwarden image pull policy                 | `IfNotPresent`       |
-| `image.pullSecrets` | Specify docker-registry secret names          | `[]`                 |
-| `domain`            | Domain name where the application is accessed | `""`                 |
-| `websocket.enabled` | Enable websocket notifications                | `true`               |
-| `websocket.address` | Websocket listen address                      | `0.0.0.0`            |
-| `websocket.port`    | Websocket listen port                         | `3012`               |
-| `rocket.port`       | Rocket port                                   | `8080`               |
-| `rocket.workers`    | Rocket number of workers                      | `10`                 |
-| `webVaultEnabled`   | Enable Web Vault                              | `true`               |
+| Name                | Description                          | Value                |
+| ------------------- | ------------------------------------ | -------------------- |
+| `image.registry`    | Vaultwarden image registry           | `docker.io`          |
+| `image.repository`  | Vaultwarden image repository         | `vaultwarden/server` |
+| `image.tag`         | Vaultwarden image tag                | `1.28.1`             |
+| `image.pullPolicy`  | Vaultwarden image pull policy        | `IfNotPresent`       |
+| `image.pullSecrets` | Specify docker-registry secret names | `[]`                 |
+
+### vaultwarden configuration: all vaultwarden.$SECTION.config values end up in $DATADIR/config.json
+
+
+### See https://github.com/dani-garcia/vaultwarden/blob/main/.env.template for a complete overview
+
+
+### vaultwarden.general settings
+
+| Name                                    | Description                                   | Value     |
+| --------------------------------------- | --------------------------------------------- | --------- |
+| `vaultwarden.general.webVaultEnabled`   | Enable Web Vault                              | `true`    |
+| `vaultwarden.general.rocket.port`       | Rocket port                                   | `8080`    |
+| `vaultwarden.general.rocket.workers`    | Rocket number of workers                      | `10`      |
+| `vaultwarden.general.websocket.enabled` | Enable websocket notifications                | `true`    |
+| `vaultwarden.general.websocket.address` | Websocket listen address                      | `0.0.0.0` |
+| `vaultwarden.general.websocket.port`    | Websocket listen port                         | `3012`    |
+| `vaultwarden.general.config.domain`     | Domain name where the application is accessed | `nil`     |
+
+### vaultwarden.Security settings
+
+| Name                                                  | Description                                                                                                                    | Value         |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| `vaultwarden.security.adminToken.value`               | Plain string containing the admin token.                                                                                       | `""`          |
+| `vaultwarden.security.adminToken.existingSecret.name` | Specify an existing Kubernetes secret containing the admin token. Also set vaultwarden.security.adminToken.existingSecret.key. | `""`          |
+| `vaultwarden.security.adminToken.existingSecret.key`  | When using vaultwarden.security.adminToken.existingSecret, specify the key containing the token.                               | `""`          |
+| `vaultwarden.security.config.signupsAllowed`          | By default, anyone who can access your instance can register for a new account.                                                | `true`        |
+| `vaultwarden.security.config.invitationsAllowed`      | Even when registration is disabled, organization administrators or owners can                                                  | `true`        |
+| `vaultwarden.security.config.signupDomains`           | List of domain names for users allowed to register                                                                             | `contoso.com` |
+| `vaultwarden.security.config.signupsVerify`           | Whether to require account verification for newly-registered users.                                                            | `true`        |
+| `vaultwarden.security.config.showPassHint`            | Whether a password hint should be shown in the page.                                                                           | `false`       |
+
+### vaultwarden.smtp settings
+
+| Name                                                 | Description                                                 | Value      |
+| ---------------------------------------------------- | ----------------------------------------------------------- | ---------- |
+| `vaultwarden.smtp.username`                          | plaintext smtp username, conflicts with smtp.existingSecret | `""`       |
+| `vaultwarden.smtp.password`                          | plaintext smtp password, conflicts with smtp.existingSecret | `""`       |
+| `vaultwarden.smtp.existingSecret.name`               |                                                             | `""`       |
+| `vaultwarden.smtp.existingSecret.username.secretKey` |                                                             | `""`       |
+| `vaultwarden.smtp.existingSecret.password.secretKey` |                                                             | `""`       |
+| `vaultwarden.smtp.config.host`                       | SMTP host                                                   | `""`       |
+| `vaultwarden.smtp.config.security`                   | SMTP Encryption method                                      | `starttls` |
+| `vaultwarden.smtp.config.port`                       | SMTP port                                                   | `25`       |
+| `vaultwarden.smtp.config.from`                       | SMTP sender email address                                   | `""`       |
+| `vaultwarden.smtp.config.fromName`                   | SMTP sender FROM                                            | `""`       |
+| `vaultwarden.smtp.config.authMechanism`              | SMTP authentication mechanism                               | `Plain`    |
+| `vaultwarden.smtp.config.acceptInvalidHostnames`     | Accept Invalid Hostnames                                    | `false`    |
+| `vaultwarden.smtp.config.acceptInvalidCerts`         | Accept Invalid Certificates                                 | `false`    |
+| `vaultwarden.smtp.config.debug`                      | SMTP debugging                                              | `false`    |
+
+### vaultwarden.database settings
+
+| Name                                     | Description                                                                                                                              | Value     |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| `vaultwarden.database.type`              | Database type, either mysql or postgresql                                                                                                | `default` |
+| `vaultwarden.database.host`              | Database hostname or IP address                                                                                                          | `""`      |
+| `vaultwarden.database.port`              | Database port                                                                                                                            | `""`      |
+| `vaultwarden.database.username`          | Database username                                                                                                                        | `""`      |
+| `vaultwarden.database.password`          | Database password                                                                                                                        | `""`      |
+| `vaultwarden.database.dbName`            | Database name                                                                                                                            | `""`      |
+| `vaultwarden.database.uriOverride`       | Manually specify the DB connection string                                                                                                | `""`      |
+| `vaultwarden.database.existingSecret`    | Name of an existing secret containing the database URI                                                                                   | `""`      |
+| `vaultwarden.database.existingSecretKey` | Key in the existing secret                                                                                                               | `""`      |
+| `vaultwarden.database.connectionRetries` | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`      |
+| `vaultwarden.database.maxConnections`    | Define the size of the connection pool used for connecting to the database.                                                              | `10`      |
+
+### vaultwarden.storage settings
+
+| Name                          | Description                                 | Value      |
+| ----------------------------- | ------------------------------------------- | ---------- |
+| `vaultwarden.storage.enabled` | Enable configuration for persistent storage | `true`     |
+| `vaultwarden.storage.size`    | Storage size for /data                      | `15Gi`     |
+| `vaultwarden.storage.class`   | Specify the storage class                   | `longhorn` |
+| `vaultwarden.storage.dataDir` | Specify the data directory                  | `/data`    |
+
+### vaultwarden.logging settings
+
+| Name                         | Description                              | Value |
+| ---------------------------- | ---------------------------------------- | ----- |
+| `vaultwarden.logging.config` | configuration for file logging           | `{}`  |
+| `fullnameOverride`           | String to override the application name. | `""`  |
 
 ### Pod configuration
 
-| Name             | Description                      | Value |
-| ---------------- | -------------------------------- | ----- |
-| `podAnnotations` | Add extra annotations to the pod | `{}`  |
-| `podLabels`      | Add extra labels to the pod      | `{}`  |
-
-### Security settings
-
-| Name                           | Description                                                                                              | Value               |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------- |
-| `adminToken.existingSecret`    | Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey. | `""`                |
-| `adminToken.existingSecretKey` | When using adminToken.existingSecret, specify the key containing the token.                              | `""`                |
-| `adminToken.value`             | Plain string containing the admin token.                                                                 | `R@ndomToken$tring` |
-| `signupsAllowed`               | By default, anyone who can access your instance can register for a new account.                          | `true`              |
-| `invitationsAllowed`           | Even when registration is disabled, organization administrators or owners can                            | `true`              |
-| `signupDomains`                | List of domain names for users allowed to register                                                       | `contoso.com`       |
-| `signupsVerify`                | Whether to require account verification for newly-registered users.                                      | `true`              |
-| `showPassHint`                 | Whether a password hint should be shown in the page.                                                     | `false`             |
-| `fullnameOverride`             | String to override the application name.                                                                 | `""`                |
-| `serviceAccount.create`        | Create a service account                                                                                 | `true`              |
-| `serviceAccount.name`          | Name of the service account to create                                                                    | `vaultwarden-svc`   |
-
-### Exposure Parameters
-
 | Name                              | Description                                                                    | Value                |
 | --------------------------------- | ------------------------------------------------------------------------------ | -------------------- |
+| `podAnnotations`                  | Add extra annotations to the pod                                               | `{}`                 |
+| `podLabels`                       | Add extra labels to the pod                                                    | `{}`                 |
 | `ingress.enabled`                 | Deploy an ingress resource.                                                    | `false`              |
 | `ingress.class`                   | Ingress resource class                                                         | `nginx`              |
 | `ingress.nginxIngressAnnotations` | Add nginx specific ingress annotations                                         | `true`               |
@@ -61,58 +115,6 @@
 | `service.type`                    | Service type                                                                   | `ClusterIP`          |
 | `service.annotations`             | Additional annotations for the vaultwarden service                             | `{}`                 |
 | `service.labels`                  | Additional labels for the service                                              | `{}`                 |
-
-### Database Configuration
-
-| Name                         | Description                                                                                                                              | Value     |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| `database.type`              | Database type, either mysql or postgresql                                                                                                | `default` |
-| `database.host`              | Database hostname or IP address                                                                                                          | `""`      |
-| `database.port`              | Database port                                                                                                                            | `""`      |
-| `database.username`          | Database username                                                                                                                        | `""`      |
-| `database.password`          | Database password                                                                                                                        | `""`      |
-| `database.dbName`            | Database name                                                                                                                            | `""`      |
-| `database.uriOverride`       | Manually specify the DB connection string                                                                                                | `""`      |
-| `database.existingSecret`    | Name of an existing secret containing the database URI                                                                                   | `""`      |
-| `database.existingSecretKey` | Key in the existing secret                                                                                                               | `""`      |
-| `database.connectionRetries` | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`      |
-| `database.maxConnections`    | Define the size of the connection pool used for connecting to the database.                                                              | `10`      |
-
-### SMTP Configuration
-
-| Name                              | Description                                                                                                                                         | Value      |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| `smtp.existingSecret`             | Name of an existing secret containing the SMTP username and password. Also set smtp.username.existingSecretKey and smtp.password.existingSecretKey. | `""`       |
-| `smtp.host`                       | SMTP host                                                                                                                                           | `""`       |
-| `smtp.security`                   | SMTP Encryption method                                                                                                                              | `starttls` |
-| `smtp.port`                       | SMTP port                                                                                                                                           | `25`       |
-| `smtp.from`                       | SMTP sender email address                                                                                                                           | `""`       |
-| `smtp.fromName`                   | SMTP sender FROM                                                                                                                                    | `""`       |
-| `smtp.username.value`             | Username string for the SMTP authentication.                                                                                                        | `""`       |
-| `smtp.username.existingSecretKey` | When using an existing secret, specify the key which contains the username.                                                                         | `""`       |
-| `smtp.password.value`             | Password string for the SMTP authentication.                                                                                                        | `""`       |
-| `smtp.password.existingSecretKey` | When using an existing secret, specify the key which contains the password.                                                                         | `""`       |
-| `smtp.authMechanism`              | SMTP authentication mechanism                                                                                                                       | `Plain`    |
-| `smtp.acceptInvalidHostnames`     | Accept Invalid Hostnames                                                                                                                            | `false`    |
-| `smtp.acceptInvalidCerts`         | Accept Invalid Certificates                                                                                                                         | `false`    |
-| `smtp.debug`                      | SMTP debugging                                                                                                                                      | `false`    |
-
-### Storage Configuration
-
-| Name              | Description                                 | Value     |
-| ----------------- | ------------------------------------------- | --------- |
-| `storage.enabled` | Enable configuration for persistent storage | `false`   |
-| `storage.size`    | Storage size for /data                      | `15Gi`    |
-| `storage.class`   | Specify the storage class                   | `default` |
-| `storage.dataDir` | Specify the data directory                  | `/data`   |
-
-### Logging Configuration
-
-| Name               | Description                         | Value                   |
-| ------------------ | ----------------------------------- | ----------------------- |
-| `logging.enabled`  | Enable logging to a file            | `false`                 |
-| `logging.logfile`  | Specify logfile path for output log | `/data/vaultwarden.log` |
-| `logging.loglevel` | Specify the log level               | `warn`                  |
 
 ### Extra containers Configuration
 

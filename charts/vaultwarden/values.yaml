@@ -1,5 +1,5 @@
 
-## @section Vaultwarden settings
+## @section chart settings
 ##
 image:
   ## @param image.registry Vaultwarden image registry
@@ -24,27 +24,189 @@ image:
   ##   - myRegistryKeySecretName
   ##
   pullSecrets: []
-## @param domain Domain name where the application is accessed
-## Example: https://warden.contoso.com:8443
+
+## @section vaultwarden configuration: all vaultwarden.$SECTION.config values end up in $DATADIR/config.json
+## @section See https://github.com/dani-garcia/vaultwarden/blob/main/.env.template for a complete overview
+vaultwarden:
+  ## @section vaultwarden.general settings
+  general:
+    ## @param vaultwarden.general.webVaultEnabled Enable Web Vault
+    ##
+    webVaultEnabled: "true"
+    rocket:
+      ## @param vaultwarden.general.rocket.port Rocket port
+      port: "8080"
+      ## @param vaultwarden.general.rocket.workers Rocket number of workers
+      workers: "10"
+    websocket:
+      ## @param vaultwarden.general.websocket.enabled Enable websocket notifications
+      enabled: true
+      ## @param vaultwarden.general.websocket.address Websocket listen address
+      address: "0.0.0.0"
+      ## @paramvaultwarden.general.websocket.port Websocket listen port
+      port: 3012
+    config:
+      ## @param vaultwarden.general.config.domain Domain name where the application is accessed
+      ## Example: https://warden.contoso.com:8443
+      domain:
+  ## @section vaultwarden.Security settings
+  security:
+    adminToken:
+      ## @param vaultwarden.security.adminToken.value Plain string containing the admin token.
+      ## If not set, the admin panel will be disabled.
+      ## Example: ADMIN_TOKEN
+      ##
+      value: ""
+      existingSecret: 
+        ## @param vaultwarden.security.adminToken.existingSecret.name Specify an existing Kubernetes secret containing the admin token. Also set vaultwarden.security.adminToken.existingSecret.key.
+        ## Example: admincreds_secret
+        ##
+        name: ""
+        ## @param vaultwarden.security.adminToken.existingSecret.key When using vaultwarden.security.adminToken.existingSecret, specify the key containing the token.
+        ## Example: ADMIN_TOKEN
+        ##
+        key: ""
+    config:
+        ## @param vaultwarden.security.config.signupsAllowed By default, anyone who can access your instance can register for a new account.
+        ## To disable this, set this parameter to false. Even when signupsAllowed=false, an existing user who is
+        ## an organization owner or admin can still invite new users. If you want to disable this as well, set
+        ## invitationsAllowed to false. The vaultwarden admin can invite anyone via the admin page, regardless
+        ## of any of the restrictions above
+        ##
+        ## If signupDomains is set, then the value of signupsAllowed is ignored
+        signupsAllowed: true
+        ## @param vaultwarden.security.config.invitationsAllowed Even when registration is disabled, organization administrators or owners can
+        ## invite users to join organization. After they are invited, they can register with the invited email even
+        ## if signupsAllowed is actually set to false. You can disable this functionality completely by setting
+        ## invitationsAllowed env variable to false
+        invitationsAllowed: true
+        ## @param vaultwarden.security.config.signupDomains List of domain names for users allowed to register
+        ##
+        signupDomains: "contoso.com"
+        ## @param vaultwarden.security.config.signupsVerify Whether to require account verification for newly-registered users.
+        ##
+        signupsVerify: "true"
+        ## @param vaultwarden.security.config.showPassHint Whether a password hint should be shown in the page.
+        ##
+        showPassHint: "false"
+  ## @section vaultwarden.smtp settings
+  smtp:
+    ## @param vaultwarden.smtp.username plaintext smtp username, conflicts with smtp.existingSecret
+    username: ""
+    ## @param vaultwarden.smtp.password plaintext smtp password, conflicts with smtp.existingSecret
+    password: ""
+    existingSecret: 
+      ## @param vaultwarden.smtp.existingSecret.name 
+      # Name of an existing secret containing the SMTP username and password.
+      ##
+      name: ""
+      username:
+          ## @param vaultwarden.smtp.existingSecret.username.secretKey
+          ## Secret key containing smtp username value.
+          ##
+          secretKey: ""
+      password:
+          ## @param vaultwarden.smtp.existingSecret.password.secretKey 
+          ## Secret key containing smtp password value.
+          ##
+          secretKey: ""
+    config:
+      ## @param vaultwarden.smtp.config.host SMTP host
+      ##
+      host: ""
+      ## @param vaultwarden.smtp.config.security SMTP Encryption method
+      ## Possible values:
+      ##  - starttls: explicit TLS using ports 587 or 25
+      ##  - force_tls: implicit TLS using port 465
+      ##  - off: no encryption, using port 25, unless using STARTTLS
+      ##
+      security: "starttls"
+      ## @param vaultwarden.smtp.config.port SMTP port
+      ##
+      port: 25
+      ## @param vaultwarden.smtp.config.from SMTP sender email address
+      ## Example: juan.delacruz@gmail.com
+      ##
+      from: ""
+      ## @param vaultwarden.smtp.config.fromName SMTP sender FROM
+      ##
+      fromName: ""
+      ## @param vaultwarden.smtp.config.authMechanism SMTP authentication mechanism
+      ## Possible values: "Plain", "Login", "Xoauth2"
+      ## Multiple options need to be separated by a comma. (not tested)
+      ##
+      authMechanism: "Plain"
+      ## @param vaultwarden.smtp.config.acceptInvalidHostnames Accept Invalid Hostnames
+      ##
+      acceptInvalidHostnames: "false"
+      ## @param vaultwarden.smtp.config.acceptInvalidCerts Accept Invalid Certificates
+      ##
+      acceptInvalidCerts: "false"
+      ## @param vaultwarden.smtp.config.debug SMTP debugging
+      ##
+      debug: false
+  ## @section vaultwarden.database settings
+  database:
+    ## @param vaultwarden.database.type Database type, either mysql or postgresql
+    ## Default is a sqlite vaultwarden.database.
+    ##
+    type: "default"
+    ## @param vaultwarden.database.host Database hostname or IP address
+    ##
+    host: ""
+    ## @param vaultwarden.database.port Database port
+    ## Default for MySQL is 3306, default for PostgreSQL is 5432
+    port: ""
+    ## @param vaultwarden.database.username Database username
+    ##
+    username: ""
+    ## @param vaultwarden.database.password Database password
+    ##
+    password: ""
+    ## @param vaultwarden.database.dbName Database name
+    ##
+    dbName: ""
+    ## @param vaultwarden.database.uriOverride Manually specify the DB connection string
+    ##
+    uriOverride: ""
+    ## @param vaultwarden.database.existingSecret Name of an existing secret containing the database URI
+    ##
+    existingSecret: ""
+    ## @param vaultwarden.database.existingSecretKey Key in the existing secret
+    ##
+    existingSecretKey: ""
+    ## @param vaultwarden.database.connectionRetries Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely.
+    ##
+    connectionRetries: 15
+    ## @param vaultwarden.database.maxConnections Define the size of the connection pool used for connecting to the database.
+    ##
+    maxConnections: 10
+  ## @section vaultwarden.storage settings
+  ## Warning: once set, can no longer be updated.
+  storage:
+    ## @param vaultwarden.storage.enabled Enable configuration for persistent storage
+    enabled: true
+    ##
+    ## @param vaultwarden.storage.size Storage size for /data
+    ##
+    size: "15Gi"
+    ## @param vaultwarden.storage.class Specify the storage class
+    ##
+    class: "longhorn"
+    ## @param vaultwarden.storage.dataDir Specify the data directory
+    ##
+    dataDir: "/data"
+  ## @section vaultwarden.logging settings
+  logging:
+    ## @param vaultwarden.logging.config configuration for file logging
+    ##
+    config: {}
+      # logfile: "/data/vaultwarden.log"
+      # loglevel: "warn"
+
+## @param fullnameOverride String to override the application name.
 ##
-domain: ""
-## @param websocket.enabled Enable websocket notifications
-## @param websocket.address Websocket listen address
-## @param websocket.port Websocket listen port
-##
-websocket:
-  enabled: true
-  address: "0.0.0.0"
-  port: 3012
-## @param rocket.port Rocket port
-## @param rocket.workers Rocket number of workers
-##
-rocket:
-  port: "8080"
-  workers: "10"
-## @param webVaultEnabled Enable Web Vault
-##
-webVaultEnabled: "true"
+fullnameOverride: ""
 
 ## @section Pod configuration
 ##
@@ -54,57 +216,6 @@ podAnnotations: {}
 ## @param podLabels Add extra labels to the pod
 ##
 podLabels: {}
-
-## @section Security settings
-##
-adminToken:
-  ## @param adminToken.existingSecret Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey.
-  ## Example: admincreds_secret
-  ##
-  existingSecret: ""
-  ## @param adminToken.existingSecretKey When using adminToken.existingSecret, specify the key containing the token.
-  ## Example: ADMIN_TOKEN
-  ##
-  existingSecretKey: ""
-  ## @param adminToken.value Plain string containing the admin token.
-  ## Example: ADMIN_TOKEN
-  ##
-  value: "R@ndomToken$tring"
-## @param signupsAllowed By default, anyone who can access your instance can register for a new account.
-## To disable this, set this parameter to false. Even when signupsAllowed=false, an existing user who is
-## an organization owner or admin can still invite new users. If you want to disable this as well, set
-## invitationsAllowed to false. The vaultwarden admin can invite anyone via the admin page, regardless
-## of any of the restrictions above
-##
-## If signupDomains is set, then the value of signupsAllowed is ignored
-signupsAllowed: true
-## @param invitationsAllowed Even when registration is disabled, organization administrators or owners can
-## invite users to join organization. After they are invited, they can register with the invited email even
-## if signupsAllowed is actually set to false. You can disable this functionality completely by setting
-## invitationsAllowed env variable to false
-invitationsAllowed: true
-## @param signupDomains List of domain names for users allowed to register
-##
-signupDomains: "contoso.com"
-## @param signupsVerify Whether to require account verification for newly-registered users.
-##
-signupsVerify: "true"
-## @param showPassHint Whether a password hint should be shown in the page.
-##
-showPassHint: "false"
-## @param fullnameOverride String to override the application name.
-##
-fullnameOverride: ""
-## @param serviceAccount.create Create a service account
-## @param serviceAccount.name Name of the service account to create
-##
-serviceAccount:
-  create: true
-  name: "vaultwarden-svc"
-
-
-## @section Exposure Parameters
-##
 
 ## Ingress configuration
 ## Refer to the README for some examples
@@ -170,135 +281,6 @@ service:
   ##
   labels: {}
 
-## @section Database Configuration
-##
-database:
-  ## @param database.type Database type, either mysql or postgresql
-  ## Default is a sqlite database.
-  ##
-  type: "default"
-  ## @param database.host Database hostname or IP address
-  ##
-  host: ""
-  ## @param database.port Database port
-  ## Default for MySQL is 3306, default for PostgreSQL is 5432
-  port: ""
-  ## @param database.username Database username
-  ##
-  username: ""
-  ## @param database.password Database password
-  ##
-  password: ""
-  ## @param database.dbName Database name
-  ##
-  dbName: ""
-  ## @param database.uriOverride Manually specify the DB connection string
-  ##
-  uriOverride: ""
-  ## @param database.existingSecret Name of an existing secret containing the database URI
-  ##
-  existingSecret: ""
-  ## @param database.existingSecretKey Key in the existing secret
-  ##
-  existingSecretKey: ""
-  ## @param database.connectionRetries Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely.
-  ##
-  connectionRetries: 15
-  ## @param database.maxConnections Define the size of the connection pool used for connecting to the database.
-  ##
-  maxConnections: 10
-
-## @section SMTP Configuration
-##
-smtp:
-  ## @param smtp.existingSecret Name of an existing secret containing the SMTP username and password. Also set smtp.username.existingSecretKey and smtp.password.existingSecretKey.
-  ##
-  existingSecret: ""
-  ## @param smtp.host SMTP host
-  ##
-  host: ""
-  ## @param smtp.security SMTP Encryption method
-  ## Possible values:
-  ##  - starttls: explicit TLS using ports 587 or 25
-  ##  - force_tls: implicit TLS using port 465
-  ##  - off: no encryption, using port 25, unless using STARTTLS
-  ##
-  security: "starttls"
-  ## @param smtp.port SMTP port
-  ##
-  port: 25
-  ## @param smtp.from SMTP sender email address
-  ## Example: juan.delacruz@gmail.com
-  ##
-  from: ""
-  ## @param smtp.fromName SMTP sender FROM
-  ##
-  fromName: ""
-  ## Username for SMTP authentication.
-  ##
-  username:
-    ## @param smtp.username.value Username string for the SMTP authentication.
-    ## Example: juan
-    ##
-    value: ""
-    ## @param smtp.username.existingSecretKey When using an existing secret, specify the key which contains the username.
-    ## Example: SMTP_USERNAME
-    ##
-    existingSecretKey: ""
-  ## Password for SMTP authentication.
-  ##
-  password:
-    ## @param smtp.password.value Password string for the SMTP authentication.
-    ## Example: Sup3rsecurepa$$word
-    ##
-    value: ""
-    ## @param smtp.password.existingSecretKey When using an existing secret, specify the key which contains the password.
-    ## Example: SMTP_PASSWORD
-    ##
-    existingSecretKey: ""
-  ## @param smtp.authMechanism SMTP authentication mechanism
-  ## Possible values: "Plain", "Login", "Xoauth2"
-  ## Multiple options need to be separated by a comma. (not tested)
-  ##
-  authMechanism: "Plain"
-  ## @param smtp.acceptInvalidHostnames Accept Invalid Hostnames
-  ##
-  acceptInvalidHostnames: "false"
-  ## @param smtp.acceptInvalidCerts Accept Invalid Certificates
-  ##
-  acceptInvalidCerts: "false"
-  ## @param smtp.debug SMTP debugging
-  ##
-  debug: false
-
-## @section Storage Configuration
-##
-storage:
-  ## @param storage.enabled Enable configuration for persistent storage
-  ##
-  enabled: false
-  ## @param storage.size Storage size for /data
-  ##
-  size: "15Gi"
-  ## @param storage.class Specify the storage class
-  ##
-  class: "default"
-  ## @param storage.dataDir Specify the data directory
-  ##
-  dataDir: "/data"
-
-## @section Logging Configuration
-##
-logging:
-  ## @param logging.enabled Enable logging to a file
-  ##
-  enabled: false
-  ## @param logging.logfile Specify logfile path for output log
-  ##
-  logfile: "/data/vaultwarden.log"
-  ## @param logging.loglevel Specify the log level
-  ##
-  loglevel: "warn"
 
 ## @section Extra containers Configuration
 ##

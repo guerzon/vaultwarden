@@ -1,43 +1,33 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "vaultwarden.fullname" . }}
+  name: {{ include "vaultwarden.fullname" . }}-config
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/component: vaultwarden
     {{- include "vaultwarden.labels" . | nindent 4 }}
 data:
-  DOMAIN: {{ .Values.domain | quote }}
-  {{- if and .Values.smtp.host .Values.smtp.from | quote }}
-  SMTP_HOST: {{ .Values.smtp.host | quote }}
-  SMTP_SECURITY: {{ .Values.smtp.security | quote }}
-  SMTP_PORT: {{ .Values.smtp.port | quote }}
-  {{- if .Values.smtp.authMechanism }}
-  SMTP_AUTH_MECHANISM: {{ .Values.smtp.authMechanism | quote }}
-  {{- end }}
-  SMTP_FROM: {{ .Values.smtp.from | quote }}
-  SMTP_FROM_NAME: {{ default "Vaultwarden" .Values.smtp.fromName | quote }}
-  SMTP_DEBUG: {{ .Values.smtp.debug | quote }}
-  SMTP_ACCEPT_INVALID_HOSTNAMES: {{ .Values.smtp.acceptInvalidHostnames | quote }}
-  SMTP_ACCEPT_INVALID_CERTS: {{ .Values.smtp.acceptInvalidCerts | quote }}
-  {{- end }}
-  {{- if .Values.websocket.enabled }}
+  config.json: |
+    {{- $mergedConfig := merge .Values.vaultwarden.smtp.config .Values.vaultwarden.general.config .Values.vaultwarden.security.config .Values.vaultwarden.logging.config }}
+    {{ $mergedConfig | toJson }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "vaultwarden.fullname" . }}-env
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: vaultwarden
+    {{- include "vaultwarden.labels" . | nindent 4 }}
+data:
+  {{- if .Values.vaultwarden.general.websocket.enabled }}
   WEBSOCKET_ENABLED: "true"
-  WEBSOCKET_ADDRESS: {{ .Values.websocket.address | quote }}
-  WEBSOCKET_PORT: {{ .Values.websocket.port | quote }}
+  WEBSOCKET_ADDRESS: {{ .Values.vaultwarden.general.websocket.address | quote }}
+  WEBSOCKET_PORT: {{ .Values.vaultwarden.general.websocket.port | quote }}
   {{- end }}
-  DATA_FOLDER: {{ .Values.storage.dataDir | quote }}
-  ROCKET_PORT: {{ .Values.rocket.port | quote }}
-  ROCKET_WORKERS: {{ .Values.rocket.workers | quote }}
-  SHOW_PASSWORD_HINT: {{ .Values.showPassHint | quote }}
-  SIGNUPS_ALLOWED: {{ .Values.signupsAllowed | quote }}
-  INVITATIONS_ALLOWED: {{ .Values.invitationsAllowed | quote }}
-  SIGNUPS_DOMAINS_WHITELIST: {{ .Values.signupDomains | quote }}
-  SIGNUPS_VERIFY: {{ .Values.signupsVerify | quote }}
-  WEB_VAULT_ENABLED: {{ .Values.webVaultEnabled | quote }}
-  {{- if .Values.logging.enabled }}
-  LOG_FILE: {{ .Values.logging.logfile | quote }}
-  LOG_LEVEL: {{ .Values.logging.loglevel | quote }}
-  {{- end }}
-  DB_CONNECTION_RETRIES: {{ .Values.database.connectionRetries | quote }}
-  DATABASE_MAX_CONNS: {{ .Values.database.maxConnections | quote }}
+  DATA_FOLDER: {{ .Values.vaultwarden.storage.dataDir | quote }}
+  ROCKET_PORT: {{ .Values.vaultwarden.general.rocket.port | quote }}
+  ROCKET_WORKERS: {{ .Values.vaultwarden.general.rocket.workers | quote }}
+  WEB_VAULT_ENABLED: {{ .Values.vaultwarden.general.webVaultEnabled | quote }}
+  DB_CONNECTION_RETRIES: {{ .Values.vaultwarden.database.connectionRetries | quote }}
+  DATABASE_MAX_CONNS: {{ .Values.vaultwarden.database.maxConnections | quote }}

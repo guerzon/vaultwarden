@@ -10,7 +10,7 @@
 
 When submitting a pull request, please ensure that:
 
-- The PR follow [Helm best practices](https://helm.sh/docs/chart_best_practices/).
+- The PR follows [Helm best practices](https://helm.sh/docs/chart_best_practices/).
 - Any change to a chart requires a version bump following [semver](https://semver.org/) principles.
 - The tables of parameters are generated based on the metadata information from the `values.yaml` file, by using [this tool](https://github.com/bitnami-labs/readme-generator-for-helm).
 

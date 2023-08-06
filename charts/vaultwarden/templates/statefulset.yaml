@@ -45,7 +45,7 @@ spec:
       {{- end }}
       initContainers:
         {{- if .Values.initContainers }}
-        {{- toYaml .Values.initContainers | nindent 8 }}
+        {{- .Values.initContainers | nindent 8 }}
         {{- end }}
       containers:
         - image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -53,37 +53,38 @@ spec:
           name: vaultwarden
           envFrom:
             - configMapRef:
-                name: {{ include "vaultwarden.fullname" . }}
+                name: {{ include "vaultwarden.fullname" . }}-env
           env:
-            {{- if or (.Values.smtp.username.value) (.Values.smtp.username.existingSecretKey )}}
+            {{- if .Values.vaultwarden.smtp.existingSecret.username }}
             - name: SMTP_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ default (include "vaultwarden.fullname" .) .Values.smtp.existingSecret }}
-                  key: {{ default "SMTP_USERNAME" .Values.smtp.username.existingSecretKey }}
+                  name: {{ default (include "vaultwarden.fullname" .) .Values.vaultwarden.smtp.existingSecret.name }}
+                  key: {{ default "SMTP_USERNAME" .Values.vaultwarden.smtp.existingSecret.username.secretKey }}
             {{- end }}
-            {{- if or (.Values.smtp.password.value) (.Values.smtp.password.existingSecretKey )}}
+            {{- if .Values.vaultwarden.smtp.existingSecret.password }}
             - name: SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ default (include "vaultwarden.fullname" .) .Values.smtp.existingSecret }}
-                  key: {{ default "SMTP_PASSWORD" .Values.smtp.password.existingSecretKey }}
+                  name: {{ default (include "vaultwarden.fullname" .) .Values.vaultwarden.smtp.existingSecret.name }}
+                  key: {{ default "SMTP_PASSWORD" .Values.vaultwarden.smtp.existingSecret.password.secretKey }}
             {{- end }}
             - name: ADMIN_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ default (include "vaultwarden.fullname" .) .Values.adminToken.existingSecret }}
-                  key: {{ default "ADMIN_TOKEN" .Values.adminToken.existingSecretKey }}
-            {{- if ne "default" .Values.database.type }}
+                  name: {{ default (include "vaultwarden.fullname" .) .Values.vaultwarden.security.adminToken.existingSecret.name }}
+                  key: {{ default "ADMIN_TOKEN" .Values.vaultwarden.security.adminToken.existingSecret.key }}
+                  optional: true
+            {{- if ne "default" .Values.vaultwarden.database.type }}
             - name: DATABASE_URL
-              {{- if .Values.database.existingSecret }}
+              {{- if .Values.vaultwarden.database.existingSecret }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.database.existingSecret }}
-                  key: {{ .Values.database.existingSecretKey }}
+                  name: {{ .Values.vaultwarden.database.existingSecret }}
+                  key: {{ .Values.vaultwarden.database.existingSecretKey }}
               {{- else }}
-              {{- if .Values.database.uriOverride }}
-              value: {{ .Values.database.uriOverride }}
+              {{- if .Values.vaultwarden.database.uriOverride }}
+              value: {{ .Values.vaultwarden.database.uriOverride }}
               {{- else }}
               value: {{ include "dbString" . | quote }}
               {{- end }}
@@ -93,14 +94,17 @@ spec:
             - containerPort: 8080
               name: http
               protocol: TCP
-            - containerPort: {{ .Values.websocket.port }}
+            - containerPort: {{ .Values.vaultwarden.general.websocket.port }}
               name: websocket
               protocol: TCP
-          {{- if .Values.storage.enabled }}
           volumeMounts:
+            - name: vaultwarden-config
+              mountPath: {{ .Values.vaultwarden.storage.dataDir }}/config.json
+              subPath: config.json
+            {{- if .Values.vaultwarden.storage.enabled }}
             - name: vaultwarden-data
-              mountPath: {{ .Values.storage.dataDir }}
-          {{- end }}
+              mountPath: {{ .Values.vaultwarden.storage.dataDir }}
+            {{- end }}
           resources:
             limits:
               cpu: 300m
@@ -108,13 +112,17 @@ spec:
             requests:
               cpu: 50m
               memory: 256Mi
+      securityContext:  
+        runAsUser: 1000  
+        fsGroup: 1000    
         {{- if .Values.sidecars }}
         {{- toYaml .Values.sidecars | nindent 8 }}
         {{- end }}
-      {{- if .Values.serviceAccount.create }}
-      serviceAccountName: {{ .Values.serviceAccount.name }}
-      {{- end }}
-  {{- if .Values.storage.enabled }}
+      volumes:
+        - name: vaultwarden-config
+          configMap:
+            name: {{ include "vaultwarden.fullname" . }}-config
+  {{- if .Values.vaultwarden.storage.enabled }}
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Retain
     whenScaled: Retain
@@ -128,6 +136,6 @@ spec:
           - "ReadWriteOnce"
         resources:
           requests:
-            storage: {{ .Values.storage.size }}
-        storageClassName: {{ default "default" .Values.storage.class }}
+            storage: {{ .Values.vaultwarden.storage.size }}
+        storageClassName: {{ default "default" .Values.vaultwarden.storage.class }}
   {{- end }}
