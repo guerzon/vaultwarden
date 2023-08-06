@@ -7,7 +7,7 @@
 | ------------------- | ------------------------------------ | -------------------- |
 | `image.registry`    | Vaultwarden image registry           | `docker.io`          |
 | `image.repository`  | Vaultwarden image repository         | `vaultwarden/server` |
-| `image.tag`         | Vaultwarden image tag                | `1.28.1`             |
+| `image.tag`         | Vaultwarden image tag                | `""`                 |
 | `image.pullPolicy`  | Vaultwarden image pull policy        | `IfNotPresent`       |
 | `image.pullSecrets` | Specify docker-registry secret names | `[]`                 |
 
@@ -79,12 +79,12 @@
 
 ### vaultwarden.storage settings
 
-| Name                          | Description                                 | Value      |
-| ----------------------------- | ------------------------------------------- | ---------- |
-| `vaultwarden.storage.enabled` | Enable configuration for persistent storage | `true`     |
-| `vaultwarden.storage.size`    | Storage size for /data                      | `15Gi`     |
-| `vaultwarden.storage.class`   | Specify the storage class                   | `longhorn` |
-| `vaultwarden.storage.dataDir` | Specify the data directory                  | `/data`    |
+| Name                          | Description                                 | Value   |
+| ----------------------------- | ------------------------------------------- | ------- |
+| `vaultwarden.storage.enabled` | Enable configuration for persistent storage | `true`  |
+| `vaultwarden.storage.size`    | Storage size for /data                      | `15Gi`  |
+| `vaultwarden.storage.class`   | Specify the storage class                   | `""`    |
+| `vaultwarden.storage.dataDir` | Specify the data directory                  | `/data` |
 
 ### vaultwarden.logging settings
 

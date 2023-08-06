@@ -137,5 +137,5 @@ spec:
         resources:
           requests:
             storage: {{ .Values.vaultwarden.storage.size }}
-        storageClassName: {{ default "default" .Values.vaultwarden.storage.class }}
+        storageClassName: {{ default "" .Values.vaultwarden.storage.class }}
   {{- end }}

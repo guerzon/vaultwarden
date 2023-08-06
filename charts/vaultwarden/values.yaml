@@ -192,7 +192,7 @@ vaultwarden:
     size: "15Gi"
     ## @param vaultwarden.storage.class Specify the storage class
     ##
-    class: "longhorn"
+    class: ""
     ## @param vaultwarden.storage.dataDir Specify the data directory
     ##
     dataDir: "/data"
