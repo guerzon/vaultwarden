@@ -7,7 +7,7 @@
 | ------------------- | --------------------------------------------- | -------------------- |
 | `image.registry`    | Vaultwarden image registry                    | `docker.io`          |
 | `image.repository`  | Vaultwarden image repository                  | `vaultwarden/server` |
-| `image.tag`         | Vaultwarden image tag                         | `1.28.1`             |
+| `image.tag`         | Vaultwarden image tag                         | `""`                 |
 | `image.pullPolicy`  | Vaultwarden image pull policy                 | `IfNotPresent`       |
 | `image.pullSecrets` | Specify docker-registry secret names          | `[]`                 |
 | `domain`            | Domain name where the application is accessed | `""`                 |
