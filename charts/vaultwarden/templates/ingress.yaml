@@ -1,74 +1,61 @@
-{{- $ingress := .Values.ingress -}}
-{{- if $ingress.enabled }}
-{{- $newAPIversion := .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
-{{- if $newAPIversion }}
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "test.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
-{{- else }}
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
 apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ include "vaultwarden.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  name: {{ $fullName }}
   labels:
-    app.kubernetes.io/component: vaultwarden
-    {{- include "vaultwarden.labels" . | nindent 4 }}
-    {{- range $key, $value := $ingress.labels }}
-    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
-    {{- end }}
+    {{- include "test.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
   annotations:
-    ingress.kubernetes.io/rewrite-target: /
-    {{- if $ingress.tls }}
-    ingress.kubernetes.io/ssl-redirect: "true"
-    {{- end }}
-    {{- if $ingress.additionalAnnotations }}
-    {{- toYaml $ingress.additionalAnnotations | nindent 4 }}
-    {{- end }}
-    {{- if $ingress.nginxIngressAnnotations }}
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers "Request-Id: $req_id";
-    nginx.ingress.kubernetes.io/connection-proxy-header: "keep-alive"
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/limit-connections: "25"
-    nginx.ingress.kubernetes.io/limit-rps: "15"
-    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
-    {{- if $ingress.nginxAllowList }}
-    nginx.ingress.kubernetes.io/whitelist-source-range: {{ $ingress.nginxAllowList }}
-    {{- end }}
-    {{- end }}
-spec:
-  {{- if $ingress.class }}
-  ingressClassName: {{ $ingress.class | quote }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- if $ingress.tls }}
+spec:
+  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- if .Values.ingress.tls }}
   tls:
+    {{- range .Values.ingress.tls }}
     - hosts:
-        - {{ $ingress.hostname | quote }}
-      secretName: {{ $ingress.tlsSecret }}
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
   {{- end }}
   rules:
-    - host: {{ $ingress.hostname | quote }}
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
       http:
         paths:
-        - path: {{ $ingress.path }}
-          pathType: {{ $ingress.pathType }}
-          backend:
-            service:
-              name: {{ include "vaultwarden.fullname" . }}
-              port:
-                name: "http"
-        {{- if .Values.websocket.enabled }}
-        - path: {{ $ingress.pathWs }}
-          pathType: {{ $ingress.pathTypeWs }}
-          backend:
-            service:
-              name: {{ include "vaultwarden.fullname" . }}
-              port:
-                name: "websocket"
-        {{- end }}
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+            pathType: {{ .pathType }}
+            {{- end }}
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+              {{- else }}
+              serviceName: {{ $fullName }}
+              servicePort: {{ $svcPort }}
+              {{- end }}
+          {{- end }}
+    {{- end }}
 {{- end }}

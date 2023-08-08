@@ -1,10 +1,14 @@
-name: Release Charts
+name: Helm Chart Release
 
 on:
   push:
     branches:
       - main
 
+permissions:
+  packages: write
+  contents: read
+  
 jobs:
   release:
     permissions:

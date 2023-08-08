@@ -1,316 +1,107 @@
-
-## @section chart settings
-##
 image:
-  ## @param image.registry Vaultwarden image registry
-  ##
   registry: docker.io
-  ## @param image.repository Vaultwarden image repository
-  ##
   repository: vaultwarden/server
-  ##
-  ## @param image.tag Vaultwarden image tag
-  ## Ref: https://hub.docker.com/r/vaultwarden/server/tags
-  ##
   tag: ""
-  ## @param image.pullPolicy Vaultwarden image pull policy
-  ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-  ##
   pullPolicy: IfNotPresent
-  ## @param image.pullSecrets Specify docker-registry secret names
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ## Example:
-  ## pullSecrets:
-  ##   - myRegistryKeySecretName
-  ##
   pullSecrets: []
 
-## @section vaultwarden configuration: all vaultwarden.$SECTION.config values end up in $DATADIR/config.json
-## @section See https://github.com/dani-garcia/vaultwarden/blob/main/.env.template for a complete overview
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podLabels: {}
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+initContainers: []
+
+sidecars: []
+
+nodeSelector: {}
+
+affinity: {}
+
+tolerations: []
+
+statefulsetlabels: {}
+
+
 vaultwarden:
-  ## @section vaultwarden.general settings
   general:
-    ## @param vaultwarden.general.webVaultEnabled Enable Web Vault
-    ##
     webVaultEnabled: "true"
     rocket:
-      ## @param vaultwarden.general.rocket.port Rocket port
       port: "8080"
-      ## @param vaultwarden.general.rocket.workers Rocket number of workers
       workers: "10"
     websocket:
-      ## @param vaultwarden.general.websocket.enabled Enable websocket notifications
       enabled: true
-      ## @param vaultwarden.general.websocket.address Websocket listen address
       address: "0.0.0.0"
-      ## @paramvaultwarden.general.websocket.port Websocket listen port
       port: 3012
     config:
-      ## @param vaultwarden.general.config.domain Domain name where the application is accessed
-      ## Example: https://warden.contoso.com:8443
       domain:
-  ## @section vaultwarden.Security settings
   security:
     adminToken:
-      ## @param vaultwarden.security.adminToken.value Plain string containing the admin token.
-      ## If not set, the admin panel will be disabled.
-      ## Example: ADMIN_TOKEN
-      ##
       value: ""
       existingSecret: 
-        ## @param vaultwarden.security.adminToken.existingSecret.name Specify an existing Kubernetes secret containing the admin token. Also set vaultwarden.security.adminToken.existingSecret.key.
-        ## Example: admincreds_secret
-        ##
         name: ""
-        ## @param vaultwarden.security.adminToken.existingSecret.key When using vaultwarden.security.adminToken.existingSecret, specify the key containing the token.
-        ## Example: ADMIN_TOKEN
-        ##
         key: ""
     config:
-        ## @param vaultwarden.security.config.signupsAllowed By default, anyone who can access your instance can register for a new account.
-        ## To disable this, set this parameter to false. Even when signupsAllowed=false, an existing user who is
-        ## an organization owner or admin can still invite new users. If you want to disable this as well, set
-        ## invitationsAllowed to false. The vaultwarden admin can invite anyone via the admin page, regardless
-        ## of any of the restrictions above
-        ##
-        ## If signupDomains is set, then the value of signupsAllowed is ignored
         signupsAllowed: true
-        ## @param vaultwarden.security.config.invitationsAllowed Even when registration is disabled, organization administrators or owners can
-        ## invite users to join organization. After they are invited, they can register with the invited email even
-        ## if signupsAllowed is actually set to false. You can disable this functionality completely by setting
-        ## invitationsAllowed env variable to false
         invitationsAllowed: true
-        ## @param vaultwarden.security.config.signupDomains List of domain names for users allowed to register
-        ##
         signupDomains: "contoso.com"
-        ## @param vaultwarden.security.config.signupsVerify Whether to require account verification for newly-registered users.
-        ##
         signupsVerify: "true"
-        ## @param vaultwarden.security.config.showPassHint Whether a password hint should be shown in the page.
-        ##
         showPassHint: "false"
-  ## @section vaultwarden.smtp settings
   smtp:
-    ## @param vaultwarden.smtp.username plaintext smtp username, conflicts with smtp.existingSecret
     username: ""
-    ## @param vaultwarden.smtp.password plaintext smtp password, conflicts with smtp.existingSecret
     password: ""
     existingSecret: 
-      ## @param vaultwarden.smtp.existingSecret.name 
       # Name of an existing secret containing the SMTP username and password.
-      ##
       name: ""
       username:
-          ## @param vaultwarden.smtp.existingSecret.username.secretKey
-          ## Secret key containing smtp username value.
-          ##
           secretKey: ""
       password:
-          ## @param vaultwarden.smtp.existingSecret.password.secretKey 
-          ## Secret key containing smtp password value.
-          ##
           secretKey: ""
     config:
-      ## @param vaultwarden.smtp.config.host SMTP host
-      ##
       host: ""
-      ## @param vaultwarden.smtp.config.security SMTP Encryption method
-      ## Possible values:
-      ##  - starttls: explicit TLS using ports 587 or 25
-      ##  - force_tls: implicit TLS using port 465
-      ##  - off: no encryption, using port 25, unless using STARTTLS
-      ##
       security: "starttls"
-      ## @param vaultwarden.smtp.config.port SMTP port
-      ##
       port: 25
-      ## @param vaultwarden.smtp.config.from SMTP sender email address
-      ## Example: juan.delacruz@gmail.com
-      ##
       from: ""
-      ## @param vaultwarden.smtp.config.fromName SMTP sender FROM
-      ##
       fromName: ""
-      ## @param vaultwarden.smtp.config.authMechanism SMTP authentication mechanism
-      ## Possible values: "Plain", "Login", "Xoauth2"
-      ## Multiple options need to be separated by a comma. (not tested)
-      ##
       authMechanism: "Plain"
-      ## @param vaultwarden.smtp.config.acceptInvalidHostnames Accept Invalid Hostnames
-      ##
       acceptInvalidHostnames: "false"
-      ## @param vaultwarden.smtp.config.acceptInvalidCerts Accept Invalid Certificates
-      ##
       acceptInvalidCerts: "false"
-      ## @param vaultwarden.smtp.config.debug SMTP debugging
-      ##
       debug: false
-  ## @section vaultwarden.database settings
   database:
-    ## @param vaultwarden.database.type Database type, either mysql or postgresql
-    ## Default is a sqlite vaultwarden.database.
-    ##
     type: "default"
-    ## @param vaultwarden.database.host Database hostname or IP address
-    ##
     host: ""
-    ## @param vaultwarden.database.port Database port
-    ## Default for MySQL is 3306, default for PostgreSQL is 5432
     port: ""
-    ## @param vaultwarden.database.username Database username
-    ##
     username: ""
-    ## @param vaultwarden.database.password Database password
-    ##
     password: ""
-    ## @param vaultwarden.database.dbName Database name
-    ##
     dbName: ""
-    ## @param vaultwarden.database.uriOverride Manually specify the DB connection string
-    ##
     uriOverride: ""
-    ## @param vaultwarden.database.existingSecret Name of an existing secret containing the database URI
-    ##
     existingSecret: ""
-    ## @param vaultwarden.database.existingSecretKey Key in the existing secret
-    ##
     existingSecretKey: ""
-    ## @param vaultwarden.database.connectionRetries Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely.
-    ##
     connectionRetries: 15
-    ## @param vaultwarden.database.maxConnections Define the size of the connection pool used for connecting to the database.
-    ##
     maxConnections: 10
-  ## @section vaultwarden.storage settings
-  ## Warning: once set, can no longer be updated.
   storage:
-    ## @param vaultwarden.storage.enabled Enable configuration for persistent storage
     enabled: true
-    ##
-    ## @param vaultwarden.storage.size Storage size for /data
-    ##
     size: "15Gi"
-    ## @param vaultwarden.storage.class Specify the storage class
-    ##
     class: ""
-    ## @param vaultwarden.storage.dataDir Specify the data directory
-    ##
     dataDir: "/data"
-  ## @section vaultwarden.logging settings
   logging:
-    ## @param vaultwarden.logging.config configuration for file logging
-    ##
     config: {}
       # logfile: "/data/vaultwarden.log"
       # loglevel: "warn"
-
-## @param fullnameOverride String to override the application name.
-##
-fullnameOverride: ""
-
-## @section Pod configuration
-##
-## @param podAnnotations Add extra annotations to the pod
-##
-podAnnotations: {}
-## @param podLabels Add extra labels to the pod
-##
-podLabels: {}
-
-## Ingress configuration
-## Refer to the README for some examples
-##
-ingress:
-  ## @param ingress.enabled Deploy an ingress resource.
-  ##
-  enabled: false
-  ## @param ingress.class Ingress resource class
-  ## The Ingress class to use, e. g. "nginx" for a nginx ingress controller or "alb" for a AWS LB controller.
-  #
-  class: "nginx"
-  ## @param ingress.nginxIngressAnnotations Add nginx specific ingress annotations
-  ## This annotations are only makes sense for the kubernetes nginx ingress controller (https://kubernetes.github.io/ingress-nginx/)
-  ##
-  nginxIngressAnnotations: true
-  ## @param ingress.additionalAnnotations Additional annotations for the ingress resource.
-  ##
-  additionalAnnotations: {}
-  ## @param ingress.labels Additional labels for the ingress resource.
-  ##
-  labels: {}
-  ## @param ingress.tls Enable TLS on the ingress resource.
-  ##
-  tls: true
-  ## @param ingress.hostname Hostname for the ingress.
-  ##
-  hostname: "warden.contoso.com"
-  ## @param ingress.path Default application path for the ingress
-  ##
-  path: "/"
-  ## @param ingress.pathWs Path for the websocket ingress
-  ##
-  pathWs: "/notifications/hub"
-  ## @param ingress.pathType Path type for the ingress
-  ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
-  ##
-  pathType: "Prefix"
-  ## @param ingress.pathTypeWs Path type for the ingress
-  ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
-  ##
-  pathTypeWs: "Exact"
-  ## @param ingress.tlsSecret Kubernetes secret containing the SSL certificate when using the "nginx" class.
-  ##
-  tlsSecret: ""
-  ## @param ingress.nginxAllowList Comma-separated list of IP addresses and subnets to allow.
-  ##
-  nginxAllowList: ""
-  ## TODO:
-  ##   - Add support for using cert-manager.
-  ##   - Support for multiple TLS hostnames.
-  ##
-
-## Service configuration
-service:
-  ## @param service.type Service type
-  ##
-  type: "ClusterIP"
-  ## @param service.annotations Additional annotations for the vaultwarden service
-  ##
-  annotations: {}
-  ## @param service.labels Additional labels for the service
-  ##
-  labels: {}
-
-
-## @section Extra containers Configuration
-##
-
-## @param initContainers extra init containers for initializing the vaultwarden instance
-##
-initContainers: []
-
-## @param sidecars extra containers running alongside the vaultwarden instance
-##
-sidecars: []
-
-## @section Extra Configuration
-##
-
-## @param nodeSelector Node labels for pod assignment
-## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-##
-nodeSelector: {}
-
-## @param affinity Affinity for pod assignment
-## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-##
-affinity: {}
-
-## @param tolerations Tolerations for pod assignment
-## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-##
-tolerations: []
-
-## @param statefulsetlabels Additional labels for the statefulset
-##
-statefulsetlabels: {}
