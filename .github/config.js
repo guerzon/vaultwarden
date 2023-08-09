@@ -4,7 +4,7 @@ module.exports = {
   gitAuthor: 'Renovate Bot <bot@renovateapp.com>',
   platform: 'github',
   includeForks: true,
-  dryRun: 'full',
+  dryRun: null,
   repositories: ['guerzon/vaultwarden'],
     extends: ['config:base'],
     allowPostUpgradeCommandTemplating: true,
