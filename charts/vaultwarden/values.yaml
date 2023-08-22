@@ -65,9 +65,8 @@ adminToken:
   ## @param adminToken.existingSecretKey When using adminToken.existingSecret, specify the key containing the token.
   ## Example: ADMIN_TOKEN
   ##
-  existingSecretKey: ""
+  existingSecretKey: "ADMIN_TOKEN"
   ## @param adminToken.value Plain string containing the admin token.
-  ## Example: ADMIN_TOKEN
   ##
   value: "R@ndomToken$tring"
 ## @param signupsAllowed By default, anyone who can access your instance can register for a new account.
