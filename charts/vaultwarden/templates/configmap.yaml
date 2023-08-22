@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/component: vaultwarden
     {{- include "vaultwarden.labels" . | nindent 4 }}
 data:
-  DOMAIN: {{ .Values.domain | quote }}
+  DOMAIN: {{ required "A valid .Values.domain entry required. Variable needs to contain the protocol (http, https). Use 'http[s]://bw.example.com' instead of 'bw.example.com'" .Values.domain | quote }}
   {{- if and .Values.smtp.host .Values.smtp.from | quote }}
   SMTP_HOST: {{ .Values.smtp.host | quote }}
   SMTP_SECURITY: {{ .Values.smtp.security | quote }}
