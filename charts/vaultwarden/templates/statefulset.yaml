@@ -73,7 +73,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ default (include "vaultwarden.fullname" .) .Values.adminToken.existingSecret }}
-                  key: {{ default "ADMIN_TOKEN" .Values.adminToken.existingSecretKey }}
+                  key: {{ .Values.adminToken.existingSecretKey }}
             {{- if ne "default" .Values.database.type }}
             - name: DATABASE_URL
               {{- if .Values.database.existingSecret }}
