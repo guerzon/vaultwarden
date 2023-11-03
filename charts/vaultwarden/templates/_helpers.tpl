@@ -37,7 +37,9 @@ Common labels
 {{- define "vaultwarden.labels" -}}
 helm.sh/chart: {{ include "vaultwarden.chart" . }}
 {{ include "vaultwarden.selectorLabels" . }}
-app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
