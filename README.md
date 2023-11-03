@@ -8,9 +8,8 @@
 ## TL;DR
 
 ```bash
-git clone https://github.com/guerzon/vaultwarden
-cd vaultwarden
-helm install my-vaultwarden-release charts/vaultwarden/
+helm repo add vaultwarden https://guerzon.github.io/vaultwarden
+helm install my-vaultwarden-release vaultwarden/vaultwarden
 ```
 
 ## Description
@@ -31,7 +30,8 @@ To deploy the chart with the release name `vaultwarden-release`:
 ```bash
 export NAMESPACE=vaultwarden
 export DOMAIN_NAME=pass.company.com
-helm install vaultwarden-release charts/vaultwarden/ \
+helm repo add vaultwarden https://guerzon.github.io/vaultwarden
+helm install vaultwarden-release vaultwarden/vaultwarden \
   --namespace $NAMESPACE \
   --set "ingress.enabled=true" \
   --set "ingress.hostname=$DOMAIN_NAME"
@@ -43,7 +43,7 @@ To deploy the chart to another namespace using custom values in the file `demo.y
 export NAMESPACE=vaultwarden-demo
 export RELEASE_NAME=vaultwarden-demo
 helm upgrade -i \
-  -n $NAMESPACE $RELEASE_NAME charts/vaultwarden/ \
+  -n $NAMESPACE $RELEASE_NAME vaultwarden/vaultwarden \
   -f demo.yaml
 ```
 
@@ -240,7 +240,7 @@ Nevertheless, if you find any issues while using this chart, or have any suggest
 
 ## Author
 
-This Helm chart was created and is being maintained by [Lester Guerzon](https://pidnull.io).
+This Helm chart was created and is being maintained by [Lester Guerzon](https://blog.pidnull.io).
 
 ### Credits
 

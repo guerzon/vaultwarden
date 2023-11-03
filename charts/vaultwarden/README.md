@@ -7,7 +7,7 @@
 | ------------------- | --------------------------------------------- | -------------------- |
 | `image.registry`    | Vaultwarden image registry                    | `docker.io`          |
 | `image.repository`  | Vaultwarden image repository                  | `vaultwarden/server` |
-| `image.tag`         | Vaultwarden image tag                         | `1.28.1`             |
+| `image.tag`         | Vaultwarden image tag                         | `1.29.2`             |
 | `image.pullPolicy`  | Vaultwarden image pull policy                 | `IfNotPresent`       |
 | `image.pullSecrets` | Specify docker-registry secret names          | `[]`                 |
 | `domain`            | Domain name where the application is accessed | `""`                 |
@@ -34,10 +34,13 @@
 | `adminToken.value`             | Plain string containing the admin token.                                                                 | `R@ndomToken$tring` |
 | `signupsAllowed`               | By default, anyone who can access your instance can register for a new account.                          | `true`              |
 | `invitationsAllowed`           | Even when registration is disabled, organization administrators or owners can                            | `true`              |
-| `signupDomains`                | List of domain names for users allowed to register                                                       | `contoso.com`       |
+| `signupDomains`                | List of domain names for users allowed to register                                                       | `""`                |
 | `signupsVerify`                | Whether to require account verification for newly-registered users.                                      | `true`              |
 | `showPassHint`                 | Whether a password hint should be shown in the page.                                                     | `false`             |
 | `fullnameOverride`             | String to override the application name.                                                                 | `""`                |
+| `invitationOrgName`            | String Name shown in the invitation emails that don't come from a specific organization                  | `Vaultwarden`       |
+| `iconBlacklistNonGlobalIps`    | Whether block non-global IPs.                                                                            | `true`              |
+| `ipHeader`                     | Client IP Header, used to identify the IP of the client                                                  | `X-Real-IP`         |
 | `serviceAccount.create`        | Create a service account                                                                                 | `true`              |
 | `serviceAccount.name`          | Name of the service account to create                                                                    | `vaultwarden-svc`   |
 
@@ -99,12 +102,12 @@
 
 ### Storage Configuration
 
-| Name              | Description                                 | Value     |
-| ----------------- | ------------------------------------------- | --------- |
-| `storage.enabled` | Enable configuration for persistent storage | `false`   |
-| `storage.size`    | Storage size for /data                      | `15Gi`    |
-| `storage.class`   | Specify the storage class                   | `default` |
-| `storage.dataDir` | Specify the data directory                  | `/data`   |
+| Name              | Description                                 | Value   |
+| ----------------- | ------------------------------------------- | ------- |
+| `storage.enabled` | Enable configuration for persistent storage | `false` |
+| `storage.size`    | Storage size for /data                      | `15Gi`  |
+| `storage.class`   | Specify the storage class                   | `""`    |
+| `storage.dataDir` | Specify the data directory                  | `/data` |
 
 ### Logging Configuration
 
