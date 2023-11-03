@@ -9,7 +9,7 @@ sources:
   - https://github.com/dani-garcia/vaultwarden
 appVersion: 1.28.1
 maintainers:
-  - name: Lester Guerzon
+  - name: guerzon
     email: guerzon@proton.me
     url: https://github.com/guerzon
-version: 0.14.0
+version: 0.15.0
