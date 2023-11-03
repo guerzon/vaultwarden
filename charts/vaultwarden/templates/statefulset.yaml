@@ -129,5 +129,7 @@ spec:
         resources:
           requests:
             storage: {{ .Values.storage.size }}
-        storageClassName: {{ default "default" .Values.storage.class }}
+        {{- if .Values.storage.class }}
+        storageClassName: {{ .Values.storage.class | quote }}
+        {{- end }}
   {{- end }}
