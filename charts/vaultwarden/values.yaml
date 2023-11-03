@@ -85,7 +85,7 @@ signupsAllowed: true
 invitationsAllowed: true
 ## @param signupDomains List of domain names for users allowed to register
 ##
-signupDomains: "contoso.com"
+signupDomains: ""
 ## @param signupsVerify Whether to require account verification for newly-registered users.
 ##
 signupsVerify: "true"
@@ -95,6 +95,19 @@ showPassHint: "false"
 ## @param fullnameOverride String to override the application name.
 ##
 fullnameOverride: ""
+
+## @param invitationOrgName String Name shown in the invitation emails that don't come from a specific organization
+##
+invitationOrgName: "Vaultwarden"
+
+## @param iconBlacklistNonGlobalIps Whether block non-global IPs.
+## Useful to secure your internal environment: See https://en.wikipedia.org/wiki/Reserved_IP_addresses for a list of IPs which it will block
+iconBlacklistNonGlobalIps: "true"
+
+## @param ipHeader Client IP Header, used to identify the IP of the client
+##
+ipHeader: "X-Real-IP"
+
 ## @param serviceAccount.create Create a service account
 ## @param serviceAccount.name Name of the service account to create
 ##
