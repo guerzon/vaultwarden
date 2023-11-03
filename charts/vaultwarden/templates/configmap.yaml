@@ -8,7 +8,7 @@ metadata:
     {{- include "vaultwarden.labels" . | nindent 4 }}
 data:
   DOMAIN: {{ .Values.domain | quote }}
-  {{- if and .Values.smtp.host .Values.smtp.from | quote }}
+  {{- if and .Values.smtp.host .Values.smtp.from }}
   SMTP_HOST: {{ .Values.smtp.host | quote }}
   SMTP_SECURITY: {{ .Values.smtp.security | quote }}
   SMTP_PORT: {{ .Values.smtp.port | quote }}
