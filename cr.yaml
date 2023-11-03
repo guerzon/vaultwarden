@@ -1,1 +1,2 @@
 release-name-template: "v{{ .Version }}"
+generate-release-notes: true
