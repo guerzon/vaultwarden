@@ -10,9 +10,10 @@ image:
   repository: vaultwarden/server
   ##
   ## @param image.tag Vaultwarden image tag
+  #  Defaults to appVersion in Chart.yaml
   ## Ref: https://hub.docker.com/r/vaultwarden/server/tags
   ##
-  tag: "1.28.1"
+  tag: ""
   ## @param image.pullPolicy Vaultwarden image pull policy
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
   ##
