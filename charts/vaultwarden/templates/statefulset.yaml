@@ -43,6 +43,10 @@ spec:
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
       {{- end }}
+      securityContext:
+        runAsUser: {{ .Values.runAsUser }}
+        runAsGroup: {{ .Values.runAsUser }}
+        fsGroup: {{ .Values.runAsUser }}
       initContainers:
         {{- if .Values.initContainers }}
         {{- toYaml .Values.initContainers | nindent 8 }}
@@ -51,6 +55,8 @@ spec:
         - image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: vaultwarden
+          securityContext:
+            allowPrivilegeEscalation: false
           envFrom:
             - configMapRef:
                 name: {{ include "vaultwarden.fullname" . }}
