@@ -9,6 +9,10 @@ metadata:
     {{- range $key, $value := .Values.statefulsetlabels }}
     {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
     {{- end }}
+  {{- with .Values.statefulsetAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   serviceName: vaultwarden
   replicas: 1
@@ -18,10 +22,6 @@ spec:
       {{- include "vaultwarden.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
         app.kubernetes.io/component: vaultwarden
         {{- include "vaultwarden.selectorLabels" . | nindent 8 }}
@@ -31,9 +31,9 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha1sum }}
         checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha1sum }}
-      {{- with .Values.podAnnotations }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- if .Values.nodeSelector }}
       nodeSelector:
