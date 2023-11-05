@@ -349,6 +349,10 @@ tolerations: []
 ##
 statefulsetlabels: {}
 
+## @param statefulsetAnnotations Annotations for the statefulset
+##
+statefulsetAnnotations: {}
+
 ## @param pushNotifications Enable mobile push notifications
 ## Supported since 1.29.0.
 ## Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details

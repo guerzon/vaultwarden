@@ -352,11 +352,12 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 ### Extra Configuration
 
-| Name                | Description                           | Value |
-| ------------------- | ------------------------------------- | ----- |
-| `nodeSelector`      | Node labels for pod assignment        | `{}`  |
-| `affinity`          | Affinity for pod assignment           | `{}`  |
-| `tolerations`       | Tolerations for pod assignment        | `[]`  |
-| `statefulsetlabels` | Additional labels for the statefulset | `{}`  |
-| `pushNotifications` | Enable mobile push notifications      | `{}`  |
-| `resources`         | Resource configurations               | `{}`  |
+| Name                     | Description                           | Value |
+| ------------------------ | ------------------------------------- | ----- |
+| `nodeSelector`           | Node labels for pod assignment        | `{}`  |
+| `affinity`               | Affinity for pod assignment           | `{}`  |
+| `tolerations`            | Tolerations for pod assignment        | `[]`  |
+| `statefulsetlabels`      | Additional labels for the statefulset | `{}`  |
+| `statefulsetAnnotations` | Annotations for the statefulset       | `{}`  |
+| `pushNotifications`      | Enable mobile push notifications      | `{}`  |
+| `resources`              | Resource configurations               | `{}`  |
