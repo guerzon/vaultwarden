@@ -26,7 +26,12 @@ data:
   WEBSOCKET_ADDRESS: {{ .Values.websocket.address | quote }}
   WEBSOCKET_PORT: {{ .Values.websocket.port | quote }}
   {{- end }}
-  DATA_FOLDER: {{ .Values.storage.dataDir | quote }}
+  {{- if .Values.data }}
+  DATA_FOLDER: {{ default "/data" .Values.data.path | quote }}
+  {{- end }}
+  {{- if .Values.attachments }}
+  ATTACHMENTS_FOLDER: {{ default "/data/attachments" .Values.attachments.path | quote }}
+  {{- end }}
   ROCKET_PORT: {{ .Values.rocket.port | quote }}
   ROCKET_WORKERS: {{ .Values.rocket.workers | quote }}
   SHOW_PASSWORD_HINT: {{ .Values.showPassHint | quote }}
@@ -37,12 +42,19 @@ data:
   {{- end }}
   SIGNUPS_VERIFY: {{ .Values.signupsVerify | quote }}
   WEB_VAULT_ENABLED: {{ .Values.webVaultEnabled | quote }}
-  {{- if .Values.logging.enabled }}
-  LOG_FILE: {{ .Values.logging.logfile | quote }}
-  LOG_LEVEL: {{ .Values.logging.loglevel | quote }}
+  {{- if .Values.logging.logFile }}
+  LOG_FILE: {{ .Values.logging.logFile | quote }}
+  {{- end }}
+  {{- if .Values.logging.logLevel }}
+  LOG_LEVEL: {{ .Values.logging.logLevel | quote }}
   {{- end }}
   DB_CONNECTION_RETRIES: {{ .Values.database.connectionRetries | quote }}
   DATABASE_MAX_CONNS: {{ .Values.database.maxConnections | quote }}
   INVITATION_ORG_NAME: {{ .Values.invitationOrgName | quote }}
   ICON_BLACKLIST_NON_GLOBAL_IPS: {{ .Values.iconBlacklistNonGlobalIps | quote }}
   IP_HEADER: {{ .Values.ipHeader | quote }}
+  {{- if .Values.pushNotifications }}
+  PUSH_ENABLED: "true"
+  PUSH_INSTALLATION_ID: {{ .Values.pushNotifications.installationId | quote }}
+  PUSH_INSTALLATION_KEY: {{ .Values.pushNotifications.installationKey | quote }}
+  {{- end }}

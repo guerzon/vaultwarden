@@ -15,6 +15,7 @@ The `vaultwarden` project can be found [here](https://github.com/dani-garcia/vau
 
 - Kubernetes >= 1.12
 - Helm >= 3.1.0
+- `docker` and `make` for generating the chart documentation
 
 ## Usage
 
@@ -26,16 +27,6 @@ helm repo add vaultwarden https://guerzon.github.io/vaultwarden
 
 Refer to the detailed documentation [here](./charts/vaultwarden/README.md).
 
-## Uninstall
-
-To uninstall/delete the `vaultwarden-demo` release:
-
-```console
-export NAMESPACE=vaultwarden
-export RELEASE_NAME=vaultwarden-demo
-helm -n $NAMESPACE uninstall $RELEASE_NAME
-```
-
 ## Disclaimer
 
 Please do your due-diligence before using this chart for a production deployment.
@@ -44,7 +35,7 @@ Nevertheless, if you find any issues while using this chart, or have any suggest
 
 ## License
 
-[MIT](./LICENSE).
+See [LICENSE](./LICENSE).
 
 ## Author
 
@@ -54,3 +45,9 @@ This Helm chart was created and maintained by [Lester Guerzon](https://blog.pidn
 
 - The `vaultwarden` project can be found [here](https://github.com/dani-garcia/vaultwarden)
 - Further information about `Bitwarden` and 8bit Solutions LLC can be found [here](https://bitwarden.com/)
+
+## References
+
+- Guides: <https://github.com/dani-garcia/vaultwarden/wiki>
+- Configuration: <https://github.com/dani-garcia/vaultwarden/blob/main/.env.template>
+- Releases: <https://github.com/dani-garcia/vaultwarden/releases>
