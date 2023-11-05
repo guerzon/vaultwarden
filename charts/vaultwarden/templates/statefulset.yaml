@@ -47,10 +47,10 @@ spec:
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
       {{- end }}
+      {{- if .Values.initContainers }}
       initContainers:
-        {{- if .Values.initContainers }}
         {{- toYaml .Values.initContainers | nindent 8 }}
-        {{- end }}
+      {{- end }}
       containers:
         - image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -73,11 +73,16 @@ spec:
                   name: {{ default (include "vaultwarden.fullname" .) .Values.smtp.existingSecret }}
                   key: {{ default "SMTP_PASSWORD" .Values.smtp.password.existingSecretKey }}
             {{- end }}
+            {{- if .Values.adminToken }}
             - name: ADMIN_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: {{ default (include "vaultwarden.fullname" .) .Values.adminToken.existingSecret }}
                   key: {{ default "ADMIN_TOKEN" .Values.adminToken.existingSecretKey }}
+            {{- else }}
+            - name: DISABLE_ADMIN_TOKEN
+              value: "true"
+            {{- end }}
             {{- if ne "default" .Values.database.type }}
             - name: DATABASE_URL
               {{- if .Values.database.existingSecret }}
@@ -100,31 +105,37 @@ spec:
             - containerPort: {{ .Values.websocket.port }}
               name: websocket
               protocol: TCP
-          {{- if .Values.storage.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /alive
+              port: 8080
+              initialDelaySeconds: 5
+          {{- if .Values.data }}
           volumeMounts:
-            - name: vaultwarden-data
-              mountPath: {{ .Values.storage.dataDir }}
+            - name: {{ .Values.data.name }}
+              mountPath: {{ default "/data" .Values.data.path }}
+          {{- end }}
+          {{- if .Values.attachments }}
+          volumeMounts:
+            - name: {{ .Values.attachments.name }}
+              mountPath: {{ default "/data/attachments" .Values.attachments.path }}
           {{- end }}
           resources:
-            limits:
-              cpu: 300m
-              memory: 1Gi
-            requests:
-              cpu: 50m
-              memory: 256Mi
+            {{- toYaml .Values.resources | nindent 12 }}
         {{- if .Values.sidecars }}
         {{- toYaml .Values.sidecars | nindent 8 }}
         {{- end }}
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- end }}
-  {{- if .Values.storage.enabled }}
+  {{- if (or .Values.data .Values.attachments) }}
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Retain
     whenScaled: Retain
   volumeClaimTemplates:
+    {{- if .Values.data }}
     - metadata:
-        name: vaultwarden-data
+        name: {{ .Values.data.name }}
         labels:
           {{- include "vaultwarden.labels" . | nindent 10 }}
       spec:
@@ -132,8 +143,24 @@ spec:
           - "ReadWriteOnce"
         resources:
           requests:
-            storage: {{ .Values.storage.size }}
-        {{- if .Values.storage.class }}
-        storageClassName: {{ .Values.storage.class | quote }}
+            storage: {{ .Values.data.size }}
+        {{- if .Values.data.class }}
+        storageClassName: {{ .Values.data.class | quote }}
         {{- end }}
+    {{- end }}
+    {{- if .Values.attachments }}
+    - metadata:
+        name: {{ .Values.attachments.name }}
+        labels:
+          {{- include "vaultwarden.labels" . | nindent 10 }}
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: {{ .Values.attachments.size }}
+        {{- if .Values.attachments.class }}
+        storageClassName: {{ .Values.attachments.class | quote }}
+        {{- end }}
+    {{- end }}
   {{- end }}

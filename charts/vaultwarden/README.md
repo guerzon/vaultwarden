@@ -27,7 +27,7 @@ helm upgrade -i \
   -f demo.yaml
 ```
 
-### General configuration
+## General configuration
 
 This chart deploys `vaultwarden` from pre-built images on [Docker Hub](https://hub.docker.com/r/vaultwarden/server/tags): `vaultwarden/server`. The image can be defined by specifying the tag with `image.tag`.
 
@@ -48,7 +48,7 @@ domain: "https://vaultwarden.contoso.com:9443/"
 
 Detailed configuration options can be found in the [Vaultwarden settings](./charts/vaultwarden/README.md#vaultwarden-settings) section.
 
-### Database options
+## Database options
 
 By default, `vaultwarden` uses a SQLite database located in `/data/db.sqlite3`. However, it is also possible to make use of an external database, in particular either [MySQL](https://www.mysql.com/downloads/) or [PostgreSQL](https://www.postgresql.org).
 
@@ -91,11 +91,11 @@ database:
 
 Detailed configuration options can be found in the [Database Configuration](./charts/vaultwarden/README.md#database-configuration) section.
 
-### SSL and Ingress
+## SSL and Ingress
 
 This chart supports the usage of existing Ingress Controllers for exposing the `vaultwarden` deployment.
 
-#### nginx-ingress
+### nginx-ingress
 
 Nginx ingress controller can be installed by following [this](https://kubernetes.github.io/ingress-nginx/deploy/) guide. An SSL certificate can be added as a secret with a few commands:
 
@@ -118,7 +118,7 @@ ingress:
   allowList: "10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16"
 ```
 
-#### AWS LB Controller
+### AWS LB Controller
 
 When using AWS, the [AWS Load Balancer controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/deploy/installation/) can be used together with [ACM](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/guide/ingress/cert_discovery/).
 
@@ -137,9 +137,26 @@ ingress:
 
 Detailed configuration options can be found in the [Exposure Parameters](./charts/vaultwarden/README.md#exposure-parameters) section.
 
-### Security
+## Security
 
-An admin token can be generated with: `openssl rand -base64 48`.
+### Admin page
+
+An insecure string token can be generated with: `openssl rand -base64 48` and can be used for the admin token. However, from v1.28.0 and later, it is now possible to pass a hashed value to the admin token:
+
+```bash
+echo -n "R@ndomTokenString" | argon2 "$(openssl rand -base64 32)" -e -id -k 19456 -t 2 -p 1
+```
+
+Please see [this](https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page#secure-the-admin_token) guide for more information.
+
+```yaml
+adminToken:
+  value: "khit9gYQV6ax9LKTTm+s6QbZi5oiuR+3s1PEn9q3IRmCl9IQn7LmBpmFCOYTb7Mr"
+```
+
+You can also [disable](https://github.com/dani-garcia/vaultwarden/wiki/Disable-admin-token) the admin token by passing `--set adminToken=null` to `helm`. Doing so will pass the disable the authentication to the admin page. Do this if you know what you are doing.
+
+### Service account
 
 By default, the chart deploys a [service account](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/) called `vaultwarden-svc`.
 
@@ -151,7 +168,7 @@ serviceAccount:
 
 Detailed configuration options can be found in the [Security settings](./charts/vaultwarden/README.md#security-settings) section.
 
-### Mail settings
+## Mail settings
 
 To enable the SMTP service, make sure that at a minimum, `smtp.host` and `smtp.from` are set.
 
@@ -168,31 +185,48 @@ smtp:
 
 Detailed configuration options can be found in the [SMTP Configuration](./charts/vaultwarden/README.md#smtp-configuration) section.
 
-### Storage
+## Persistent storage
 
-To use persistent storage using a claim, set `storage.enabled` to `true`. The following example sets the storage class to an already-installed Rancher's [local path storage](https://github.com/rancher/local-path-provisioner) provisioner.
+Vaultwarden requires persistent storage for its attachments and icons cache.
+
+To use persistent storage using a claim, set the `data` dictionary. Optionally set a different path using the `path` key. The following example sets the storage class to an already-installed Rancher's [local path storage](https://github.com/rancher/local-path-provisioner) provisioner.
 
 ```yaml
-storage:
-  enabled: true
-  size: "10Gi"
+data:
+  name: "vaultwarden-data"
+  size: "15Gi"
   class: "local-path"
 ```
 
 Example for AWS:
 
 ```yaml
-storage:
-  enabled: true
+data:
+  name: "vaultwarden-data"
   size: "10Gi"
   class: "gp2"
+  path: "/srv/vaultwarden-data"
 ```
 
-Detailed configuration options can be found in the [Storage Configuration](./charts/vaultwarden/README.md#storage-configuration) section.
+To use persistent storage for attachments, set the `attachmenets` dictionary. Optionally set a different path. Note that by default, the path is `/data/attachments`.
 
-## Deployment in GKE
+```yaml
+data:
+  name: "vaultwarden-data"
+  size: "15Gi"
+  class: "local-path"
+```
 
-I have written a detailed post about deploying Vaultwarden in Google Kubernetes Engine [here](https://medium.com/@sreafterhours/terraform-helm-external-dns-cert-manager-nginx-and-vaultwarden-on-gke-5080f3b4909f).
+## Uninstall
+
+To uninstall/delete the `vaultwarden-demo` release:
+
+```bash
+export NAMESPACE=vaultwarden
+export RELEASE_NAME=vaultwarden-demo
+
+helm -n $NAMESPACE uninstall $RELEASE_NAME
+```
 
 ## Parameters
 
@@ -202,7 +236,7 @@ I have written a detailed post about deploying Vaultwarden in Google Kubernetes 
 | ------------------- | --------------------------------------------- | -------------------- |
 | `image.registry`    | Vaultwarden image registry                    | `docker.io`          |
 | `image.repository`  | Vaultwarden image repository                  | `vaultwarden/server` |
-| `image.tag`         | Vaultwarden image tag                         | `1.29.2`             |
+| `image.tag`         | Vaultwarden image tag                         | `1.29.2-alpine`      |
 | `image.pullPolicy`  | Vaultwarden image pull policy                 | `IfNotPresent`       |
 | `image.pullSecrets` | Specify docker-registry secret names          | `[]`                 |
 | `domain`            | Domain name where the application is accessed | `""`                 |
@@ -222,22 +256,22 @@ I have written a detailed post about deploying Vaultwarden in Google Kubernetes 
 
 ### Security settings
 
-| Name                           | Description                                                                                              | Value               |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------- |
-| `adminToken.existingSecret`    | Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey. | `""`                |
-| `adminToken.existingSecretKey` | When using adminToken.existingSecret, specify the key containing the token.                              | `""`                |
-| `adminToken.value`             | Plain string containing the admin token.                                                                 | `R@ndomToken$tring` |
-| `signupsAllowed`               | By default, anyone who can access your instance can register for a new account.                          | `true`              |
-| `invitationsAllowed`           | Even when registration is disabled, organization administrators or owners can                            | `true`              |
-| `signupDomains`                | List of domain names for users allowed to register                                                       | `""`                |
-| `signupsVerify`                | Whether to require account verification for newly-registered users.                                      | `true`              |
-| `showPassHint`                 | Whether a password hint should be shown in the page.                                                     | `false`             |
-| `fullnameOverride`             | String to override the application name.                                                                 | `""`                |
-| `invitationOrgName`            | String Name shown in the invitation emails that don't come from a specific organization                  | `Vaultwarden`       |
-| `iconBlacklistNonGlobalIps`    | Whether block non-global IPs.                                                                            | `true`              |
-| `ipHeader`                     | Client IP Header, used to identify the IP of the client                                                  | `X-Real-IP`         |
-| `serviceAccount.create`        | Create a service account                                                                                 | `true`              |
-| `serviceAccount.name`          | Name of the service account to create                                                                    | `vaultwarden-svc`   |
+| Name                           | Description                                                                                              | Value                                                                                                                                    |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `adminToken.existingSecret`    | Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey. | `""`                                                                                                                                     |
+| `adminToken.existingSecretKey` | When using adminToken.existingSecret, specify the key containing the token.                              | `""`                                                                                                                                     |
+| `adminToken.value`             | Plain or argon2 string containing the admin token.                                                       | `$argon2id$v=19$m=19456,t=2,p=1$Vkx1VkE4RmhDMUhwNm9YVlhPQkVOZk1Yc1duSDdGRVYzd0Y5ZkgwaVg0Yz0$PK+h1ANCbzzmEKaiQfCjWw+hWFaMKvLhG2PjRanH5Kk` |
+| `signupsAllowed`               | By default, anyone who can access your instance can register for a new account.                          | `true`                                                                                                                                   |
+| `invitationsAllowed`           | Even when registration is disabled, organization administrators or owners can                            | `true`                                                                                                                                   |
+| `signupDomains`                | List of domain names for users allowed to register. For example:                                         | `""`                                                                                                                                     |
+| `signupsVerify`                | Whether to require account verification for newly-registered users.                                      | `true`                                                                                                                                   |
+| `showPassHint`                 | Whether a password hint should be shown in the page.                                                     | `false`                                                                                                                                  |
+| `fullnameOverride`             | String to override the application name.                                                                 | `""`                                                                                                                                     |
+| `invitationOrgName`            | String Name shown in the invitation emails that don't come from a specific organization                  | `Vaultwarden`                                                                                                                            |
+| `iconBlacklistNonGlobalIps`    | Whether block non-global IPs.                                                                            | `true`                                                                                                                                   |
+| `ipHeader`                     | Client IP Header, used to identify the IP of the client                                                  | `X-Real-IP`                                                                                                                              |
+| `serviceAccount.create`        | Create a service account                                                                                 | `true`                                                                                                                                   |
+| `serviceAccount.name`          | Name of the service account to create                                                                    | `vaultwarden-svc`                                                                                                                        |
 
 ### Exposure Parameters
 
@@ -295,22 +329,19 @@ I have written a detailed post about deploying Vaultwarden in Google Kubernetes 
 | `smtp.acceptInvalidCerts`         | Accept Invalid Certificates                                                                                                                         | `false`    |
 | `smtp.debug`                      | SMTP debugging                                                                                                                                      | `false`    |
 
-### Storage Configuration
+### Persistent data configuration
 
-| Name              | Description                                 | Value   |
-| ----------------- | ------------------------------------------- | ------- |
-| `storage.enabled` | Enable configuration for persistent storage | `false` |
-| `storage.size`    | Storage size for /data                      | `15Gi`  |
-| `storage.class`   | Specify the storage class                   | `""`    |
-| `storage.dataDir` | Specify the data directory                  | `/data` |
+| Name          | Description                                                               | Value |
+| ------------- | ------------------------------------------------------------------------- | ----- |
+| `data`        | Data directory configuration, refer to values.yaml for parameters.        | `{}`  |
+| `attachments` | Attachments directory configuration, refer to values.yaml for parameters. | `{}`  |
 
 ### Logging Configuration
 
-| Name               | Description                         | Value                   |
-| ------------------ | ----------------------------------- | ----------------------- |
-| `logging.enabled`  | Enable logging to a file            | `false`                 |
-| `logging.logfile`  | Specify logfile path for output log | `/data/vaultwarden.log` |
-| `logging.loglevel` | Specify the log level               | `warn`                  |
+| Name               | Description           | Value |
+| ------------------ | --------------------- | ----- |
+| `logging.logLevel` | Specify the log level | `""`  |
+| `logging.logFile`  | Log to a file         | `""`  |
 
 ### Extra containers Configuration
 
@@ -327,3 +358,5 @@ I have written a detailed post about deploying Vaultwarden in Google Kubernetes 
 | `affinity`          | Affinity for pod assignment           | `{}`  |
 | `tolerations`       | Tolerations for pod assignment        | `[]`  |
 | `statefulsetlabels` | Additional labels for the statefulset | `{}`  |
+| `pushNotifications` | Enable mobile push notifications      | `{}`  |
+| `resources`         | Resource configurations               | `{}`  |

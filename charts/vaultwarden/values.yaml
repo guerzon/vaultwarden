@@ -11,7 +11,7 @@ image:
   ## @param image.tag Vaultwarden image tag
   ## Ref: https://hub.docker.com/r/vaultwarden/server/tags
   ##
-  tag: "1.29.2"
+  tag: "1.29.2-alpine"
   ## @param image.pullPolicy Vaultwarden image pull policy
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
   ##
@@ -56,6 +56,7 @@ podLabels: {}
 
 ## @section Security settings
 ##
+
 adminToken:
   ## @param adminToken.existingSecret Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey.
   ## Example: admincreds_secret
@@ -65,10 +66,11 @@ adminToken:
   ## Example: ADMIN_TOKEN
   ##
   existingSecretKey: ""
-  ## @param adminToken.value Plain string containing the admin token.
-  ## Example: ADMIN_TOKEN
+  ## @param adminToken.value Plain or argon2 string containing the admin token.
+  ## This example is the argon2 has of "R@ndomTokenString" (no quotes).
   ##
-  value: "R@ndomToken$tring"
+  value: "$argon2id$v=19$m=19456,t=2,p=1$Vkx1VkE4RmhDMUhwNm9YVlhPQkVOZk1Yc1duSDdGRVYzd0Y5ZkgwaVg0Yz0$PK+h1ANCbzzmEKaiQfCjWw+hWFaMKvLhG2PjRanH5Kk"
+
 ## @param signupsAllowed By default, anyone who can access your instance can register for a new account.
 ## To disable this, set this parameter to false. Even when signupsAllowed=false, an existing user who is
 ## an organization owner or admin can still invite new users. If you want to disable this as well, set
@@ -82,7 +84,8 @@ signupsAllowed: true
 ## if signupsAllowed is actually set to false. You can disable this functionality completely by setting
 ## invitationsAllowed env variable to false
 invitationsAllowed: true
-## @param signupDomains List of domain names for users allowed to register
+## @param signupDomains List of domain names for users allowed to register. For example:
+## example.com,example.net,example.org.
 ##
 signupDomains: ""
 ## @param signupsVerify Whether to require account verification for newly-registered users.
@@ -283,34 +286,35 @@ smtp:
   ##
   debug: false
 
-## @section Storage Configuration
+## @section Persistent data configuration
 ##
-storage:
-  ## @param storage.enabled Enable configuration for persistent storage
-  ##
-  enabled: false
-  ## @param storage.size Storage size for /data
-  ##
-  size: "15Gi"
-  ## @param storage.class Specify the storage class
-  ##
-  class: ""
-  ## @param storage.dataDir Specify the data directory
-  ##
-  dataDir: "/data"
+
+## @param data Data directory configuration, refer to values.yaml for parameters.
+##
+data: {}
+  # name: "vaultwarden-data"
+  # size: "15Gi"
+  # class: ""
+  # path: "/data"
+
+## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
+## By default, attachments/ is located inside the data directory.
+##
+attachments: {}
+  # name: "vaultwarden-files"
+  # size: "100Gi"
+  # class: ""
+  # path: /files
 
 ## @section Logging Configuration
 ##
 logging:
-  ## @param logging.enabled Enable logging to a file
+  ## @param logging.logLevel Specify the log level
   ##
-  enabled: false
-  ## @param logging.logfile Specify logfile path for output log
+  logLevel: ""
+  ## @param logging.logFile Log to a file
   ##
-  logfile: "/data/vaultwarden.log"
-  ## @param logging.loglevel Specify the log level
-  ##
-  loglevel: "warn"
+  logFile: ""
 
 ## @section Extra containers Configuration
 ##
@@ -344,3 +348,25 @@ tolerations: []
 ## @param statefulsetlabels Additional labels for the statefulset
 ##
 statefulsetlabels: {}
+
+## @param pushNotifications Enable mobile push notifications
+## Supported since 1.29.0.
+## Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details
+##
+pushNotifications: {}
+  # installationId: ""
+  # installationKey: ""
+
+## @param resources Resource configurations
+##
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 300m
+  #   memory: 1Gi
+  # requests:
+  #   cpu: 50m
+  #   memory: 256Mi
