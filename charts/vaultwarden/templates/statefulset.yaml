@@ -109,7 +109,7 @@ spec:
             httpGet:
               path: /alive
               port: 8080
-              initialDelaySeconds: 5
+            initialDelaySeconds: 5
           {{- if .Values.data }}
           volumeMounts:
             - name: {{ .Values.data.name }}
