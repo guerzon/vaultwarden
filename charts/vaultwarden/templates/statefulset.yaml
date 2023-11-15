@@ -110,15 +110,16 @@ spec:
               path: /alive
               port: 8080
             initialDelaySeconds: 5
-          {{- if .Values.data }}
+          {{- if or (.Values.data) (.Values.attachments) }}
           volumeMounts:
+          {{- if .Values.data }}
             - name: {{ .Values.data.name }}
               mountPath: {{ default "/data" .Values.data.path }}
           {{- end }}
           {{- if .Values.attachments }}
-          volumeMounts:
             - name: {{ .Values.attachments.name }}
               mountPath: {{ default "/data/attachments" .Values.attachments.path }}
+          {{- end }}
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
