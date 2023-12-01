@@ -28,3 +28,6 @@ spec:
       protocol: TCP
       targetPort: {{ .Values.websocket.port }}
     {{- end }}
+{{- if .Values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
+{{- end }}

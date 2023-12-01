@@ -66,3 +66,29 @@ Return the database string
 {{- $var := print .Values.database.type "://" .Values.database.username ":" .Values.database.password "@" .Values.database.host (include "dbPort" . ) "/" .Values.database.dbName }}
 {{- printf "%s" $var }}
 {{- end -}}
+
+{{/*
+Return the appropriate apiVersion for podDisruptionBudget.
+*/}}
+{{- define "podDisruptionBudget.apiVersion" -}}
+{{- if semverCompare ">=1.21-0" .Capabilities.KubeVersion.Version -}}
+{{- print "policy/v1" -}}
+{{- else -}}
+{{- print "policy/v1beta1" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Determine whether to use deployment or statefulset
+*/}}
+{{- define "vaultwarden.deploymentKind" -}}
+{{- if .Values.deploymentKind }}
+{{- .Values.deploymentKind }}
+{{- else }}
+{{- if (and .Values.data (ne .Values.database.type "default")) }}
+{{- "Deployment" }}
+{{- else }}
+{{- "StatefulSet" }}
+{{- end }}
+{{- end }}
+{{- end }}
