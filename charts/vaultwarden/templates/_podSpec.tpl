@@ -90,6 +90,7 @@ containers:
     livenessProbe:
       httpGet:
         path: /alive
+        port: http
       initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
       periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
       timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
@@ -121,6 +122,7 @@ containers:
     startupProbe:
       httpGet:
         path: /alive
+        port: http
       initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
       periodSeconds: {{ .Values.startupProbe.periodSeconds }}
       timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
