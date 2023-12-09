@@ -96,11 +96,6 @@ containers:
       timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
       successThreshold: {{ .Values.livenessProbe.successThreshold }}
       failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
-    {{- else }}
-    {{- with .Values.customLivenessProbe }}
-    livenessProbe:
-    {{- toYaml . | nindent 12 }}
-    {{- end }}
     {{- end }}
     {{- if .Values.readinessProbe.enabled }}
     readinessProbe:
@@ -112,11 +107,6 @@ containers:
       timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
       successThreshold: {{ .Values.readinessProbe.successThreshold }}
       failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
-    {{- else }}
-    {{- with .Values.customReadinessProbe }}
-    readinessProbe:
-    {{- toYaml . | nindent 12 }}
-    {{- end }}
     {{- end }}
     {{- if .Values.startupProbe.enabled }}
     startupProbe:
@@ -128,11 +118,6 @@ containers:
       timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
       successThreshold: {{ .Values.startupProbe.successThreshold }}
       failureThreshold: {{ .Values.startupProbe.failureThreshold }}
-    {{- else }}
-    {{- with .Values.customStartupProbe }}
-    startupProbe:
-    {{- toYaml . | nindent 12 }}
-    {{- end }}
     {{- end }}
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 8 }}
