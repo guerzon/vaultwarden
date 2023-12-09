@@ -1,0 +1,22 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+{{- $component := .Values.podDisruptionBudget }}
+apiVersion: {{ include "podDisruptionBudget.apiVersion" . }}
+kind: PodDisruptionBudget
+metadata:
+  name: vaultwarden
+  namespace: {{ .Release.Namespace }}
+  labels:
+    k8s-app: vaultwarden
+    app.kubernetes.io/name: vaultwarden
+    app.kubernetes.io/part-of: vaultwarden
+spec:
+  {{- with $component.maxUnavailable }}
+  maxUnavailable: {{ . }}
+  {{- end }}
+  {{- with $component.minAvailable }}
+  minAvailable: {{ . }}
+  {{- end }}
+  selector:
+    matchLabels:
+      k8s-app: vaultwarden
+{{- end }}

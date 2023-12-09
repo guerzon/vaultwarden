@@ -6,6 +6,10 @@ metadata:
   labels:
     app.kubernetes.io/component: vaultwarden
     {{- include "vaultwarden.labels" . | nindent 4 }}
+{{- with .Values.configMapAnnotations }}
+  annotations:
+    {{- . | toYaml | nindent 4 }}
+{{- end }}
 data:
   DOMAIN: {{ .Values.domain | quote }}
   {{- if and .Values.smtp.host .Values.smtp.from }}
@@ -32,6 +36,7 @@ data:
   {{- if .Values.attachments }}
   ATTACHMENTS_FOLDER: {{ default "/data/attachments" .Values.attachments.path | quote }}
   {{- end }}
+  ROCKET_ADDRESS: {{ .Values.rocket.address | quote }}
   ROCKET_PORT: {{ .Values.rocket.port | quote }}
   ROCKET_WORKERS: {{ .Values.rocket.workers | quote }}
   SHOW_PASSWORD_HINT: {{ .Values.showPassHint | quote }}

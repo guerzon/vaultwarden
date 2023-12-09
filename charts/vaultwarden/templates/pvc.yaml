@@ -1,0 +1,10 @@
+{{- if eq (include "vaultwarden.resourceType" .) "Deployment" }}
+{{- range $pvc := (fromYaml (include "vaultwarden.pvcSpec" .)).volumeClaimTemplates }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+{{- $newName := printf "%s-%s-0" $pvc.metadata.name $.Release.Name }}
+{{- $newPvc := merge (dict "metadata" (dict "name" $newName)) $pvc }}
+{{ $newPvc | toYaml }}
+{{- end }}
+{{- end }}

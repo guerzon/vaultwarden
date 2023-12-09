@@ -1,6 +1,6 @@
-{{- if eq (include "vaultwarden.resourceType" .) "StatefulSet" }}
+{{- if eq (include "vaultwarden.resourceType" .) "Deployment" }}
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ include "vaultwarden.fullname" . }}
   namespace: {{ .Release.Namespace }}
@@ -15,14 +15,13 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  serviceName: vaultwarden
   replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/component: vaultwarden
       {{- include "vaultwarden.selectorLabels" . | nindent 6 }}
   {{- with .Values.strategy }}
-  updateStrategy:
+  strategy:
     {{- . | toYaml | nindent 8 }}
   {{- end }}
   template:
@@ -41,8 +40,11 @@ spec:
         {{- end }}
     spec:
       {{- include "vaultwarden.podSpec" . | nindent 6 }}
-  persistentVolumeClaimRetentionPolicy:
-    whenDeleted: Retain
-    whenScaled: Retain
-  {{- include "vaultwarden.pvcSpec" . | nindent 2 }}
+      volumes:
+        {{- range $pvc := (fromYaml (include "vaultwarden.pvcSpec" .)).volumeClaimTemplates }}
+        {{- $newName := printf "%s-%s-0" $pvc.metadata.name $.Release.Name }}
+        - name: {{ $pvc.metadata.name }}
+          persistentVolumeClaim:
+            claimName: {{ $newName }}
+        {{- end }}
 {{- end }}
