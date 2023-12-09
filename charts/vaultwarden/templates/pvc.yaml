@@ -1,4 +1,4 @@
-{{- if eq (include "vaultwarden.deploymentKind" .) "Deployment" }}
+{{- if eq (include "vaultwarden.resourceType" .) "Deployment" }}
 {{- range $pvc := (fromYaml (include "vaultwarden.pvcSpec" .)).volumeClaimTemplates }}
 ---
 apiVersion: v1
