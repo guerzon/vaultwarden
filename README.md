@@ -11,6 +11,10 @@ This [Helm](https://helm.sh/docs/) chart is used to deploy `vaultwarden` with a 
 
 The `vaultwarden` project can be found [here](https://github.com/dani-garcia/vaultwarden). To learn more about Vaultwarden, please visit the [wiki](https://github.com/dani-garcia/vaultwarden/wiki).
 
+### Change of Resource Type in Versions >= 0.18.0
+
+Starting from version 0.18.0, when a stateless configuration is detected that utilizes an external database and persistent storage, a `Deployment` is automatically used in favor of the current `StatefulSet`. This enables running multiple pods simultaneously, thereby enhancing the processes of updates, rollbacks, and scalability for load balancing. This automatic detection can be overridden by manually specifying a `resourceType`.
+
 ## Prerequisites
 
 - Kubernetes >= 1.12
