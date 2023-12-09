@@ -46,10 +46,14 @@ rocket:
 ##
 webVaultEnabled: "true"
 
-## @section Overwrite automatic deployment kind detection
+## @section Overwrite automatic resource type detection
 ## Can be either Deployment or StatefulSet
 ##
-deploymentKind: ""
+resourceType: ""
+
+## @param configMapAnnotations Add extra annotations to the configmap
+##
+configMapAnnotations: {}
 
 ## @section Pod configuration
 ##

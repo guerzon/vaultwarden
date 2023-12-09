@@ -1,4 +1,4 @@
-{{- if eq (include "vaultwarden.deploymentKind" .) "StatefulSet" }}
+{{- if eq (include "vaultwarden.resourceType" .) "StatefulSet" }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
