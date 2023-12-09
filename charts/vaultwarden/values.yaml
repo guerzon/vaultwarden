@@ -266,6 +266,8 @@ service:
   ## @param service.labels Additional labels for the service
   ##
   labels: {}
+  ## @param service.ipFamilyPolicy IP family policy for the service
+  ipFamilyPolicy: "SingleStack"
 
 ## @section Database Configuration
 ##
