@@ -380,6 +380,7 @@ data: {}
   # size: "15Gi"
   # class: ""
   # path: "/data"
+  # keepPvc: false
 
 ## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
 ## By default, attachments/ is located inside the data directory.

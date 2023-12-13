@@ -208,13 +208,24 @@ data:
   path: "/srv/vaultwarden-data"
 ```
 
-To use persistent storage for attachments, set the `attachmenets` dictionary. Optionally set a different path. Note that by default, the path is `/data/attachments`.
+To use persistent storage for attachments, set the `attachments` dictionary. Optionally set a different path. Note that by default, the path is `/data/attachments`.
 
 ```yaml
 data:
   name: "vaultwarden-data"
   size: "15Gi"
   class: "local-path"
+```
+
+In case you want to keep the existing persistent volume claim during uninstall and redeployments, set the option `keepPvc: true`
+(This will be ignored for StatefulSets and is only relevant for `resourceType: Deployment`)
+
+```yaml
+data:
+  name: "vaultwarden-data"
+  size: "15Gi"
+  class: "local-path"
+  keepPvc: true
 ```
 
 ## Uninstall
