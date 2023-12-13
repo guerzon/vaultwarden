@@ -27,6 +27,12 @@ volumeClaimTemplates:
       name: {{ .name }}
       labels:
         {{- include "vaultwarden.labels" $ | nindent 10 }}
+      annotations:
+        meta.helm.sh/release-name: {{ $.Release.Name | quote }}
+        meta.helm.sh/release-namespace: {{ $.Release.Namespace | quote }}
+        {{- if .keepPvc }}
+        helm.sh/resource-policy: keep
+        {{- end }}
     spec:
       accessModes:
         - "ReadWriteOnce"

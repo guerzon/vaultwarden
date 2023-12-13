@@ -390,6 +390,7 @@ attachments: {}
   # size: "100Gi"
   # class: ""
   # path: /files
+  # keepPvc: false
 
 ## @section Logging Configuration
 ##
