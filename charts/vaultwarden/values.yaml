@@ -194,7 +194,7 @@ livenessProbe:
   enabled: true
   ## @param livenessProbe.initialDelaySeconds Delay before liveness probe is initiated
   ##
-  initialDelaySeconds: 200
+  initialDelaySeconds: 5
   ## @param livenessProbe.timeoutSeconds How long to wait for the probe to succeed
   ##
   timeoutSeconds: 1
@@ -239,7 +239,7 @@ startupProbe:
   enabled: false
   ## @param startupProbe.initialDelaySeconds Delay before startup probe is initiated
   ##
-  initialDelaySeconds: 60
+  initialDelaySeconds: 5
   ## @param startupProbe.timeoutSeconds How long to wait for the probe to succeed
   ##
   timeoutSeconds: 1
