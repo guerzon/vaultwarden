@@ -253,7 +253,23 @@ startupProbe:
   ##
   failureThreshold: 10
 
+## Pod security options
+podSecurityContext: {}
+  # fsGroup: 1001
+  # supplementalGroups:
+  #   - 1001
+
+## Default security options to run vault as read only container without privilege escalation
 securityContext: {}
+  # allowPrivilegeEscalation: false
+  # privileged: false
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsGroup: 1001
+  # runAsUser: 1001
+  # capabilities:
+  #   drop:
+  #     - ALL
 
 ## Service configuration
 service:
