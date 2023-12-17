@@ -11,6 +11,10 @@ affinity:
 tolerations:
 {{- toYaml . | nindent 8 }}
 {{- end }}
+{{- with .Values.podSecurityContext }}
+securityContext:
+  {{- toYaml . | nindent 8 }}
+{{- end }}
 {{- with .Values.initContainers }}
 initContainers:
 {{- toYaml . | nindent 8 }}
