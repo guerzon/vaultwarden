@@ -293,6 +293,9 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `serviceAccount.name`          | Name of the service account to create                                                                    | `vaultwarden-svc`                                                                                                                        |
 | `podSecurityContext`           | Pod security options                                                                                     | `{}`                                                                                                                                     |
 | `securityContext`              | Default security options to run vault as read only container without privilege escalation                | `{}`                                                                                                                                     |
+| `yubico.clientId`              | Yubico client ID                                                                                         | `""`                                                                                                                                     |
+| `yubico.secretKey`             | Yubico secret key                                                                                        | `""`                                                                                                                                     |
+| `yubico.server`                | Specify a Yubico server, otherwise the default servers will be used                                      | `""`                                                                                                                                     |
 
 ### Exposure Parameters
 

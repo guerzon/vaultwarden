@@ -63,3 +63,10 @@ data:
   PUSH_INSTALLATION_ID: {{ .Values.pushNotifications.installationId | quote }}
   PUSH_INSTALLATION_KEY: {{ .Values.pushNotifications.installationKey | quote }}
   {{- end }}
+  {{- if and .Values.yubico.clientId .Values.yubico.secretKey }}
+  YUBICO_CLIENT_ID: {{ .Values.yubico.clientId | quote }}
+  YUBICO_SECRET_KEY: {{ .Values.yubico.secretKey | quote }}
+  {{- if .Values.yubico.server }}
+  YUBICO_SERVER: {{ .Values.yubico.server | quote }}
+  {{- end }}
+  {{- end }}
