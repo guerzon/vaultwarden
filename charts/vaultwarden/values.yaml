@@ -35,6 +35,7 @@ websocket:
   enabled: true
   address: "0.0.0.0"
   port: 3012
+## @param rocket.address Address to bind to
 ## @param rocket.port Rocket port
 ## @param rocket.workers Rocket number of workers
 ##
@@ -47,7 +48,8 @@ rocket:
 webVaultEnabled: "true"
 
 ## @section Overwrite automatic resource type detection
-## Can be either Deployment or StatefulSet
+##
+## @param resourceType Can be either Deployment or StatefulSet
 ##
 resourceType: ""
 
@@ -127,6 +129,25 @@ serviceAccount:
   create: true
   name: "vaultwarden-svc"
 
+## @param podSecurityContext Pod security options
+##
+podSecurityContext: {}
+  # fsGroup: 1001
+  # supplementalGroups:
+  #   - 1001
+
+## @param securityContext Default security options to run vault as read only container without privilege escalation
+securityContext: {}
+  # allowPrivilegeEscalation: false
+  # privileged: false
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsGroup: 1001
+  # runAsUser: 1001
+  # capabilities:
+  #   drop:
+  #     - ALL
+
 
 ## @section Exposure Parameters
 ##
@@ -183,6 +204,20 @@ ingress:
   ##   - Support for multiple TLS hostnames.
   ##
 
+## Service configuration
+service:
+  ## @param service.type Service type
+  ##
+  type: "ClusterIP"
+  ## @param service.annotations Additional annotations for the vaultwarden service
+  ##
+  annotations: {}
+  ## @param service.labels Additional labels for the service
+  ##
+  labels: {}
+  ## @param service.ipFamilyPolicy IP family policy for the service
+  ipFamilyPolicy: "SingleStack"
+
 ## @section Probe Parameters
 ##
 
@@ -230,7 +265,6 @@ readinessProbe:
   ##
   failureThreshold: 3
 
-
 ## Startup probe configuration
 ##
 startupProbe:
@@ -252,38 +286,6 @@ startupProbe:
   ## @param startupProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed
   ##
   failureThreshold: 10
-
-## Pod security options
-podSecurityContext: {}
-  # fsGroup: 1001
-  # supplementalGroups:
-  #   - 1001
-
-## Default security options to run vault as read only container without privilege escalation
-securityContext: {}
-  # allowPrivilegeEscalation: false
-  # privileged: false
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsGroup: 1001
-  # runAsUser: 1001
-  # capabilities:
-  #   drop:
-  #     - ALL
-
-## Service configuration
-service:
-  ## @param service.type Service type
-  ##
-  type: "ClusterIP"
-  ## @param service.annotations Additional annotations for the vaultwarden service
-  ##
-  annotations: {}
-  ## @param service.labels Additional labels for the service
-  ##
-  labels: {}
-  ## @param service.ipFamilyPolicy IP family policy for the service
-  ipFamilyPolicy: "SingleStack"
 
 ## @section Database Configuration
 ##
@@ -418,7 +420,7 @@ logging:
   ##
   logFile: ""
 
-## @section Extra containers Configuration
+## @section Extra Configuration
 ##
 
 ## @param initContainers extra init containers for initializing the vaultwarden instance
@@ -428,9 +430,6 @@ initContainers: []
 ## @param sidecars extra containers running alongside the vaultwarden instance
 ##
 sidecars: []
-
-## @section Extra Configuration
-##
 
 ## @param nodeSelector Node labels for pod assignment
 ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -477,19 +476,20 @@ resources: {}
   #   cpu: 50m
   #   memory: 256Mi
 
+## @param strategy Resource configurations
+##
 strategy: {}
   # type: RollingUpdate
   # rollingUpdate:
   #   maxSurge: 1
   #   maxUnavailable: 0
 
-# PodDisruptionBudget settings
 podDisruptionBudget:
-  # -- enable PodDisruptionBudget
+  ## @param podDisruptionBudget.enabled Enable PodDisruptionBudget settings
   # ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
   enabled: false
-  # -- Minimum number/percentage of pods that should remain scheduled.
+  ## @param podDisruptionBudget.minAvailable Minimum number/percentage of pods that should remain scheduled.
   # When it's set, maxUnavailable must be disabled by `maxUnavailable: null`
   minAvailable: 1
-  # -- Maximum number/percentage of pods that may be made unavailable
+  ## @param podDisruptionBudget.maxUnavailable Maximum number/percentage of pods that may be made unavailable
   maxUnavailable: null

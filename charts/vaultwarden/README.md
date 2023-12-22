@@ -247,16 +247,24 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | ------------------- | --------------------------------------------- | -------------------- |
 | `image.registry`    | Vaultwarden image registry                    | `docker.io`          |
 | `image.repository`  | Vaultwarden image repository                  | `vaultwarden/server` |
-| `image.tag`         | Vaultwarden image tag                         | `1.29.2-alpine`      |
+| `image.tag`         | Vaultwarden image tag                         | `1.30.1-alpine`      |
 | `image.pullPolicy`  | Vaultwarden image pull policy                 | `IfNotPresent`       |
 | `image.pullSecrets` | Specify docker-registry secret names          | `[]`                 |
 | `domain`            | Domain name where the application is accessed | `""`                 |
 | `websocket.enabled` | Enable websocket notifications                | `true`               |
 | `websocket.address` | Websocket listen address                      | `0.0.0.0`            |
 | `websocket.port`    | Websocket listen port                         | `3012`               |
+| `rocket.address`    | Address to bind to                            | `0.0.0.0`            |
 | `rocket.port`       | Rocket port                                   | `8080`               |
 | `rocket.workers`    | Rocket number of workers                      | `10`                 |
 | `webVaultEnabled`   | Enable Web Vault                              | `true`               |
+
+### Overwrite automatic resource type detection
+
+| Name                   | Description                             | Value |
+| ---------------------- | --------------------------------------- | ----- |
+| `resourceType`         | Can be either Deployment or StatefulSet | `""`  |
+| `configMapAnnotations` | Add extra annotations to the configmap  | `{}`  |
 
 ### Pod configuration
 
@@ -283,6 +291,8 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `ipHeader`                     | Client IP Header, used to identify the IP of the client                                                  | `X-Real-IP`                                                                                                                              |
 | `serviceAccount.create`        | Create a service account                                                                                 | `true`                                                                                                                                   |
 | `serviceAccount.name`          | Name of the service account to create                                                                    | `vaultwarden-svc`                                                                                                                        |
+| `podSecurityContext`           | Pod security options                                                                                     | `{}`                                                                                                                                     |
+| `securityContext`              | Default security options to run vault as read only container without privilege escalation                | `{}`                                                                                                                                     |
 
 ### Exposure Parameters
 
@@ -304,6 +314,30 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `service.type`                    | Service type                                                                   | `ClusterIP`          |
 | `service.annotations`             | Additional annotations for the vaultwarden service                             | `{}`                 |
 | `service.labels`                  | Additional labels for the service                                              | `{}`                 |
+| `service.ipFamilyPolicy`          | IP family policy for the service                                               | `SingleStack`        |
+
+### Probe Parameters
+
+| Name                                 | Description                                                             | Value   |
+| ------------------------------------ | ----------------------------------------------------------------------- | ------- |
+| `livenessProbe.enabled`              | Enable liveness probe                                                   | `true`  |
+| `livenessProbe.initialDelaySeconds`  | Delay before liveness probe is initiated                                | `5`     |
+| `livenessProbe.timeoutSeconds`       | How long to wait for the probe to succeed                               | `1`     |
+| `livenessProbe.periodSeconds`        | How often to perform the probe                                          | `10`    |
+| `livenessProbe.successThreshold`     | Minimum consecutive successes for the probe to be considered successful | `1`     |
+| `livenessProbe.failureThreshold`     | Minimum consecutive failures for the probe to be considered failed      | `10`    |
+| `readinessProbe.enabled`             | Enable readiness probe                                                  | `true`  |
+| `readinessProbe.initialDelaySeconds` | Delay before readiness probe is initiated                               | `5`     |
+| `readinessProbe.timeoutSeconds`      | How long to wait for the probe to succeed                               | `1`     |
+| `readinessProbe.periodSeconds`       | How often to perform the probe                                          | `10`    |
+| `readinessProbe.successThreshold`    | Minimum consecutive successes for the probe to be considered successful | `1`     |
+| `readinessProbe.failureThreshold`    | Minimum consecutive failures for the probe to be considered failed      | `3`     |
+| `startupProbe.enabled`               | Enable startup probe                                                    | `false` |
+| `startupProbe.initialDelaySeconds`   | Delay before startup probe is initiated                                 | `5`     |
+| `startupProbe.timeoutSeconds`        | How long to wait for the probe to succeed                               | `1`     |
+| `startupProbe.periodSeconds`         | How often to perform the probe                                          | `10`    |
+| `startupProbe.successThreshold`      | Minimum consecutive successes for the probe to be considered successful | `1`     |
+| `startupProbe.failureThreshold`      | Minimum consecutive failures for the probe to be considered failed      | `10`    |
 
 ### Database Configuration
 
@@ -354,21 +388,20 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `logging.logLevel` | Specify the log level | `""`  |
 | `logging.logFile`  | Log to a file         | `""`  |
 
-### Extra containers Configuration
-
-| Name             | Description                                                     | Value |
-| ---------------- | --------------------------------------------------------------- | ----- |
-| `initContainers` | extra init containers for initializing the vaultwarden instance | `[]`  |
-| `sidecars`       | extra containers running alongside the vaultwarden instance     | `[]`  |
-
 ### Extra Configuration
 
-| Name                     | Description                           | Value |
-| ------------------------ | ------------------------------------- | ----- |
-| `nodeSelector`           | Node labels for pod assignment        | `{}`  |
-| `affinity`               | Affinity for pod assignment           | `{}`  |
-| `tolerations`            | Tolerations for pod assignment        | `[]`  |
-| `statefulsetlabels`      | Additional labels for the statefulset | `{}`  |
-| `statefulsetAnnotations` | Annotations for the statefulset       | `{}`  |
-| `pushNotifications`      | Enable mobile push notifications      | `{}`  |
-| `resources`              | Resource configurations               | `{}`  |
+| Name                                 | Description                                                     | Value   |
+| ------------------------------------ | --------------------------------------------------------------- | ------- |
+| `initContainers`                     | extra init containers for initializing the vaultwarden instance | `[]`    |
+| `sidecars`                           | extra containers running alongside the vaultwarden instance     | `[]`    |
+| `nodeSelector`                       | Node labels for pod assignment                                  | `{}`    |
+| `affinity`                           | Affinity for pod assignment                                     | `{}`    |
+| `tolerations`                        | Tolerations for pod assignment                                  | `[]`    |
+| `commonLabels`                       | Additional labels for the deployment or statefulset             | `{}`    |
+| `commonAnnotations`                  | Annotations for the deployment or statefulset                   | `{}`    |
+| `pushNotifications`                  | Enable mobile push notifications                                | `{}`    |
+| `resources`                          | Resource configurations                                         | `{}`    |
+| `strategy`                           | Resource configurations                                         | `{}`    |
+| `podDisruptionBudget.enabled`        | Enable PodDisruptionBudget settings                             | `false` |
+| `podDisruptionBudget.minAvailable`   | Minimum number/percentage of pods that should remain scheduled. | `1`     |
+| `podDisruptionBudget.maxUnavailable` | Maximum number/percentage of pods that may be made unavailable  | `nil`   |
