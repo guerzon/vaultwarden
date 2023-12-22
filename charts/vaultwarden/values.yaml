@@ -148,6 +148,15 @@ securityContext: {}
   #   drop:
   #     - ALL
 
+## @param yubico.clientId Yubico client ID
+## @param yubico.secretKey Yubico secret key
+## @param yubico.server Specify a Yubico server, otherwise the default servers will be used
+##
+yubico:
+  clientId: ""
+  secretKey: ""
+  server: ""
+
 
 ## @section Exposure Parameters
 ##
