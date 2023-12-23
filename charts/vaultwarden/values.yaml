@@ -296,6 +296,10 @@ startupProbe:
   ##
   failureThreshold: 10
 
+  ## @param service.name Vaultwarden service/ingress name
+  ##
+  name: vaultwarden
+
 ## @section Database Configuration
 ##
 database:
