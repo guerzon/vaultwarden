@@ -70,3 +70,6 @@ data:
   YUBICO_SERVER: {{ .Values.yubico.server | quote }}
   {{- end }}
   {{- end }}
+  {{- with .Values.experimentalClientFeatureFlags }}
+  EXPERIMENTAL_CLIENT_FEATURE_FLAGS: {{ . | quote }}
+  {{- end }}

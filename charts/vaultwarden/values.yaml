@@ -157,6 +157,14 @@ yubico:
   secretKey: ""
   server: ""
 
+## @param experimentalClientFeatureFlags Comma separated list of experimental features to enable in clients, make sure to check which features are already enabled by default (.env.template)
+## Possible values:
+##  - "autofill-overlay": Add an overlay menu to form fields for quick access to credentials.
+##  - "autofill-v2": Use the new autofill implementation.
+##  - "browser-fileless-import": Directly import credentials from other providers without a file.
+##  - "fido2-vault-credentials": Enable the use of FIDO2 security keys as second factor.
+experimentalClientFeatureFlags: null
+
 
 ## @section Exposure Parameters
 ##
