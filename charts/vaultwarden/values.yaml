@@ -114,6 +114,69 @@ fullnameOverride: ""
 ##
 invitationOrgName: "Vaultwarden"
 
+## @param orgCreationUsers Controls which users can create new orgs.
+## Blank or 'all' means all users can create orgs.
+## 'none' means no users can create orgs.
+## A comma-separated list means only those users can create orgs.
+##
+orgCreationUsers: ""
+
+## @param orgEventsEnabled Controls whether event logging is enabled for organizations
+##
+orgEventsEnabled: "false"
+
+## @param sendsAllowed Controls whether users are allowed to create Bitwarden Sends.
+##
+sendsAllowed: "true"
+
+## @param emergencyAccessAllowed Controls whether users can enable emergency access to their accounts.
+##
+emergencyAccessAllowed: "true"
+
+## @param emergencyNotifReminderSched Cron schedule of the job that sends expiration reminders to emergency access grantors.
+## Set to blank to disable this job.
+##
+emergencyNotifReminderSched: "0 3 * * * *"
+
+## @param emergencyRqstTimeoutSched Cron schedule of the job that grants emergency access requests that have met the required wait time.
+## Set to blank to disable this job.
+##
+emergencyRqstTimeoutSched: "0 7 * * * *"
+
+## @param eventCleanupSched Cron schedule of the job that cleans old events from the event table.
+## Set to blank to disable this job. Also without eventsDayRetain set, this job will not start.
+##
+eventCleanupSched: "0 10 0 * * *"
+
+## @param eventsDayRetain Number of days to retain events stored in the database.
+## If unset (the default), events are kept indefinitely and the scheduled job is disabled!
+##
+eventsDayRetain: ""
+
+## @param iconService The predefined icon services are: internal, bitwarden, duckduckgo, google.
+##
+iconService: "internal"
+
+## @param invitationExpirationHours The number of hours after which an organization invite token, emergency access invite token,
+## email verification token and deletion request token will expire (must be at least 1)
+##
+invitationExpirationHours: "120"
+
+## @param requireDeviceEmail Require new device emails. When a user logs in an email is required to be sent.
+##
+requireDeviceEmail: "false"
+
+## @param trashAutoDeleteDays Number of days to wait before auto-deleting a trashed item.
+## If unset (the default), trashed items are not auto-deleted.
+## This setting applies globally, so make sure to inform all users of any changes to this setting.
+##
+trashAutoDeleteDays: ""
+
+## @param timeZone Specify timezone different from the default (UTC).
+## For example: "Europe/Berlin"
+##
+timeZone: ""
+
 ## @param iconBlacklistNonGlobalIps Whether block non-global IPs.
 ## Useful to secure your internal environment: See https://en.wikipedia.org/wiki/Reserved_IP_addresses for a list of IPs which it will block
 iconBlacklistNonGlobalIps: "true"
@@ -437,6 +500,10 @@ logging:
   ##
   logFile: ""
 
+## @param extendedLogging Enable extended logging, which shows timestamps and targets in the logs
+##
+extendedLogging: "true"
+
 ## @section Extra Configuration
 ##
 
@@ -510,3 +577,9 @@ podDisruptionBudget:
   minAvailable: 1
   ## @param podDisruptionBudget.maxUnavailable Maximum number/percentage of pods that may be made unavailable
   maxUnavailable: null
+
+## @section BETA Features
+##
+
+## @param orgGroupsEnabled Controls whether group support is enabled for organizations
+orgGroupsEnabled: "false"
