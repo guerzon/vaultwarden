@@ -1,4 +1,4 @@
-## @section Vaultwarden settings
+## @section Kubernetes settings
 ##
 image:
   ## @param image.registry Vaultwarden image registry
@@ -23,167 +23,58 @@ image:
   ##   - myRegistryKeySecretName
   ##
   pullSecrets: []
-## @param domain Domain name where the application is accessed
-## Example: https://warden.contoso.com:8443
-##
-domain: ""
-## @param websocket.enabled Enable websocket notifications
-## @param websocket.address Websocket listen address
-## @param websocket.port Websocket listen port
-##
-websocket:
-  enabled: true
-  address: "0.0.0.0"
-  port: 3012
-## @param rocket.address Address to bind to
-## @param rocket.port Rocket port
-## @param rocket.workers Rocket number of workers
-##
-rocket:
-  address: "0.0.0.0"
-  port: "8080"
-  workers: "10"
-## @param webVaultEnabled Enable Web Vault
-##
-webVaultEnabled: "true"
 
-## @section Overwrite automatic resource type detection
+## @param fullnameOverride String to override the application name.
 ##
+fullnameOverride: ""
+
 ## @param resourceType Can be either Deployment or StatefulSet
+## Overwrite automatic resource type detection by specifying the resource type
 ##
 resourceType: ""
+
+## @param commonAnnotations Annotations for the deployment or statefulset
+##
+commonAnnotations: {}
 
 ## @param configMapAnnotations Add extra annotations to the configmap
 ##
 configMapAnnotations: {}
 
-## @section Pod configuration
-##
 ## @param podAnnotations Add extra annotations to the pod
 ##
 podAnnotations: {}
+
+## @param commonLabels Additional labels for the deployment or statefulset
+##
+commonLabels: {}
+
 ## @param podLabels Add extra labels to the pod
 ##
 podLabels: {}
 
-## @section Security settings
+## @param initContainers extra init containers for initializing the vaultwarden instance
 ##
+initContainers: []
 
-adminToken:
-  ## @param adminToken.existingSecret Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey.
-  ## Example: admincreds_secret
-  ##
-  existingSecret: ""
-  ## @param adminToken.existingSecretKey When using adminToken.existingSecret, specify the key containing the token.
-  ## Example: ADMIN_TOKEN
-  ##
-  existingSecretKey: ""
-  ## @param adminToken.value Plain or argon2 string containing the admin token.
-  ## This example is the argon2 has of "R@ndomTokenString" (no quotes).
-  ##
-  value: "$argon2id$v=19$m=19456,t=2,p=1$Vkx1VkE4RmhDMUhwNm9YVlhPQkVOZk1Yc1duSDdGRVYzd0Y5ZkgwaVg0Yz0$PK+h1ANCbzzmEKaiQfCjWw+hWFaMKvLhG2PjRanH5Kk"
+## @param sidecars extra containers running alongside the vaultwarden instance
+##
+sidecars: []
 
-## @param signupsAllowed By default, anyone who can access your instance can register for a new account.
-## To disable this, set this parameter to false. Even when signupsAllowed=false, an existing user who is
-## an organization owner or admin can still invite new users. If you want to disable this as well, set
-## invitationsAllowed to false. The vaultwarden admin can invite anyone via the admin page, regardless
-## of any of the restrictions above
+## @param nodeSelector Node labels for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
 ##
-## If signupDomains is set, then the value of signupsAllowed is ignored
-signupsAllowed: true
-## @param invitationsAllowed Even when registration is disabled, organization administrators or owners can
-## invite users to join organization. After they are invited, they can register with the invited email even
-## if signupsAllowed is actually set to false. You can disable this functionality completely by setting
-## invitationsAllowed env variable to false
-invitationsAllowed: true
-## @param signupDomains List of domain names for users allowed to register. For example:
-## example.com,example.net,example.org.
-##
-signupDomains: ""
-## @param signupsVerify Whether to require account verification for newly-registered users.
-##
-signupsVerify: "true"
-## @param showPassHint Whether a password hint should be shown in the page.
-##
-showPassHint: "false"
-## @param fullnameOverride String to override the application name.
-##
-fullnameOverride: ""
+nodeSelector: {}
 
-## @param invitationOrgName String Name shown in the invitation emails that don't come from a specific organization
+## @param affinity Affinity for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ##
-invitationOrgName: "Vaultwarden"
+affinity: {}
 
-## @param orgCreationUsers Controls which users can create new orgs.
-## Blank or 'all' means all users can create orgs.
-## 'none' means no users can create orgs.
-## A comma-separated list means only those users can create orgs.
+## @param tolerations Tolerations for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 ##
-orgCreationUsers: ""
-
-## @param orgEventsEnabled Controls whether event logging is enabled for organizations
-##
-orgEventsEnabled: "false"
-
-## @param sendsAllowed Controls whether users are allowed to create Bitwarden Sends.
-##
-sendsAllowed: "true"
-
-## @param emergencyAccessAllowed Controls whether users can enable emergency access to their accounts.
-##
-emergencyAccessAllowed: "true"
-
-## @param emergencyNotifReminderSched Cron schedule of the job that sends expiration reminders to emergency access grantors.
-## Set to blank to disable this job.
-##
-emergencyNotifReminderSched: "0 3 * * * *"
-
-## @param emergencyRqstTimeoutSched Cron schedule of the job that grants emergency access requests that have met the required wait time.
-## Set to blank to disable this job.
-##
-emergencyRqstTimeoutSched: "0 7 * * * *"
-
-## @param eventCleanupSched Cron schedule of the job that cleans old events from the event table.
-## Set to blank to disable this job. Also without eventsDayRetain set, this job will not start.
-##
-eventCleanupSched: "0 10 0 * * *"
-
-## @param eventsDayRetain Number of days to retain events stored in the database.
-## If unset (the default), events are kept indefinitely and the scheduled job is disabled!
-##
-eventsDayRetain: ""
-
-## @param iconService The predefined icon services are: internal, bitwarden, duckduckgo, google.
-##
-iconService: "internal"
-
-## @param invitationExpirationHours The number of hours after which an organization invite token, emergency access invite token,
-## email verification token and deletion request token will expire (must be at least 1)
-##
-invitationExpirationHours: "120"
-
-## @param requireDeviceEmail Require new device emails. When a user logs in an email is required to be sent.
-##
-requireDeviceEmail: "false"
-
-## @param trashAutoDeleteDays Number of days to wait before auto-deleting a trashed item.
-## If unset (the default), trashed items are not auto-deleted.
-## This setting applies globally, so make sure to inform all users of any changes to this setting.
-##
-trashAutoDeleteDays: ""
-
-## @param timeZone Specify timezone different from the default (UTC).
-## For example: "Europe/Berlin"
-##
-timeZone: ""
-
-## @param iconBlacklistNonGlobalIps Whether block non-global IPs.
-## Useful to secure your internal environment: See https://en.wikipedia.org/wiki/Reserved_IP_addresses for a list of IPs which it will block
-iconBlacklistNonGlobalIps: "true"
-
-## @param ipHeader Client IP Header, used to identify the IP of the client
-##
-ipHeader: "X-Real-IP"
+tolerations: []
 
 ## @param serviceAccount.create Create a service account
 ## @param serviceAccount.name Name of the service account to create
@@ -211,94 +102,8 @@ securityContext: {}
   #   drop:
   #     - ALL
 
-## @param yubico.clientId Yubico client ID
-## @param yubico.secretKey Yubico secret key
-## @param yubico.server Specify a Yubico server, otherwise the default servers will be used
-##
-yubico:
-  clientId: ""
-  secretKey: ""
-  server: ""
 
-## @param experimentalClientFeatureFlags Comma separated list of experimental features to enable in clients, make sure to check which features are already enabled by default (.env.template)
-## Possible values:
-##  - "autofill-overlay": Add an overlay menu to form fields for quick access to credentials.
-##  - "autofill-v2": Use the new autofill implementation.
-##  - "browser-fileless-import": Directly import credentials from other providers without a file.
-##  - "fido2-vault-credentials": Enable the use of FIDO2 security keys as second factor.
-experimentalClientFeatureFlags: null
-
-
-## @section Exposure Parameters
-##
-
-## Ingress configuration
-## Refer to the README for some examples
-##
-ingress:
-  ## @param ingress.enabled Deploy an ingress resource.
-  ##
-  enabled: false
-  ## @param ingress.class Ingress resource class
-  ## The Ingress class to use, e. g. "nginx" for a nginx ingress controller or "alb" for a AWS LB controller.
-  #
-  class: "nginx"
-  ## @param ingress.nginxIngressAnnotations Add nginx specific ingress annotations
-  ## This annotations are only makes sense for the kubernetes nginx ingress controller (https://kubernetes.github.io/ingress-nginx/)
-  ##
-  nginxIngressAnnotations: true
-  ## @param ingress.additionalAnnotations Additional annotations for the ingress resource.
-  ##
-  additionalAnnotations: {}
-  ## @param ingress.labels Additional labels for the ingress resource.
-  ##
-  labels: {}
-  ## @param ingress.tls Enable TLS on the ingress resource.
-  ##
-  tls: true
-  ## @param ingress.hostname Hostname for the ingress.
-  ##
-  hostname: "warden.contoso.com"
-  ## @param ingress.path Default application path for the ingress
-  ##
-  path: "/"
-  ## @param ingress.pathWs Path for the websocket ingress
-  ##
-  pathWs: "/notifications/hub"
-  ## @param ingress.pathType Path type for the ingress
-  ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
-  ##
-  pathType: "Prefix"
-  ## @param ingress.pathTypeWs Path type for the ingress
-  ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
-  ##
-  pathTypeWs: "Exact"
-  ## @param ingress.tlsSecret Kubernetes secret containing the SSL certificate when using the "nginx" class.
-  ##
-  tlsSecret: ""
-  ## @param ingress.nginxAllowList Comma-separated list of IP addresses and subnets to allow.
-  ##
-  nginxAllowList: ""
-  ## TODO:
-  ##   - Add support for using cert-manager.
-  ##   - Support for multiple TLS hostnames.
-  ##
-
-## Service configuration
-service:
-  ## @param service.type Service type
-  ##
-  type: "ClusterIP"
-  ## @param service.annotations Additional annotations for the vaultwarden service
-  ##
-  annotations: {}
-  ## @param service.labels Additional labels for the service
-  ##
-  labels: {}
-  ## @param service.ipFamilyPolicy IP family policy for the service
-  ipFamilyPolicy: "SingleStack"
-
-## @section Probe Parameters
+## @section Reliability configuration
 ##
 
 ## Liveness probe configuration
@@ -367,8 +172,68 @@ startupProbe:
   ##
   failureThreshold: 10
 
-## @section Database Configuration
+## @param resources Resource configurations
 ##
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 300m
+  #   memory: 1Gi
+  # requests:
+  #   cpu: 50m
+  #   memory: 256Mi
+
+## @param strategy Resource configurations
+##
+strategy: {}
+  # type: RollingUpdate
+  # rollingUpdate:
+  #   maxSurge: 1
+  #   maxUnavailable: 0
+
+podDisruptionBudget:
+  ## @param podDisruptionBudget.enabled Enable PodDisruptionBudget settings
+  # ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+  enabled: false
+  ## @param podDisruptionBudget.minAvailable Minimum number/percentage of pods that should remain scheduled.
+  # When it's set, maxUnavailable must be disabled by `maxUnavailable: null`
+  minAvailable: 1
+  ## @param podDisruptionBudget.maxUnavailable Maximum number/percentage of pods that may be made unavailable
+  maxUnavailable: null
+
+
+## @section Persistent data configuration
+##
+
+## @param data Data directory configuration, refer to values.yaml for parameters.
+##
+data: {}
+  # name: "vaultwarden-data"
+  # size: "15Gi"
+  # class: ""
+  # path: "/data"
+  # keepPvc: false
+
+## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
+## By default, attachments/ is located inside the data directory.
+##
+attachments: {}
+  # name: "vaultwarden-files"
+  # size: "100Gi"
+  # class: ""
+  # path: /files
+  # keepPvc: false
+
+## @param webVaultEnabled Enable Web Vault
+##
+webVaultEnabled: "true"
+
+## @section Database settings
+##
+
 database:
   ## @param database.type Database type, either mysql or postgresql
   ## Default is a sqlite database.
@@ -404,6 +269,196 @@ database:
   ## @param database.maxConnections Define the size of the connection pool used for connecting to the database.
   ##
   maxConnections: 10
+
+## @section Push notifications
+##
+
+## @param pushNotifications Enable mobile push notifications, see values.yaml for parameters
+## Supported since 1.29.0.
+## Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details
+##
+pushNotifications: {}
+  # installationId: ""
+  # installationKey: ""
+
+## @section Scheduled jobs
+##
+
+## @param emergencyNotifReminderSched Cron schedule of the job that sends expiration reminders to emergency access grantors.
+## Set to blank to disable this job.
+##
+emergencyNotifReminderSched: "0 3 * * * *"
+
+## @param emergencyRqstTimeoutSched Cron schedule of the job that grants emergency access requests that have met the required wait time.
+## Set to blank to disable this job.
+##
+emergencyRqstTimeoutSched: "0 7 * * * *"
+
+## @param eventCleanupSched Cron schedule of the job that cleans old events from the event table.
+## Set to blank to disable this job. Also without eventsDayRetain set, this job will not start.
+##
+eventCleanupSched: "0 10 0 * * *"
+
+## @param eventsDayRetain Number of days to retain events stored in the database.
+## If unset (the default), events are kept indefinitely and the scheduled job is disabled!
+##
+eventsDayRetain: ""
+
+## @section General settings
+##
+
+## @param domain Domain name where the application is accessed
+## Example: https://warden.contoso.com:8443
+##
+domain: ""
+
+## @param sendsAllowed Controls whether users are allowed to create Bitwarden Sends.
+##
+sendsAllowed: "true"
+
+## @param trashAutoDeleteDays Number of days to wait before auto-deleting a trashed item.
+## If unset (the default), trashed items are not auto-deleted.
+## This setting applies globally, so make sure to inform all users of any changes to this setting.
+##
+trashAutoDeleteDays: ""
+
+## @param signupsAllowed By default, anyone who can access your instance can register for a new account.
+## To disable this, set this parameter to false. Even when signupsAllowed=false, an existing user who is
+## an organization owner or admin can still invite new users. If you want to disable this as well, set
+## invitationsAllowed to false. The vaultwarden admin can invite anyone via the admin page, regardless
+## of any of the restrictions above
+##
+## If signupDomains is set, then the value of signupsAllowed is ignored
+signupsAllowed: true
+
+## @param signupsVerify Whether to require account verification for newly-registered users.
+##
+signupsVerify: "true"
+
+## @param signupDomains List of domain names for users allowed to register. For example:
+## example.com,example.net,example.org.
+##
+signupDomains: ""
+
+## @param orgEventsEnabled Controls whether event logging is enabled for organizations
+##
+orgEventsEnabled: "false"
+
+## @param orgCreationUsers Controls which users can create new orgs.
+## Blank or 'all' means all users can create orgs.
+## 'none' means no users can create orgs.
+## A comma-separated list means only those users can create orgs.
+##
+orgCreationUsers: ""
+
+## @param invitationsAllowed Even when registration is disabled, organization administrators or owners can
+## invite users to join organization. After they are invited, they can register with the invited email even
+## if signupsAllowed is actually set to false. You can disable this functionality completely by setting
+## invitationsAllowed env variable to false
+##
+invitationsAllowed: true
+
+## @param invitationOrgName String Name shown in the invitation emails that don't come from a specific organization
+##
+invitationOrgName: "Vaultwarden"
+
+## @param invitationExpirationHours The number of hours after which an organization invite token, emergency access invite token,
+## email verification token and deletion request token will expire (must be at least 1)
+##
+invitationExpirationHours: "120"
+
+## @param emergencyAccessAllowed Controls whether users can enable emergency access to their accounts.
+##
+emergencyAccessAllowed: "true"
+
+## @param showPassHint Controls whether a password hint should be shown directly in the web page if
+## SMTP service is not configured. Not recommended for publicly-accessible instances
+## as this provides unauthenticated access to potentially sensitive data.
+##
+showPassHint: "false"
+
+
+## @section Advanced settings
+##
+
+## @param ipHeader Client IP Header, used to identify the IP of the client
+##
+ipHeader: "X-Real-IP"
+
+## @param iconService The predefined icon services are: internal, bitwarden, duckduckgo, google.
+##
+iconService: "internal"
+
+## @param iconBlacklistNonGlobalIps Whether block non-global IPs.
+## Useful to secure your internal environment: See https://en.wikipedia.org/wiki/Reserved_IP_addresses for a list of IPs which it will block
+##
+iconBlacklistNonGlobalIps: "true"
+
+## @param experimentalClientFeatureFlags Comma separated list of experimental features to enable in clients, make sure to check which features are already enabled by default (.env.template)
+## Possible values:
+##  - "autofill-overlay": Add an overlay menu to form fields for quick access to credentials.
+##  - "autofill-v2": Use the new autofill implementation.
+##  - "browser-fileless-import": Directly import credentials from other providers without a file.
+##  - "fido2-vault-credentials": Enable the use of FIDO2 security keys as second factor.
+##
+experimentalClientFeatureFlags: null
+
+## @param requireDeviceEmail Require new device emails. When a user logs in an email is required to be sent.
+##
+requireDeviceEmail: "false"
+
+## @param extendedLogging Enable extended logging, which shows timestamps and targets in the logs
+##
+extendedLogging: "true"
+
+logging:
+  ## @param logging.logLevel Specify the log level
+  ##
+  logLevel: ""
+  ## @param logging.logFile Log to a file
+  ##
+  logFile: ""
+
+## Token for the admin interface, preferably an Argon2 PCH string
+adminToken:
+  ## @param adminToken.existingSecret Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey.
+  ## Example: admincreds_secret
+  ##
+  existingSecret: ""
+  ## @param adminToken.existingSecretKey When using adminToken.existingSecret, specify the key containing the token.
+  ## Example: ADMIN_TOKEN
+  ##
+  existingSecretKey: ""
+  ## @param adminToken.value Plain or argon2 string containing the admin token.
+  ## This example is the argon2 has of "R@ndomTokenString" (no quotes).
+  ##
+  value: "$argon2id$v=19$m=19456,t=2,p=1$Vkx1VkE4RmhDMUhwNm9YVlhPQkVOZk1Yc1duSDdGRVYzd0Y5ZkgwaVg0Yz0$PK+h1ANCbzzmEKaiQfCjWw+hWFaMKvLhG2PjRanH5Kk"
+
+## @param timeZone Specify timezone different from the default (UTC).
+## For example: "Europe/Berlin"
+##
+timeZone: ""
+
+
+## @section BETA Features
+##
+
+## @param orgGroupsEnabled Controls whether group support is enabled for organizations
+orgGroupsEnabled: "false"
+
+
+## @section MFA/2FA settings
+##
+
+## @param yubico.clientId Yubico client ID
+## @param yubico.secretKey Yubico secret key
+## @param yubico.server Specify a Yubico server, otherwise the default servers will be used
+##
+yubico:
+  clientId: ""
+  secretKey: ""
+  server: ""
+
 
 ## @section SMTP Configuration
 ##
@@ -468,118 +523,90 @@ smtp:
   ##
   debug: false
 
-## @section Persistent data configuration
+
+## @section Exposure settings 
 ##
 
-## @param data Data directory configuration, refer to values.yaml for parameters.
+## @param websocket.enabled Enable websocket notifications
+## @param websocket.address Websocket listen address
+## @param websocket.port Websocket listen port
 ##
-data: {}
-  # name: "vaultwarden-data"
-  # size: "15Gi"
-  # class: ""
-  # path: "/data"
-  # keepPvc: false
+websocket:
+  enabled: true
+  address: "0.0.0.0"
+  port: 3012
 
-## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
-## By default, attachments/ is located inside the data directory.
+## @param rocket.address Address to bind to
+## @param rocket.port Rocket port
+## @param rocket.workers Rocket number of workers
 ##
-attachments: {}
-  # name: "vaultwarden-files"
-  # size: "100Gi"
-  # class: ""
-  # path: /files
-  # keepPvc: false
+rocket:
+  address: "0.0.0.0"
+  port: "8080"
+  workers: "10"
 
-## @section Logging Configuration
-##
-logging:
-  ## @param logging.logLevel Specify the log level
+## Service configuration
+service:
+  ## @param service.type Service type
   ##
-  logLevel: ""
-  ## @param logging.logFile Log to a file
+  type: "ClusterIP"
+  ## @param service.annotations Additional annotations for the vaultwarden service
   ##
-  logFile: ""
+  annotations: {}
+  ## @param service.labels Additional labels for the service
+  ##
+  labels: {}
+  ## @param service.ipFamilyPolicy IP family policy for the service
+  ipFamilyPolicy: "SingleStack"
 
-## @param extendedLogging Enable extended logging, which shows timestamps and targets in the logs
+## Ingress configuration
+## Refer to the README for some examples
 ##
-extendedLogging: "true"
-
-## @section Extra Configuration
-##
-
-## @param initContainers extra init containers for initializing the vaultwarden instance
-##
-initContainers: []
-
-## @param sidecars extra containers running alongside the vaultwarden instance
-##
-sidecars: []
-
-## @param nodeSelector Node labels for pod assignment
-## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-##
-nodeSelector: {}
-
-## @param affinity Affinity for pod assignment
-## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-##
-affinity: {}
-
-## @param tolerations Tolerations for pod assignment
-## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-##
-tolerations: []
-
-## @param commonLabels Additional labels for the deployment or statefulset
-##
-commonLabels: {}
-
-## @param commonAnnotations Annotations for the deployment or statefulset
-##
-commonAnnotations: {}
-
-## @param pushNotifications Enable mobile push notifications
-## Supported since 1.29.0.
-## Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details
-##
-pushNotifications: {}
-  # installationId: ""
-  # installationKey: ""
-
-## @param resources Resource configurations
-##
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 300m
-  #   memory: 1Gi
-  # requests:
-  #   cpu: 50m
-  #   memory: 256Mi
-
-## @param strategy Resource configurations
-##
-strategy: {}
-  # type: RollingUpdate
-  # rollingUpdate:
-  #   maxSurge: 1
-  #   maxUnavailable: 0
-
-podDisruptionBudget:
-  ## @param podDisruptionBudget.enabled Enable PodDisruptionBudget settings
-  # ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+ingress:
+  ## @param ingress.enabled Deploy an ingress resource.
+  ##
   enabled: false
-  ## @param podDisruptionBudget.minAvailable Minimum number/percentage of pods that should remain scheduled.
-  # When it's set, maxUnavailable must be disabled by `maxUnavailable: null`
-  minAvailable: 1
-  ## @param podDisruptionBudget.maxUnavailable Maximum number/percentage of pods that may be made unavailable
-  maxUnavailable: null
-
-## @section BETA Features
-##
-
-## @param orgGroupsEnabled Controls whether group support is enabled for organizations
-orgGroupsEnabled: "false"
+  ## @param ingress.class Ingress resource class
+  ## The Ingress class to use, e. g. "nginx" for a nginx ingress controller or "alb" for a AWS LB controller.
+  #
+  class: "nginx"
+  ## @param ingress.nginxIngressAnnotations Add nginx specific ingress annotations
+  ## This annotations are only makes sense for the kubernetes nginx ingress controller (https://kubernetes.github.io/ingress-nginx/)
+  ##
+  nginxIngressAnnotations: true
+  ## @param ingress.additionalAnnotations Additional annotations for the ingress resource.
+  ##
+  additionalAnnotations: {}
+  ## @param ingress.labels Additional labels for the ingress resource.
+  ##
+  labels: {}
+  ## @param ingress.tls Enable TLS on the ingress resource.
+  ##
+  tls: true
+  ## @param ingress.hostname Hostname for the ingress.
+  ##
+  hostname: "warden.contoso.com"
+  ## @param ingress.path Default application path for the ingress
+  ##
+  path: "/"
+  ## @param ingress.pathWs Path for the websocket ingress
+  ##
+  pathWs: "/notifications/hub"
+  ## @param ingress.pathType Path type for the ingress
+  ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
+  pathType: "Prefix"
+  ## @param ingress.pathTypeWs Path type for the ingress
+  ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+  ##
+  pathTypeWs: "Exact"
+  ## @param ingress.tlsSecret Kubernetes secret containing the SSL certificate when using the "nginx" class.
+  ##
+  tlsSecret: ""
+  ## @param ingress.nginxAllowList Comma-separated list of IP addresses and subnets to allow.
+  ##
+  nginxAllowList: ""
+  ## TODO:
+  ##   - Add support for using cert-manager.
+  ##   - Support for multiple TLS hostnames.
+  ##
