@@ -73,3 +73,22 @@ data:
   {{- with .Values.experimentalClientFeatureFlags }}
   EXPERIMENTAL_CLIENT_FEATURE_FLAGS: {{ . | quote }}
   {{- end }}
+  {{- with .Values.orgCreationUsers }}
+  ORG_CREATION_USERS: {{ . | quote }}
+  {{- end }}
+  ORG_EVENTS_ENABLED: {{ .Values.orgEventsEnabled | quote }}
+  ORG_GROUPS_ENABLED: {{ .Values.orgGroupsEnabled | quote }}
+  SENDS_ALLOWED: {{ .Values.sendsAllowed | quote }}
+  EMERGENCY_ACCESS_ALLOWED: {{ .Values.emergencyAccessAllowed | quote }}
+  EMERGENCY_NOTIFICATION_REMINDER_SCHEDULE: {{ .Values.emergencyNotifReminderSched | quote }}
+  EMERGENCY_REQUEST_TIMEOUT_SCHEDULE: {{ .Values.emergencyRqstTimeoutSched | quote }}
+  {{- if .Values.eventsDayRetain }}
+  EVENTS_DAYS_RETAIN: {{ .Values.eventsDayRetain | quote }}
+  EVENT_CLEANUP_SCHEDULE: {{ .Values.eventCleanupSched | quote }}
+  {{- end }}
+  EXTENDED_LOGGING: {{ .Values.extendedLogging | quote }}
+  ICON_SERVICE: {{ .Values.iconService | quote }}
+  INVITATION_EXPIRATION_HOURS: {{ .Values.invitationExpirationHours | quote}}
+  REQUIRE_DEVICE_EMAIL: {{ .Values.requireDeviceEmail | quote }}
+  TRASH_AUTO_DELETE_DAYS: {{ .Values.trashAutoDeleteDays | quote }}
+  TZ: {{ .Values.timeZone | quote }}
