@@ -70,6 +70,11 @@ data:
   YUBICO_SERVER: {{ .Values.yubico.server | quote }}
   {{- end }}
   {{- end }}
+  {{- if and .Values.duo.ikey .Values.duo.secretKey .Values.duo.hostname }}
+  DUO_IKEY: {{ .Values.duo.ikey | quote }}
+  DUO_SKEY: {{ .Values.duo.secretKey | quote }}
+  DUO_HOST: {{ .Values.duo.hostname | quote }}
+  {{- end }}
   {{- with .Values.experimentalClientFeatureFlags }}
   EXPERIMENTAL_CLIENT_FEATURE_FLAGS: {{ . | quote }}
   {{- end }}
@@ -87,8 +92,27 @@ data:
   EVENT_CLEANUP_SCHEDULE: {{ .Values.eventCleanupSched | quote }}
   {{- end }}
   EXTENDED_LOGGING: {{ .Values.extendedLogging | quote }}
+  LOG_TIMESTAMP_FORMAT: {{ .Values.logTimestampFormat | quote }}
   ICON_SERVICE: {{ .Values.iconService | quote }}
+  ICON_REDIRECT_CODE: {{ .Values.iconRedirectCode | quote }}
   INVITATION_EXPIRATION_HOURS: {{ .Values.invitationExpirationHours | quote}}
   REQUIRE_DEVICE_EMAIL: {{ .Values.requireDeviceEmail | quote }}
   TRASH_AUTO_DELETE_DAYS: {{ .Values.trashAutoDeleteDays | quote }}
+  {{- with .Values.timeZone }}
   TZ: {{ .Values.timeZone | quote }}
+  {{- with .Values.hibpApiKey }}
+  HIBP_API_KEY: {{ . | quote }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.orgAttachmentLimit }}
+  ORG_ATTACHMENT_LIMIT: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.userAttachmentLimit }}
+  USER_ATTACHMENT_LIMIT: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.userSendLimit }}
+  USER_SEND_LIMIT: {{ . | quote }}
+  {{- end }}
+  EMAIL_CHANGE_ALLOWED: {{ .Values.emailChangeAllowed | quote }}
+  ADMIN_RATELIMIT_SECONDS: {{ .Values.adminRateLimitSeconds | quote }}
+  ADMIN_RATELIMIT_MAX_BURST: {{ .Values.adminRateLimitMaxBurst | quote }}

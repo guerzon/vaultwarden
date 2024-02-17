@@ -340,6 +340,10 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | --------------------------- | -------------------------------------------------------------------------------------------- | ------------- |
 | `domain`                    | Domain name where the application is accessed                                                | `""`          |
 | `sendsAllowed`              | Controls whether users are allowed to create Bitwarden Sends.                                | `true`        |
+| `hibpApiKey`                | HaveIBeenPwned API Key                                                                       | `""`          |
+| `orgAttachmentLimit`        | Max Kilobytes of attachment storage allowed per organization.                                | `""`          |
+| `userAttachmentLimit`       | Max kilobytes of attachment storage allowed per user.                                        | `""`          |
+| `userSendLimit`             | Max kilobytes of send storage allowed per user.                                              | `""`          |
 | `trashAutoDeleteDays`       | Number of days to wait before auto-deleting a trashed item.                                  | `""`          |
 | `signupsAllowed`            | By default, anyone who can access your instance can register for a new account.              | `true`        |
 | `signupsVerify`             | Whether to require account verification for newly-registered users.                          | `true`        |
@@ -350,6 +354,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `invitationOrgName`         | String Name shown in the invitation emails that don't come from a specific organization      | `Vaultwarden` |
 | `invitationExpirationHours` | The number of hours after which an organization invite token, emergency access invite token, | `120`         |
 | `emergencyAccessAllowed`    | Controls whether users can enable emergency access to their accounts.                        | `true`        |
+| `emailChangeAllowed`        | Controls whether users can change their email.                                               | `true`        |
 | `showPassHint`              | Controls whether a password hint should be shown directly in the web page if                 | `false`       |
 
 ### Advanced settings
@@ -358,15 +363,19 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | `ipHeader`                       | Client IP Header, used to identify the IP of the client                                                                                              | `X-Real-IP`                                                                                                                              |
 | `iconService`                    | The predefined icon services are: internal, bitwarden, duckduckgo, google.                                                                           | `internal`                                                                                                                               |
+| `iconRedirectCode`               | Icon redirect code                                                                                                                                   | `302`                                                                                                                                    |
 | `iconBlacklistNonGlobalIps`      | Whether block non-global IPs.                                                                                                                        | `true`                                                                                                                                   |
 | `experimentalClientFeatureFlags` | Comma separated list of experimental features to enable in clients, make sure to check which features are already enabled by default (.env.template) | `nil`                                                                                                                                    |
 | `requireDeviceEmail`             | Require new device emails. When a user logs in an email is required to be sent.                                                                      | `false`                                                                                                                                  |
 | `extendedLogging`                | Enable extended logging, which shows timestamps and targets in the logs                                                                              | `true`                                                                                                                                   |
+| `logTimestampFormat`             | Timestamp format used in extended logging.                                                                                                           | `%Y-%m-%d %H:%M:%S.%3f`                                                                                                                  |
 | `logging.logLevel`               | Specify the log level                                                                                                                                | `""`                                                                                                                                     |
 | `logging.logFile`                | Log to a file                                                                                                                                        | `""`                                                                                                                                     |
 | `adminToken.existingSecret`      | Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey.                                             | `""`                                                                                                                                     |
 | `adminToken.existingSecretKey`   | When using adminToken.existingSecret, specify the key containing the token.                                                                          | `""`                                                                                                                                     |
 | `adminToken.value`               | Plain or argon2 string containing the admin token.                                                                                                   | `$argon2id$v=19$m=19456,t=2,p=1$Vkx1VkE4RmhDMUhwNm9YVlhPQkVOZk1Yc1duSDdGRVYzd0Y5ZkgwaVg0Yz0$PK+h1ANCbzzmEKaiQfCjWw+hWFaMKvLhG2PjRanH5Kk` |
+| `adminRateLimitSeconds`          | Number of seconds, on average, between admin login requests from the same IP address before rate limiting kicks in.                                  | `300`                                                                                                                                    |
+| `adminRateLimitMaxBurst`         | Allow a burst of requests of up to this size, while maintaining the average indicated by adminRateLimitSeconds.                                      | `3`                                                                                                                                      |
 | `timeZone`                       | Specify timezone different from the default (UTC).                                                                                                   | `""`                                                                                                                                     |
 
 ### BETA Features
@@ -382,6 +391,9 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `yubico.clientId`  | Yubico client ID                                                    | `""`  |
 | `yubico.secretKey` | Yubico secret key                                                   | `""`  |
 | `yubico.server`    | Specify a Yubico server, otherwise the default servers will be used | `""`  |
+| `duo.ikey`         | Duo Integration Key                                                 | `""`  |
+| `duo.secretKey`    | Duo Secret Key                                                      | `""`  |
+| `duo.hostname`     | Duo API hostname                                                    | `""`  |
 
 ### SMTP Configuration
 

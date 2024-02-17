@@ -1,3 +1,5 @@
+## Instruction: when adding a new value, follow https://github.com/dani-garcia/vaultwarden/blob/main/.env.template as much as possible.
+
 ## @section Kubernetes settings
 ##
 image:
@@ -316,6 +318,25 @@ domain: ""
 ##
 sendsAllowed: "true"
 
+## @param hibpApiKey HaveIBeenPwned API Key
+##
+hibpApiKey: ""
+
+## @param orgAttachmentLimit Max Kilobytes of attachment storage allowed per organization.
+## When this limit is reached, organization members will not be allowed to upload further attachments for ciphers owned by that organization.
+##
+orgAttachmentLimit: ""
+
+## @param userAttachmentLimit Max kilobytes of attachment storage allowed per user.
+## When this limit is reached, the user will not be allowed to upload further attachments.
+##
+userAttachmentLimit: ""
+
+## @param userSendLimit Max kilobytes of send storage allowed per user.
+## When this limit is reached, the user will not be allowed to upload further sends.
+##
+userSendLimit: ""
+
 ## @param trashAutoDeleteDays Number of days to wait before auto-deleting a trashed item.
 ## If unset (the default), trashed items are not auto-deleted.
 ## This setting applies globally, so make sure to inform all users of any changes to this setting.
@@ -371,6 +392,11 @@ invitationExpirationHours: "120"
 ##
 emergencyAccessAllowed: "true"
 
+## @param emailChangeAllowed Controls whether users can change their email.
+## This setting applies globally to all users
+##
+emailChangeAllowed: "true"
+
 ## @param showPassHint Controls whether a password hint should be shown directly in the web page if
 ## SMTP service is not configured. Not recommended for publicly-accessible instances
 ## as this provides unauthenticated access to potentially sensitive data.
@@ -388,6 +414,10 @@ ipHeader: "X-Real-IP"
 ## @param iconService The predefined icon services are: internal, bitwarden, duckduckgo, google.
 ##
 iconService: "internal"
+
+## @param iconRedirectCode Icon redirect code
+##
+iconRedirectCode: "302"
 
 ## @param iconBlacklistNonGlobalIps Whether block non-global IPs.
 ## Useful to secure your internal environment: See https://en.wikipedia.org/wiki/Reserved_IP_addresses for a list of IPs which it will block
@@ -410,6 +440,10 @@ requireDeviceEmail: "false"
 ## @param extendedLogging Enable extended logging, which shows timestamps and targets in the logs
 ##
 extendedLogging: "true"
+
+## @param logTimestampFormat Timestamp format used in extended logging.
+##
+logTimestampFormat: "%Y-%m-%d %H:%M:%S.%3f"
 
 logging:
   ## @param logging.logLevel Specify the log level
@@ -434,6 +468,14 @@ adminToken:
   ##
   value: "$argon2id$v=19$m=19456,t=2,p=1$Vkx1VkE4RmhDMUhwNm9YVlhPQkVOZk1Yc1duSDdGRVYzd0Y5ZkgwaVg0Yz0$PK+h1ANCbzzmEKaiQfCjWw+hWFaMKvLhG2PjRanH5Kk"
 
+## @param adminRateLimitSeconds Number of seconds, on average, between admin login requests from the same IP address before rate limiting kicks in.
+##
+adminRateLimitSeconds: "300"
+
+## @param adminRateLimitMaxBurst Allow a burst of requests of up to this size, while maintaining the average indicated by adminRateLimitSeconds.
+##
+adminRateLimitMaxBurst: "3"
+
 ## @param timeZone Specify timezone different from the default (UTC).
 ## For example: "Europe/Berlin"
 ##
@@ -450,14 +492,29 @@ orgGroupsEnabled: "false"
 ## @section MFA/2FA settings
 ##
 
-## @param yubico.clientId Yubico client ID
-## @param yubico.secretKey Yubico secret key
-## @param yubico.server Specify a Yubico server, otherwise the default servers will be used
-##
+## Yubico (Yubikey) settings
 yubico:
+  ## @param yubico.clientId Yubico client ID
+  ##
   clientId: ""
+  ## @param yubico.secretKey Yubico secret key
+  ##
   secretKey: ""
+  ## @param yubico.server Specify a Yubico server, otherwise the default servers will be used
+  ##
   server: ""
+
+## Duo settings
+duo:
+  ## @param duo.ikey Duo Integration Key
+  ##
+  ikey: ""
+  ## @param duo.secretKey Duo Secret Key
+  ##
+  secretKey: ""
+  ## @param duo.hostname Duo API hostname
+  ##
+  hostname: ""
 
 
 ## @section SMTP Configuration
@@ -524,7 +581,7 @@ smtp:
   debug: false
 
 
-## @section Exposure settings 
+## @section Exposure settings
 ##
 
 ## @param websocket.enabled Enable websocket notifications
