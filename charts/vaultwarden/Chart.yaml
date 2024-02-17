@@ -8,10 +8,10 @@ keywords:
 sources:
   - https://github.com/guerzon/vaultwarden
   - https://github.com/dani-garcia/vaultwarden
-appVersion: 1.30.1
+appVersion: 1.30.3
 maintainers:
   - name: guerzon
     email: guerzon@proton.me
     url: https://github.com/guerzon
-version: 0.21.0
+version: 0.22.0
 kubeVersion: ">=1.12.0-0"
