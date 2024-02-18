@@ -645,9 +645,7 @@ ingress:
   hostname: "warden.contoso.com"
   ## @param ingress.additionalHostnames Additional hostnames for the ingress.
   ##
-  additionalHostnames:
-    - "prod-warden.contoso.com"
-    - "vaultwarden.contoso.com"
+  additionalHostnames: []
   ## @param ingress.path Default application path for the ingress
   ##
   path: "/"
