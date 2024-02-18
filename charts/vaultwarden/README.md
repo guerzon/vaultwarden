@@ -428,7 +428,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `service.annotations`             | Additional annotations for the vaultwarden service                             | `{}`                 |
 | `service.labels`                  | Additional labels for the service                                              | `{}`                 |
 | `service.ipFamilyPolicy`          | IP family policy for the service                                               | `SingleStack`        |
-| `ingress.enabled`                 | Deploy an ingress resource.                                                    | `true`               |
+| `ingress.enabled`                 | Deploy an ingress resource.                                                    | `false`              |
 | `ingress.class`                   | Ingress resource class                                                         | `nginx`              |
 | `ingress.nginxIngressAnnotations` | Add nginx specific ingress annotations                                         | `true`               |
 | `ingress.additionalAnnotations`   | Additional annotations for the ingress resource.                               | `{}`                 |

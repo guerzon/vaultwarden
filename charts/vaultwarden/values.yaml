@@ -622,7 +622,7 @@ service:
 ingress:
   ## @param ingress.enabled Deploy an ingress resource.
   ##
-  enabled: true
+  enabled: false
   ## @param ingress.class Ingress resource class
   ## The Ingress class to use, e. g. "nginx" for a nginx ingress controller or "alb" for a AWS LB controller.
   #
