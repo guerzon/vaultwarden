@@ -118,6 +118,19 @@ ingress:
   allowList: "10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16"
 ```
 
+If you intend on making your ingress available via multiple hostnames, you can invoke the `ingress.additionalHostnames` as follows:
+
+```yaml
+ingress:
+  enabled: true
+  class: "nginx"
+  tlsSecret: vw-contoso-com-crt
+  hostname: vaultwarden.contoso.com
+  additionalHostnames:
+    - vw.contoso.com
+  allowList: "10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16"
+```
+
 ### AWS LB Controller
 
 When using AWS, the [AWS Load Balancer controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/deploy/installation/) can be used together with [ACM](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/guide/ingress/cert_discovery/).
