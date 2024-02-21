@@ -1,4 +1,5 @@
 {{- define "vaultwarden.pvcSpec" }}
+{{- $fullName := include "vaultwarden.fullname" . -}}
 {{- if (or .Values.data .Values.attachments) -}}
 volumeClaimTemplates:
   {{- with .Values.data }}
@@ -6,8 +7,8 @@ volumeClaimTemplates:
       name: {{ .name }}
       labels:
         app.kubernetes.io/component: vaultwarden
-        app.kubernetes.io/name: {{ include "vaultwarden.fullname" . }}
-        app.kubernetes.io/instance: {{ include "vaultwarden.fullname" . }}
+        app.kubernetes.io/name: {{ $fullName }}
+        app.kubernetes.io/instance: {{ $fullName }}
       annotations:
         meta.helm.sh/release-name: {{ $.Release.Name | quote }}
         meta.helm.sh/release-namespace: {{ $.Release.Namespace | quote }}
