@@ -6,8 +6,8 @@ volumeClaimTemplates:
       name: {{ .name }}
       labels:
         app.kubernetes.io/component: vaultwarden
-        app.kubernetes.io/name: {{ include "vaultwarden.fullname" . }}
-        app.kubernetes.io/instance: {{ include "vaultwarden.fullname" . }}
+        app.kubernetes.io/name: {{ include "vaultwarden.fullname" $ }}
+        app.kubernetes.io/instance: {{ include "vaultwarden.fullname" $ }}
       annotations:
         meta.helm.sh/release-name: {{ $.Release.Name | quote }}
         meta.helm.sh/release-namespace: {{ $.Release.Namespace | quote }}
@@ -29,8 +29,8 @@ volumeClaimTemplates:
       name: {{ .name }}
       labels:
         app.kubernetes.io/component: vaultwarden
-        app.kubernetes.io/name: {{ include "vaultwarden.fullname" . }}
-        app.kubernetes.io/instance: {{ include "vaultwarden.fullname" . }}
+        app.kubernetes.io/name: {{ include "vaultwarden.fullname" $ }}
+        app.kubernetes.io/instance: {{ include "vaultwarden.fullname" $ }}
       annotations:
         meta.helm.sh/release-name: {{ $.Release.Name | quote }}
         meta.helm.sh/release-namespace: {{ $.Release.Namespace | quote }}
