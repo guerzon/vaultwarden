@@ -99,10 +99,10 @@ data:
   REQUIRE_DEVICE_EMAIL: {{ .Values.requireDeviceEmail | quote }}
   TRASH_AUTO_DELETE_DAYS: {{ .Values.trashAutoDeleteDays | quote }}
   {{- with .Values.timeZone }}
-  TZ: {{ .Values.timeZone | quote }}
+  TZ: {{ . | quote }}
+  {{- end }}
   {{- with .Values.hibpApiKey }}
   HIBP_API_KEY: {{ . | quote }}
-  {{- end }}
   {{- end }}
   {{- with .Values.orgAttachmentLimit }}
   ORG_ATTACHMENT_LIMIT: {{ . | quote }}
