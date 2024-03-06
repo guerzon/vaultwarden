@@ -62,6 +62,12 @@ data:
   PUSH_ENABLED: "true"
   PUSH_INSTALLATION_ID: {{ .Values.pushNotifications.installationId | quote }}
   PUSH_INSTALLATION_KEY: {{ .Values.pushNotifications.installationKey | quote }}
+  {{- with .Values.pushNotifications.relayUri }}
+  PUSH_RELAY_URI: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.pushNotifications.identityUri }}
+  PUSH_IDENTITY_URI: {{ . | quote }}
+  {{- end }}
   {{- end }}
   {{- if and .Values.yubico.clientId .Values.yubico.secretKey }}
   YUBICO_CLIENT_ID: {{ .Values.yubico.clientId | quote }}

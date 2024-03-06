@@ -282,6 +282,8 @@ database:
 pushNotifications: {}
   # installationId: ""
   # installationKey: ""
+  # relayUri: "https://push.bitwarden.com"
+  # identityUri: "https://identity.bitwarden.com"
 
 ## @section Scheduled jobs
 ##
