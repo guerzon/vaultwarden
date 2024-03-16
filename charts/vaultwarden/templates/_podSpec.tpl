@@ -1,23 +1,23 @@
 {{- define "vaultwarden.podSpec" }}
 {{- with .Values.nodeSelector }}
 nodeSelector:
-{{- toYaml . | nindent 8 }}
+{{- toYaml . | nindent 2 }}
 {{- end }}
 {{- with .Values.affinity }}
 affinity:
-{{- toYaml . | nindent 8 }}
+{{- toYaml . | nindent 2 }}
 {{- end }}
 {{- with .Values.tolerations }}
 tolerations:
-{{- toYaml . | nindent 8 }}
+{{- toYaml . | nindent 2 }}
 {{- end }}
 {{- with .Values.podSecurityContext }}
 securityContext:
-  {{- toYaml . | nindent 8 }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- with .Values.initContainers }}
 initContainers:
-{{- toYaml . | nindent 8 }}
+{{- toYaml . | nindent 2 }}
 {{- end }}
 containers:
   - image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -85,10 +85,10 @@ containers:
       {{- end }}
     {{- end }}
     resources:
-    {{- toYaml .Values.resources | nindent 12 }}
+    {{- toYaml .Values.resources | nindent 6 }}
     {{- with .Values.securityContext }}
     securityContext:
-    {{- toYaml . | nindent 12 }}
+    {{- toYaml . | nindent 6 }}
     {{- end }}
     {{- if .Values.livenessProbe.enabled }}
     livenessProbe:
@@ -124,7 +124,7 @@ containers:
       failureThreshold: {{ .Values.startupProbe.failureThreshold }}
     {{- end }}
     {{- with .Values.sidecars }}
-    {{- toYaml . | nindent 8 }}
+    {{- toYaml . | nindent 2 }}
     {{- end }}
 {{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ .Values.serviceAccount.name }}
