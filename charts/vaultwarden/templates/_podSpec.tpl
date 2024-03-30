@@ -1,4 +1,8 @@
 {{- define "vaultwarden.podSpec" }}
+{{- with .Values.dnsConfig }}
+dnsConfig:
+{{- toYaml . | nindent 2 }}
+{{- end }}
 {{- with .Values.nodeSelector }}
 nodeSelector:
 {{- toYaml . | nindent 2 }}

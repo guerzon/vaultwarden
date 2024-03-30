@@ -104,6 +104,10 @@ securityContext: {}
   #   drop:
   #     - ALL
 
+## @param dnsConfig Pod DNS options
+## Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
+dnsConfig: {}
+
 
 ## @section Reliability configuration
 ##
