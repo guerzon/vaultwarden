@@ -676,3 +676,7 @@ ingress:
   ##   - Add support for using cert-manager.
   ##   - Support for multiple TLS hostnames.
   ##
+
+## @section High availability settings
+## @param replicaCount control how many replicas are deployed in the statefulset or deployment
+replicaCount: 1
