@@ -25,6 +25,20 @@ image:
   ##   - myRegistryKeySecretName
   ##
   pullSecrets: []
+  ## @param image.extraSecrets Vaultwarden image extra secrets
+  ## Example:
+  ## extraSecrets:
+  ##   - key: SSO_CLIENT_SECRET
+  ##     value: secretStuff
+  ##
+  extraSecrets: []
+  ## @param image.extraVars Vaultwarden image extra vars
+  ## Example:
+  ## extraVars:
+  ##   - key: SSO_AUTHORITY
+  ##     value: https://bananaguy.com/auth
+  ##
+  extraVars: []
 
 ## @param fullnameOverride String to override the application name.
 ##
