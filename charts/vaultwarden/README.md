@@ -263,6 +263,8 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `image.tag`             | Vaultwarden image tag                                                                     | `1.30.3-alpine`      |
 | `image.pullPolicy`      | Vaultwarden image pull policy                                                             | `IfNotPresent`       |
 | `image.pullSecrets`     | Specify docker-registry secret names                                                      | `[]`                 |
+| `image.extraSecrets`    | Vaultwarden image extra secrets                                                           | `[]`                 |
+| `image.extraVars`       | Vaultwarden image extra vars                                                              | `[]`                 |
 | `fullnameOverride`      | String to override the application name.                                                  | `""`                 |
 | `resourceType`          | Can be either Deployment or StatefulSet                                                   | `""`                 |
 | `commonAnnotations`     | Annotations for the deployment or statefulset                                             | `{}`                 |
@@ -279,6 +281,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `serviceAccount.name`   | Name of the service account to create                                                     | `vaultwarden-svc`    |
 | `podSecurityContext`    | Pod security options                                                                      | `{}`                 |
 | `securityContext`       | Default security options to run vault as read only container without privilege escalation | `{}`                 |
+| `dnsConfig`             | Pod DNS options                                                                           | `{}`                 |
 
 ### Reliability configuration
 
