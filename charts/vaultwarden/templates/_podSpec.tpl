@@ -31,6 +31,19 @@ containers:
       - configMapRef:
           name: {{ include "vaultwarden.fullname" . }}
     env:
+      {{- range .Values.image.extraVars }}
+      - name: {{ .key }}
+        value: {{ .value | quote }}
+      {{- end }}
+      {{- if (.Values.image.extraSecrets) }}
+      {{- range .Values.image.extraSecrets }}
+      - name: {{ .key }}
+        valueFrom:
+          secretKeyRef:
+            name: {{ include "vaultwarden.fullname" . }}
+            key: {{ .key }}
+      {{- end }}
+      {{- end }}
       {{- if or (.Values.smtp.username.value) (.Values.smtp.username.existingSecretKey )}}
       - name: SMTP_USERNAME
         valueFrom:
