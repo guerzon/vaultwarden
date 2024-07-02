@@ -40,7 +40,7 @@ containers:
       - name: {{ .key }}
         valueFrom:
           secretKeyRef:
-            name: {{ include "vaultwarden.fullname" . }}
+            name: {{ include "vaultwarden.fullname" $ }}
             key: {{ .key }}
       {{- end }}
       {{- end }}
