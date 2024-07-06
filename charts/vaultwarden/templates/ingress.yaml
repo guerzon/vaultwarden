@@ -29,7 +29,7 @@ metadata:
     {{- if $ingress.nginxIngressAnnotations }}
     nginx.ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "Request-Id: $req_id";
-    nginx.ingress.kubernetes.io/connection-proxy-header: "keep-alive"
+    nginx.ingress.kubernetes.io/connection-proxy-header: {{ $ingress.connectionProxyHeader }}
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
@@ -68,7 +68,7 @@ spec:
               name: {{ include "vaultwarden.fullname" $ }}
               port:
                 name: "http"
-        {{- if $websocket.enabled }}
+        {{- if $websocket.legacyEnabled }}
         - path: {{ $ingress.pathWs }}
           pathType: {{ $ingress.pathTypeWs }}
           backend:
@@ -88,7 +88,7 @@ spec:
               name: {{ include "vaultwarden.fullname" . }}
               port:
                 name: "http"
-        {{- if $websocket.enabled }}
+        {{- if $websocket.legacyEnabled }}
         - path: {{ $ingress.pathWs }}
           pathType: {{ $ingress.pathTypeWs }}
           backend:
