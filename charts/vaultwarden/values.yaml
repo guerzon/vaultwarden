@@ -604,12 +604,12 @@ smtp:
 ## @section Exposure settings
 ##
 
-## @param websocket.enabled Enable websocket notifications
+## @param websocket.legacyEnabled Enable websocket notifications via the legacy custom websocket implementation
 ## @param websocket.address Websocket listen address
 ## @param websocket.port Websocket listen port
 ##
 websocket:
-  enabled: true
+  legacyEnabled: false
   address: "0.0.0.0"
   port: 3012
 
@@ -690,3 +690,5 @@ ingress:
   ##   - Add support for using cert-manager.
   ##   - Support for multiple TLS hostnames.
   ##
+  ## @param ingress.connectionProxyHeader Connection proxy header.
+  connectionProxyHeader: "$connection_upgrade"
