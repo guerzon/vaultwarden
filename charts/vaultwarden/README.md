@@ -321,19 +321,21 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 ### Database settings
 
-| Name                         | Description                                                                                                                              | Value     |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| `database.type`              | Database type, either mysql or postgresql                                                                                                | `default` |
-| `database.host`              | Database hostname or IP address                                                                                                          | `""`      |
-| `database.port`              | Database port                                                                                                                            | `""`      |
-| `database.username`          | Database username                                                                                                                        | `""`      |
-| `database.password`          | Database password                                                                                                                        | `""`      |
-| `database.dbName`            | Database name                                                                                                                            | `""`      |
-| `database.uriOverride`       | Manually specify the DB connection string                                                                                                | `""`      |
-| `database.existingSecret`    | Name of an existing secret containing the database URI                                                                                   | `""`      |
-| `database.existingSecretKey` | Key in the existing secret                                                                                                               | `""`      |
-| `database.connectionRetries` | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`      |
-| `database.maxConnections`    | Define the size of the connection pool used for connecting to the database.                                                              | `10`      |
+| Name                                 | Description                                                                                                                              | Value      |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| `database.type`                      | Database type, either mysql or postgresql                                                                                                | `default`  |
+| `database.host`                      | Database hostname or IP address                                                                                                          | `""`       |
+| `database.port`                      | Database port                                                                                                                            | `""`       |
+| `database.username`                  | Database username                                                                                                                        | `""`       |
+| `database.password`                  | Database password                                                                                                                        | `""`       |
+| `database.dbName`                    | Database name                                                                                                                            | `""`       |
+| `database.uriOverride`               | Manually specify the DB connection string                                                                                                | `""`       |
+| `database.existingSecret`            | Name of an existing secret containing either a single key with the database uri, or a separate key for username and password             | `""`       |
+| `database.existingSecretKey`         | Key in the existing secret                                                                                                               | `""`       |
+| `database.existingSecretUserKey`     | Key in the existing secret                                                                                                               | `username` |
+| `database.existingSecretPasswordKey` | Key in the existing secret                                                                                                               | `password` |
+| `database.connectionRetries`         | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`       |
+| `database.maxConnections`            | Define the size of the connection pool used for connecting to the database.                                                              | `10`       |
 
 ### Push notifications
 

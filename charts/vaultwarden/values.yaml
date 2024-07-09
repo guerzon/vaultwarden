@@ -277,12 +277,18 @@ database:
   ## @param database.uriOverride Manually specify the DB connection string
   ##
   uriOverride: ""
-  ## @param database.existingSecret Name of an existing secret containing the database URI
+  ## @param database.existingSecret Name of an existing secret containing either a single key with the database uri, or a separate key for username and password
   ##
   existingSecret: ""
   ## @param database.existingSecretKey Key in the existing secret
   ##
   existingSecretKey: ""
+  ## @param database.existingSecretUserKey Key in the existing secret
+  ##
+  existingSecretUserKey: username
+  ## @param database.existingSecretPasswordKey Key in the existing secret
+  ##
+  existingSecretPasswordKey: password
   ## @param database.connectionRetries Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely.
   ##
   connectionRetries: 15
