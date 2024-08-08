@@ -1,5 +1,4 @@
 {{- $ingress := .Values.ingress -}}
-{{- $websocket := .Values.websocket -}}
 {{- $fullname := .Release.fullname -}}
 {{- if $ingress.enabled }}
 {{- $newAPIversion := .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
@@ -68,15 +67,6 @@ spec:
               name: {{ include "vaultwarden.fullname" $ }}
               port:
                 name: "http"
-        {{- if $websocket.enabled }}
-        - path: {{ $ingress.pathWs }}
-          pathType: {{ $ingress.pathTypeWs }}
-          backend:
-            service:
-              name: {{ include "vaultwarden.fullname" $ }}
-              port:
-                name: "websocket"
-        {{- end }}
     {{- end }}
     - host: {{ $ingress.hostname | quote }}
       http:
@@ -88,13 +78,4 @@ spec:
               name: {{ include "vaultwarden.fullname" . }}
               port:
                 name: "http"
-        {{- if $websocket.enabled }}
-        - path: {{ $ingress.pathWs }}
-          pathType: {{ $ingress.pathTypeWs }}
-          backend:
-            service:
-              name: {{ include "vaultwarden.fullname" . }}
-              port:
-                name: "websocket"
-        {{- end }}
 {{- end }}

@@ -22,12 +22,6 @@ spec:
       port: 80
       protocol: TCP
       targetPort: 8080
-    {{- if .Values.websocket.enabled }}
-    - name: "websocket"
-      port: 3012
-      protocol: TCP
-      targetPort: {{ .Values.websocket.port }}
-    {{- end }}
 {{- if .Values.service.ipFamilyPolicy }}
   ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
 {{- end }}

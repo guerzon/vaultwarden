@@ -87,9 +87,6 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
-      - containerPort: {{ .Values.websocket.port }}
-        name: websocket
-        protocol: TCP
     {{- if or (.Values.data) (.Values.attachments) }}
     volumeMounts:
       {{- with .Values.data }}

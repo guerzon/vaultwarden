@@ -604,15 +604,6 @@ smtp:
 ## @section Exposure settings
 ##
 
-## @param websocket.enabled Enable websocket notifications
-## @param websocket.address Websocket listen address
-## @param websocket.port Websocket listen port
-##
-websocket:
-  enabled: true
-  address: "0.0.0.0"
-  port: 3012
-
 ## @param rocket.address Address to bind to
 ## @param rocket.port Rocket port
 ## @param rocket.workers Rocket number of workers
@@ -669,17 +660,10 @@ ingress:
   ## @param ingress.path Default application path for the ingress
   ##
   path: "/"
-  ## @param ingress.pathWs Path for the websocket ingress
-  ##
-  pathWs: "/notifications/hub"
   ## @param ingress.pathType Path type for the ingress
   ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
   ##
   pathType: "Prefix"
-  ## @param ingress.pathTypeWs Path type for the ingress
-  ## Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
-  ##
-  pathTypeWs: "Exact"
   ## @param ingress.tlsSecret Kubernetes secret containing the SSL certificate when using the "nginx" class.
   ##
   tlsSecret: ""
