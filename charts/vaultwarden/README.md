@@ -260,7 +260,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | ----------------------- | ----------------------------------------------------------------------------------------- | -------------------- |
 | `image.registry`        | Vaultwarden image registry                                                                | `docker.io`          |
 | `image.repository`      | Vaultwarden image repository                                                              | `vaultwarden/server` |
-| `image.tag`             | Vaultwarden image tag                                                                     | `1.30.3-alpine`      |
+| `image.tag`             | Vaultwarden image tag                                                                     | `1.31.0-alpine`      |
 | `image.pullPolicy`      | Vaultwarden image pull policy                                                             | `IfNotPresent`       |
 | `image.pullSecrets`     | Specify docker-registry secret names                                                      | `[]`                 |
 | `image.extraSecrets`    | Vaultwarden image extra secrets                                                           | `[]`                 |
@@ -434,9 +434,6 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 | Name                              | Description                                                                    | Value                |
 | --------------------------------- | ------------------------------------------------------------------------------ | -------------------- |
-| `websocket.enabled`               | Enable websocket notifications                                                 | `true`               |
-| `websocket.address`               | Websocket listen address                                                       | `0.0.0.0`            |
-| `websocket.port`                  | Websocket listen port                                                          | `3012`               |
 | `rocket.address`                  | Address to bind to                                                             | `0.0.0.0`            |
 | `rocket.port`                     | Rocket port                                                                    | `8080`               |
 | `rocket.workers`                  | Rocket number of workers                                                       | `10`                 |
@@ -453,8 +450,6 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `ingress.hostname`                | Hostname for the ingress.                                                      | `warden.contoso.com` |
 | `ingress.additionalHostnames`     | Additional hostnames for the ingress.                                          | `[]`                 |
 | `ingress.path`                    | Default application path for the ingress                                       | `/`                  |
-| `ingress.pathWs`                  | Path for the websocket ingress                                                 | `/notifications/hub` |
 | `ingress.pathType`                | Path type for the ingress                                                      | `Prefix`             |
-| `ingress.pathTypeWs`              | Path type for the ingress                                                      | `Exact`              |
 | `ingress.tlsSecret`               | Kubernetes secret containing the SSL certificate when using the "nginx" class. | `""`                 |
 | `ingress.nginxAllowList`          | Comma-separated list of IP addresses and subnets to allow.                     | `""`                 |
