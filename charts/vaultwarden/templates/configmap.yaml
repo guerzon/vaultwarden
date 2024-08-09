@@ -25,11 +25,6 @@ data:
   SMTP_ACCEPT_INVALID_HOSTNAMES: {{ .Values.smtp.acceptInvalidHostnames | quote }}
   SMTP_ACCEPT_INVALID_CERTS: {{ .Values.smtp.acceptInvalidCerts | quote }}
   {{- end }}
-  {{- if .Values.websocket.enabled }}
-  WEBSOCKET_ENABLED: "true"
-  WEBSOCKET_ADDRESS: {{ .Values.websocket.address | quote }}
-  WEBSOCKET_PORT: {{ .Values.websocket.port | quote }}
-  {{- end }}
   {{- if .Values.data }}
   DATA_FOLDER: {{ default "/data" .Values.data.path | quote }}
   {{- end }}
