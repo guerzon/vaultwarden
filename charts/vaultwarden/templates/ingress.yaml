@@ -1,3 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: customer-headers-configmap
+data:
+  Request-Id: $req_id
+---
 {{- $ingress := .Values.ingress -}}
 {{- $fullname := .Release.fullname -}}
 {{- if $ingress.enabled }}
@@ -26,8 +33,7 @@ metadata:
     {{- toYaml $ingress.additionalAnnotations | nindent 4 }}
     {{- end }}
     {{- if $ingress.nginxIngressAnnotations }}
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers "Request-Id: $req_id";
+    nginx.ingress.kubernetes.io/custom-headers: custom-headers-configmap
     nginx.ingress.kubernetes.io/connection-proxy-header: "keep-alive"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
