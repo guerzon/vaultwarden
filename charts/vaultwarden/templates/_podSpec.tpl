@@ -68,6 +68,20 @@ containers:
       - name: DISABLE_ADMIN_TOKEN
         value: "true"
       {{- end }}
+      {{- if or (.Values.pushNotifications.installationId.value) (.Values.pushNotifications.installationId.existingSecretKey )}}
+      - name: PUSH_INSTALLATION_ID
+        valueFrom:
+          secretKeyRef:
+            name: {{ default (include "vaultwarden.fullname" .) .Values.pushNotifications.existingSecret }}
+            key: {{ default "PUSH_INSTALLATION_ID" .Values.pushNotifications.installationId.existingSecretKey }}
+      {{- end }}
+      {{- if or (.Values.pushNotifications.installationKey.value) (.Values.pushNotifications.installationKey.existingSecretKey )}}
+      - name: PUSH_INSTALLATION_KEY
+        valueFrom:
+          secretKeyRef:
+            name: {{ default (include "vaultwarden.fullname" .) .Values.pushNotifications.existingSecret }}
+            key: {{ default "PUSH_INSTALLATION_KEY" .Values.pushNotifications.installationKey.existingSecretKey }}
+      {{- end }}
       {{- if ne "default" .Values.database.type }}
       - name: DATABASE_URL
         {{- if .Values.database.existingSecret }}

@@ -55,8 +55,6 @@ data:
   IP_HEADER: {{ .Values.ipHeader | quote }}
   {{- if .Values.pushNotifications }}
   PUSH_ENABLED: "true"
-  PUSH_INSTALLATION_ID: {{ .Values.pushNotifications.installationId | quote }}
-  PUSH_INSTALLATION_KEY: {{ .Values.pushNotifications.installationKey | quote }}
   {{- with .Values.pushNotifications.relayUri }}
   PUSH_RELAY_URI: {{ . | quote }}
   {{- end }}
