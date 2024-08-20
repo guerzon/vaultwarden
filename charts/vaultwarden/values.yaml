@@ -290,19 +290,15 @@ database:
   ##
   maxConnections: 10
 
-## @section Push notifications
+## @section Push Notifications
+## Supported since 1.29.0.
+## Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details
 ##
 
-## @extra pushNotifications Enable mobile push notifications. Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details
-## Supported since 1.29.0.
-## 
-##
 pushNotifications: 
   ## @param pushNotifications.existingSecret Name of an existing secret containing the Bitwarden installation id and key
   ##
   existingSecret: ""
-  ## @extra pushNotifications.installationId Installation Id for mobile push notifications
-  ##
   installationId: 
     ## @param pushNotifications.installationId.value Bitwarden installation id string
     ## Example: installationIdGoesHere
@@ -312,7 +308,6 @@ pushNotifications:
     ## Example: INSTALLATION_ID
     ## 
     existingSecretKey: ""
-  ## @extra pushNotifications.installationKey Installation Key for mobile push notifications
   installationKey:
     ## @param pushNotifications.installationKey.value Bitwarden installation key string
     ## Example: superSecretInstallationKey
