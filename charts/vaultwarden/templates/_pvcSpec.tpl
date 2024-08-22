@@ -16,7 +16,7 @@ volumeClaimTemplates:
         {{- end }}
     spec:
       accessModes:
-        - "ReadWriteOnce"
+        - {{ .accessMode | quote }}
       resources:
         requests:
           storage: {{ .size }}
@@ -39,7 +39,7 @@ volumeClaimTemplates:
         {{- end }}
     spec:
       accessModes:
-        - "ReadWriteOnce"
+        - {{ .accessMode | quote }}
       resources:
         requests:
           storage: {{ .size }}
