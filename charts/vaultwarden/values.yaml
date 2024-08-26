@@ -239,6 +239,7 @@ data:
   # class: ""
   # path: "/data"
   # keepPvc: false
+  # accessMode: "ReadWriteOnce"
 
 ## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
 ## By default, attachments/ is located inside the data directory.
@@ -250,6 +251,7 @@ attachments:
   # class: ""
   # path: /files
   # keepPvc: false
+  # accessMode: "ReadWriteOnce"
 
 ## @param webVaultEnabled Enable Web Vault
 ##
