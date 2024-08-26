@@ -1,6 +1,21 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  name: custom-headers-configmap
+data:
+  Request-Id: $req_id
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-configuration
+  namespace: {{ .Release.Namespace }}
+data:
+  global-allowed-response-headers: Referrer-Policy,Strict-Transport-Security,X-Content-Type-Options,X-Frame-Options,Content-Security-Policy,Request-Id
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
   name: {{ include "vaultwarden.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
