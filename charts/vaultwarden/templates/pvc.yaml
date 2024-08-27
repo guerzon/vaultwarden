@@ -5,6 +5,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 {{- $newName := printf "%s-%s-0" $pvc.metadata.name $.Release.Name }}
 {{- $newPvc := merge (dict "metadata" (dict "name" $newName)) $pvc }}
+{{- $newPvc := merge (dict "metadata" (dict "namespace" $.Release.Namespace)) $newPvc }}
 {{ $newPvc | toYaml }}
 {{- end }}
 {{- end }}
