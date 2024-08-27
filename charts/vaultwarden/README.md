@@ -335,11 +335,17 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `database.connectionRetries` | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`      |
 | `database.maxConnections`    | Define the size of the connection pool used for connecting to the database.                                                              | `10`      |
 
-### Push notifications
+### Push Notifications
 
-| Name                | Description                                                      | Value |
-| ------------------- | ---------------------------------------------------------------- | ----- |
-| `pushNotifications` | Enable mobile push notifications, see values.yaml for parameters | `{}`  |
+| Name                                                  | Description                                                                         | Value                            |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------- |
+| `pushNotifications.existingSecret`                    | Name of an existing secret containing the Bitwarden installation id and key         | `""`                             |
+| `pushNotifications.installationId.value`              | Bitwarden installation id string                                                    | `""`                             |
+| `pushNotifications.installationId.existingSecretKey`  | When using an existing secret, specify the key which contains the installation id.  | `""`                             |
+| `pushNotifications.installationKey.value`             | Bitwarden installation key string                                                   | `""`                             |
+| `pushNotifications.installationKey.existingSecretKey` | When using an existing secret, specify the key which contains the installation key. | `""`                             |
+| `pushNotifications.relayUri`                          | Change Bitwarden relay uri.                                                         | `https://push.bitwarden.com`     |
+| `pushNotifications.identityUri`                       | Change Bitwarden identity uri.                                                      | `https://identity.bitwarden.com` |
 
 ### Scheduled jobs
 
