@@ -17,6 +17,7 @@ spec:
   type: {{ .Values.service.type | quote }}
   selector:
     app.kubernetes.io/component: vaultwarden
+    {{- include "vaultwarden.selectorLabels" . | nindent 4 }}
   ports:
     - name: "http"
       port: 80

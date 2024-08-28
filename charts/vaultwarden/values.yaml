@@ -296,19 +296,43 @@ database:
   ##
   maxConnections: 10
 
-## @section Push notifications
-##
-
-## @param pushNotifications Enable mobile push notifications, see values.yaml for parameters
+## @section Push Notifications
 ## Supported since 1.29.0.
 ## Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details
 ##
 pushNotifications:
-  {}
-  # installationId: ""
-  # installationKey: ""
-  # relayUri: "https://push.bitwarden.com"
-  # identityUri: "https://identity.bitwarden.com"
+  ## @param pushNotifications.enabled Enable the push notification service
+  ##
+  enabled: false
+  ## @param pushNotifications.existingSecret Name of an existing secret containing the Bitwarden installation id and key
+  ##
+  existingSecret: ""
+  installationId:
+    ## @param pushNotifications.installationId.value Bitwarden installation id string
+    ## Example: installationIdGoesHere
+    ##
+    value: ""
+    ## @param pushNotifications.installationId.existingSecretKey When using an existing secret, specify the key which contains the installation id.
+    ## Example: INSTALLATION_ID
+    ##
+    existingSecretKey: ""
+  installationKey:
+    ## @param pushNotifications.installationKey.value Bitwarden installation key string
+    ## Example: superSecretInstallationKey
+    ##
+    value: ""
+    ## @param pushNotifications.installationKey.existingSecretKey When using an existing secret, specify the key which contains the installation key.
+    ## Example: INSTALLATION_KEY
+    ##
+    existingSecretKey: ""
+  ## @param pushNotifications.relayUri Change Bitwarden relay uri.
+  ## Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details
+  ##
+  relayUri: "https://push.bitwarden.com"
+  ## @param pushNotifications.identityUri Change Bitwarden identity uri.
+  ## Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details
+  ##
+  identityUri: "https://identity.bitwarden.com"
 
 ## @section Scheduled jobs
 ##

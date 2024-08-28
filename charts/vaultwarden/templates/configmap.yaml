@@ -60,10 +60,8 @@ data:
   INVITATION_ORG_NAME: {{ .Values.invitationOrgName | quote }}
   ICON_BLACKLIST_NON_GLOBAL_IPS: {{ .Values.iconBlacklistNonGlobalIps | quote }}
   IP_HEADER: {{ .Values.ipHeader | quote }}
-  {{- if .Values.pushNotifications }}
+  {{- if .Values.pushNotifications.enabled }}
   PUSH_ENABLED: "true"
-  PUSH_INSTALLATION_ID: {{ .Values.pushNotifications.installationId | quote }}
-  PUSH_INSTALLATION_KEY: {{ .Values.pushNotifications.installationKey | quote }}
   {{- with .Values.pushNotifications.relayUri }}
   PUSH_RELAY_URI: {{ . | quote }}
   {{- end }}
