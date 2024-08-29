@@ -101,13 +101,15 @@ serviceAccount:
 
 ## @param podSecurityContext Pod security options
 ##
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 1001
   # supplementalGroups:
   #   - 1001
 
 ## @param securityContext Default security options to run vault as read only container without privilege escalation
-securityContext: {}
+securityContext:
+  {}
   # allowPrivilegeEscalation: false
   # privileged: false
   # readOnlyRootFilesystem: true
@@ -121,7 +123,6 @@ securityContext: {}
 ## @param dnsConfig Pod DNS options
 ## Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
 dnsConfig: {}
-
 
 ## @section Reliability configuration
 ##
@@ -194,7 +195,8 @@ startupProbe:
 
 ## @param resources Resource configurations
 ##
-resources: {}
+resources:
+  {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -208,7 +210,8 @@ resources: {}
 
 ## @param strategy Resource configurations
 ##
-strategy: {}
+strategy:
+  {}
   # type: RollingUpdate
   # rollingUpdate:
   #   maxSurge: 1
@@ -224,13 +227,13 @@ podDisruptionBudget:
   ## @param podDisruptionBudget.maxUnavailable Maximum number/percentage of pods that may be made unavailable
   maxUnavailable: null
 
-
 ## @section Persistent data configuration
 ##
 
 ## @param data Data directory configuration, refer to values.yaml for parameters.
 ##
-data: {}
+data:
+  {}
   # name: "vaultwarden-data"
   # size: "15Gi"
   # class: ""
@@ -241,7 +244,8 @@ data: {}
 ## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
 ## By default, attachments/ is located inside the data directory.
 ##
-attachments: {}
+attachments:
+  {}
   # name: "vaultwarden-files"
   # size: "100Gi"
   # class: ""
@@ -296,7 +300,6 @@ database:
 ## Supported since 1.29.0.
 ## Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details
 ##
-
 pushNotifications:
   ## @param pushNotifications.enabled Enable the push notification service
   ##
@@ -451,7 +454,6 @@ emailChangeAllowed: "true"
 ##
 showPassHint: "false"
 
-
 ## @section Advanced settings
 ##
 
@@ -529,13 +531,11 @@ adminRateLimitMaxBurst: "3"
 ##
 timeZone: ""
 
-
 ## @section BETA Features
 ##
 
 ## @param orgGroupsEnabled Controls whether group support is enabled for organizations
 orgGroupsEnabled: "false"
-
 
 ## @section MFA/2FA settings
 ##
@@ -563,7 +563,6 @@ duo:
   ## @param duo.hostname Duo API hostname
   ##
   hostname: ""
-
 
 ## @section SMTP Configuration
 ##
@@ -628,7 +627,6 @@ smtp:
   ##
   debug: false
 
-
 ## @section Exposure settings
 ##
 
@@ -667,7 +665,7 @@ ingress:
   #
   class: "nginx"
   ## @param ingress.nginxIngressAnnotations Add nginx specific ingress annotations
-  ## This annotations are only makes sense for the kubernetes nginx ingress controller (https://kubernetes.github.io/ingress-nginx/)
+  ## These annotations only make sense for the kubernetes nginx ingress controller (https://kubernetes.github.io/ingress-nginx/)
   ##
   nginxIngressAnnotations: true
   ## @param ingress.additionalAnnotations Additional annotations for the ingress resource.
@@ -698,6 +696,10 @@ ingress:
   ## @param ingress.nginxAllowList Comma-separated list of IP addresses and subnets to allow.
   ##
   nginxAllowList: ""
+  ## @param ingress.customHeadersConfigMap ConfigMap containing custom headers to be added to the ingress.
+  ## Defaults to "custom-headers-configmap", which sets a Request-ID header.
+  ##
+  customHeadersConfigMap: "custom-headers-configmap"
   ## TODO:
   ##   - Add support for using cert-manager.
   ##   - Support for multiple TLS hostnames.
