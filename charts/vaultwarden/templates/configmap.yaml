@@ -1,10 +1,12 @@
+{{- with .Values.ingress.customHeadersConfigMap }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: custom-headers-configmap
 data:
-  Request-Id: $req_id
+  {{- toYaml . | nindent 2 }}
 ---
+{{- end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
