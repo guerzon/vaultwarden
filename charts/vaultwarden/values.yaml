@@ -697,9 +697,10 @@ ingress:
   ##
   nginxAllowList: ""
   ## @param ingress.customHeadersConfigMap ConfigMap containing custom headers to be added to the ingress.
-  ## Defaults to "custom-headers-configmap", which sets a Request-ID header.
+  ## Requirement: First define the allowed response headers in global-allowed-response-headers.
+  ## Ref: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#custom-headers
   ##
-  customHeadersConfigMap: "custom-headers-configmap"
+  customHeadersConfigMap: {}
   ## TODO:
   ##   - Add support for using cert-manager.
   ##   - Support for multiple TLS hostnames.
