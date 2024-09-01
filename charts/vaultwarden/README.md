@@ -230,10 +230,26 @@ smtp:
   host: mx01.contoso.com
   from: no-reply@contoso.com
   fromName: "Vault Administrator"
-  username: admin
-  password: password
+  username:
+    value: admin
+  password:
+    value: password
   acceptInvalidHostnames: "true"
   acceptInvalidCerts: "true"
+```
+
+You could also use an existing Kubernetes secret that contains the SMTP username and password:
+
+```yaml
+smtp:
+  host: mx01.contoso.com
+  from: no-reply@contoso.com
+  fromName: "Vault Administrator"
+  existingSecret: smtpsecrets
+  username:
+    existingSecretKey: SMTP_USERNAME
+  password:
+    existingSecretKey: SMTP_PASSWORD
 ```
 
 Detailed configuration options can be found in the [SMTP Configuration](#smtp-configuration) section.
