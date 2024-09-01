@@ -71,9 +71,8 @@ data:
   PUSH_IDENTITY_URI: {{ . | quote }}
   {{- end }}
   {{- end }}
-  {{- if and .Values.yubico.clientId .Values.yubico.secretKey }}
+  {{- if and .Values.yubico.clientId (or .Values.yubico.secretKey.value .Values.yubico.secretKey.existingSecretKey) }}
   YUBICO_CLIENT_ID: {{ .Values.yubico.clientId | quote }}
-  YUBICO_SECRET_KEY: {{ .Values.yubico.secretKey | quote }}
   {{- if .Values.yubico.server }}
   YUBICO_SERVER: {{ .Values.yubico.server | quote }}
   {{- end }}

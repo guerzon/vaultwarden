@@ -179,7 +179,26 @@ serviceAccount:
   name: "vaultwarden-svc"
 ```
 
-Detailed configuration options can be found in the [Security settings](./charts/vaultwarden/README.md#security-settings) section.
+### MFA/2FA settings
+
+You can configure YubiKey authentication as described [here](https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Yubikey-OTP-authentication). An example configuration is as follows:
+
+```yaml
+yubico:
+  clientId: "ABCDE"
+  secretKey:
+    value: "12345"
+```
+
+You could also use an existing Kubernetes secret:
+
+```yaml
+yubico:
+  clientId: "ABCDE"
+  existingSecret: "yubisecrets"
+  secretKey:
+    existingSecretKey: "YUBI"
+```
 
 ## Mail settings
 
