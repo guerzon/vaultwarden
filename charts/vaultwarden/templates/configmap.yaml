@@ -77,9 +77,8 @@ data:
   YUBICO_SERVER: {{ .Values.yubico.server | quote }}
   {{- end }}
   {{- end }}
-  {{- if and .Values.duo.ikey .Values.duo.secretKey .Values.duo.hostname }}
-  DUO_IKEY: {{ .Values.duo.ikey | quote }}
-  DUO_SKEY: {{ .Values.duo.secretKey | quote }}
+  {{- if and .Values.duo.iKey .Values.duo.hostname (or .Values.duo.sKey.value .Values.duo.sKey.existingSecretKey) }}
+  DUO_IKEY: {{ .Values.duo.iKey | quote }}
   DUO_HOST: {{ .Values.duo.hostname | quote }}
   {{- end }}
   {{- with .Values.experimentalClientFeatureFlags }}

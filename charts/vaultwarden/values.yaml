@@ -550,7 +550,7 @@ yubico:
   ## @param yubico.existingSecret Name of an existing secret containing the Yubico secret key. Also set yubico.secretKey.existingSecretKey.
   ##
   existingSecret: ""
-  ## @param yubico.secretKey Yubico secret key
+  ## Yubico secret key
   ##
   secretKey:
     ## @param yubico.secretKey.value secretKey plain text
@@ -566,13 +566,26 @@ yubico:
   server: ""
 
 ## Duo settings
+## Reference: https://help.bitwarden.com/article/setup-two-step-login-duo/#create-a-duo-security-account
+##
 duo:
-  ## @param duo.ikey Duo Integration Key
+  ## @param duo.iKey Duo Integration Key
   ##
-  ikey: ""
-  ## @param duo.secretKey Duo Secret Key
+  iKey: ""
+  ## @param duo.existingSecret Name of an existing secret containing the Duo skey. Also set duo.sKey.existingSecretKey.
   ##
-  secretKey: ""
+  existingSecret: ""
+  ## Duo secret key
+  ##
+  sKey:
+    ## @param duo.sKey.value sKey plain text
+    ## Example: ABCDEABCDEABCDEABCDE=
+    ##
+    value: ""
+    ## @param duo.sKey.existingSecretKey When using an existing secret, specify the key which contains the sKey.
+    ## Example: DUO_SKEY
+    ##
+    existingSecretKey: ""
   ## @param duo.hostname Duo API hostname
   ##
   hostname: ""

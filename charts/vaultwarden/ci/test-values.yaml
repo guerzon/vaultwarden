@@ -18,3 +18,9 @@ yubico:
   clientId: "ABCDE"
   secretKey:
     value: "12345"
+
+duo:
+  hostname: api.duohelp.com
+  iKey: "999888"
+  sKey:
+    value: "HELLO"
