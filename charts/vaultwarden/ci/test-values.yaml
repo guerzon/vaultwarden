@@ -1,0 +1,20 @@
+domain: "https://vaultwarden.contoso.com"
+
+ingress:
+  enabled: true
+  hostname: vaultwarden.contoso.com
+  class: "nginx"
+  customHeadersConfigMap:
+    Request-Id: $req_id
+
+adminToken:
+  value: "khit9gYQV6ax9LKTTm+s6QbZi5oiuR+3s1PEn9q3IRmCl9IQn7LmBpmFCOYTb7Mr"
+
+image:
+  pullSecrets:
+    - myRegKey
+
+yubico:
+  clientId: "ABCDE"
+  secretKey:
+    value: "12345"
