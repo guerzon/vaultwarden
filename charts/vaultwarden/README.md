@@ -46,7 +46,7 @@ image:
 domain: "https://vaultwarden.contoso.com:9443/"
 ```
 
-Detailed configuration options can be found in the [Vaultwarden settings](./charts/vaultwarden/README.md#vaultwarden-settings) section.
+Detailed configuration options can be found in the [General settings](#general-settings) section.
 
 ## Database options
 
@@ -89,7 +89,7 @@ database:
   existingSecretKey: "secret-uri"
 ```
 
-Detailed configuration options can be found in the [Database Configuration](./charts/vaultwarden/README.md#database-configuration) section.
+Detailed configuration options can be found in the [Database Configuration](#database-settings) section.
 
 ## SSL and Ingress
 
@@ -148,7 +148,7 @@ ingress:
     alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:eu-central-1:ACCOUNT:certificate/LONGID"
 ```
 
-Detailed configuration options can be found in the [Exposure Parameters](./charts/vaultwarden/README.md#exposure-parameters) section.
+Detailed configuration options can be found in the [Exposure Parameters](#exposure-settings) section.
 
 ## Security
 
@@ -179,7 +179,47 @@ serviceAccount:
   name: "vaultwarden-svc"
 ```
 
-Detailed configuration options can be found in the [Security settings](./charts/vaultwarden/README.md#security-settings) section.
+### MFA/2FA settings
+
+You can configure YubiKey authentication as described [here](https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Yubikey-OTP-authentication). An example configuration is as follows:
+
+```yaml
+yubico:
+  clientId: "ABCDE"
+  secretKey:
+    value: "12345"
+```
+
+You could also use an existing Kubernetes secret:
+
+```yaml
+yubico:
+  clientId: "ABCDE"
+  existingSecret: "yubisecrets"
+  secretKey:
+    existingSecretKey: "YUBI"
+```
+
+You can configure Duo authentication as described [here](https://help.bitwarden.com/article/setup-two-step-login-duo/#create-a-duo-security-account). An example configuration is as follows:
+
+```yaml
+duo:
+  hostname: api.duohelp.com
+  iKey: "999888"
+  sKey:
+    value: "HELLO"
+```
+
+You could also use an existing Kubernetes secret:
+
+```yaml
+duo:
+  hostname: api.duohelp.com
+  iKey: "999888"
+  existingSecret: "duosecrets"
+  sKey:
+    existingSecretKey: "DUO"
+```
 
 ## Mail settings
 
@@ -190,13 +230,29 @@ smtp:
   host: mx01.contoso.com
   from: no-reply@contoso.com
   fromName: "Vault Administrator"
-  username: admin
-  password: password
+  username:
+    value: admin
+  password:
+    value: password
   acceptInvalidHostnames: "true"
   acceptInvalidCerts: "true"
 ```
 
-Detailed configuration options can be found in the [SMTP Configuration](./charts/vaultwarden/README.md#smtp-configuration) section.
+You could also use an existing Kubernetes secret that contains the SMTP username and password:
+
+```yaml
+smtp:
+  host: mx01.contoso.com
+  from: no-reply@contoso.com
+  fromName: "Vault Administrator"
+  existingSecret: smtpsecrets
+  username:
+    existingSecretKey: SMTP_USERNAME
+  password:
+    existingSecretKey: SMTP_PASSWORD
+```
+
+Detailed configuration options can be found in the [SMTP Configuration](#smtp-configuration) section.
 
 ## Persistent storage
 
@@ -409,14 +465,18 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 ### MFA/2FA settings
 
-| Name               | Description                                                         | Value |
-| ------------------ | ------------------------------------------------------------------- | ----- |
-| `yubico.clientId`  | Yubico client ID                                                    | `""`  |
-| `yubico.secretKey` | Yubico secret key                                                   | `""`  |
-| `yubico.server`    | Specify a Yubico server, otherwise the default servers will be used | `""`  |
-| `duo.ikey`         | Duo Integration Key                                                 | `""`  |
-| `duo.secretKey`    | Duo Secret Key                                                      | `""`  |
-| `duo.hostname`     | Duo API hostname                                                    | `""`  |
+| Name                                 | Description                                                                                               | Value |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------- | ----- |
+| `yubico.clientId`                    | Yubico client ID                                                                                          | `""`  |
+| `yubico.existingSecret`              | Name of an existing secret containing the Yubico secret key. Also set yubico.secretKey.existingSecretKey. | `""`  |
+| `yubico.secretKey.value`             | secretKey plain text                                                                                      | `""`  |
+| `yubico.secretKey.existingSecretKey` | When using an existing secret, specify the key which contains the secretKey.                              | `""`  |
+| `yubico.server`                      | Specify a Yubico server, otherwise the default servers will be used                                       | `""`  |
+| `duo.iKey`                           | Duo Integration Key                                                                                       | `""`  |
+| `duo.existingSecret`                 | Name of an existing secret containing the Duo skey. Also set duo.sKey.existingSecretKey.                  | `""`  |
+| `duo.sKey.value`                     | sKey plain text                                                                                           | `""`  |
+| `duo.sKey.existingSecretKey`         | When using an existing secret, specify the key which contains the sKey.                                   | `""`  |
+| `duo.hostname`                       | Duo API hostname                                                                                          | `""`  |
 
 ### SMTP Configuration
 
@@ -460,3 +520,4 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `ingress.pathType`                | Path type for the ingress                                                      | `Prefix`             |
 | `ingress.tlsSecret`               | Kubernetes secret containing the SSL certificate when using the "nginx" class. | `""`                 |
 | `ingress.nginxAllowList`          | Comma-separated list of IP addresses and subnets to allow.                     | `""`                 |
+| `ingress.customHeadersConfigMap`  | ConfigMap containing custom headers to be added to the ingress.                | `{}`                 |

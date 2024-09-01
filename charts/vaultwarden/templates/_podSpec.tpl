@@ -44,6 +44,20 @@ containers:
             key: {{ .key }}
       {{- end }}
       {{- end }}
+      {{- if or (.Values.yubico.secretKey.value) (.Values.yubico.secretKey.existingSecretKey) }}
+      - name: YUBICO_SECRET_KEY
+        valueFrom:
+          secretKeyRef:
+            name: {{ default (include "vaultwarden.fullname" .) .Values.yubico.existingSecret }}
+            key: {{ default "YUBICO_SECRET_KEY" .Values.yubico.secretKey.existingSecretKey }}
+      {{- end }}
+      {{- if or (.Values.duo.sKey.value) (.Values.duo.sKey.existingSecretKey) }}
+      - name: DUO_SKEY
+        valueFrom:
+          secretKeyRef:
+            name: {{ default (include "vaultwarden.fullname" .) .Values.duo.existingSecret }}
+            key: {{ default "DUO_SKEY" .Values.duo.sKey.existingSecretKey }}
+      {{- end }}  
       {{- if or (.Values.smtp.username.value) (.Values.smtp.username.existingSecretKey )}}
       - name: SMTP_USERNAME
         valueFrom:
