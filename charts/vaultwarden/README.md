@@ -46,7 +46,7 @@ image:
 domain: "https://vaultwarden.contoso.com:9443/"
 ```
 
-Detailed configuration options can be found in the [Vaultwarden settings](./charts/vaultwarden/README.md#vaultwarden-settings) section.
+Detailed configuration options can be found in the [General settings](#general-settings) section.
 
 ## Database options
 
@@ -89,7 +89,7 @@ database:
   existingSecretKey: "secret-uri"
 ```
 
-Detailed configuration options can be found in the [Database Configuration](./charts/vaultwarden/README.md#database-configuration) section.
+Detailed configuration options can be found in the [Database Configuration](#database-settings) section.
 
 ## SSL and Ingress
 
@@ -148,7 +148,7 @@ ingress:
     alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:eu-central-1:ACCOUNT:certificate/LONGID"
 ```
 
-Detailed configuration options can be found in the [Exposure Parameters](./charts/vaultwarden/README.md#exposure-parameters) section.
+Detailed configuration options can be found in the [Exposure Parameters](#exposure-settings) section.
 
 ## Security
 
@@ -236,7 +236,7 @@ smtp:
   acceptInvalidCerts: "true"
 ```
 
-Detailed configuration options can be found in the [SMTP Configuration](./charts/vaultwarden/README.md#smtp-configuration) section.
+Detailed configuration options can be found in the [SMTP Configuration](#smtp-configuration) section.
 
 ## Persistent storage
 
