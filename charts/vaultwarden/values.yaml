@@ -124,6 +124,11 @@ securityContext:
 ## Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
 dnsConfig: {}
 
+## @param enableServiceLinks Enable service links, Kubernetes default is true
+## Ref: https://kubernetes.io/docs/tutorials/services/connect-applications-service/#accessing-the-service
+##
+enableServiceLinks: true
+
 ## @section Reliability configuration
 ##
 

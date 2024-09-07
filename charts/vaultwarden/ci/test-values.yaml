@@ -24,3 +24,5 @@ duo:
   iKey: "999888"
   sKey:
     value: "HELLO"
+
+enableServiceLinks: false

@@ -23,6 +23,9 @@ securityContext:
 initContainers:
 {{- toYaml . | nindent 2 }}
 {{- end }}
+{{- if not .Values.enableServiceLinks }}
+enableServiceLinks: false
+{{- end }}
 containers:
   - image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
     imagePullPolicy: {{ .Values.image.pullPolicy }}
