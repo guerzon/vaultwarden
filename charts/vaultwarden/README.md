@@ -35,9 +35,11 @@ Example that uses the Alpine-based image `1.24.0-alpine` and an existing secret 
 
 ```yaml
 image:
+  registry: ghcr.io
+  repository: guerzon/vaultwarden
   tag: "1.24.0-alpine"
   pullSecrets:
-    - myRegKey
+    - name: myRegKey
 ```
 
 **Important**: specify the URL used by users with the `domain` variable, otherwise, some functionalities might not work:
@@ -318,7 +320,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `image.repository`      | Vaultwarden image repository                                                              | `vaultwarden/server` |
 | `image.tag`             | Vaultwarden image tag                                                                     | `1.32.0-alpine`      |
 | `image.pullPolicy`      | Vaultwarden image pull policy                                                             | `IfNotPresent`       |
-| `image.pullSecrets`     | Specify docker-registry secret names                                                      | `[]`                 |
+| `image.pullSecrets`     | Specify docker-registry secrets                                                           | `[]`                 |
 | `image.extraSecrets`    | Vaultwarden image extra secrets                                                           | `[]`                 |
 | `image.extraVars`       | Vaultwarden image extra vars                                                              | `[]`                 |
 | `fullnameOverride`      | String to override the application name.                                                  | `""`                 |

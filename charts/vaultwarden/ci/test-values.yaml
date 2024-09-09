@@ -12,7 +12,7 @@ adminToken:
 
 image:
   pullSecrets:
-    - myRegKey
+    - name: myRegKey
 
 yubico:
   clientId: "ABCDE"

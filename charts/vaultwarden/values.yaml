@@ -18,11 +18,11 @@ image:
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
   ##
   pullPolicy: IfNotPresent
-  ## @param image.pullSecrets Specify docker-registry secret names
+  ## @param image.pullSecrets Specify docker-registry secrets
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ## Example:
   ## pullSecrets:
-  ##   - myRegistryKeySecretName
+  ##   - name: myRegistryKeySecretName
   ##
   pullSecrets: []
   ## @param image.extraSecrets Vaultwarden image extra secrets
