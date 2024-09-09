@@ -15,4 +15,4 @@ adminToken:
 
 image:
   pullSecrets:
-    - myRegKey
+    - name: myRegKey
