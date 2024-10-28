@@ -153,6 +153,9 @@ livenessProbe:
   ## @param livenessProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed
   ##
   failureThreshold: 10
+  ## @param livenessProbe.path Path on which the probe is exposed, default is "/alive". Replace when using non-root path deployment
+  ##
+  path: /alive
 
 ## Readiness probe configuration
 ##
@@ -175,6 +178,9 @@ readinessProbe:
   ## @param readinessProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed
   ##
   failureThreshold: 3
+  ## @param readinessProbe.path Path on which the probe is exposed, default is "/alive". Replace when using non-root path deployment
+  ##
+  path: /alive
 
 ## Startup probe configuration
 ##
@@ -197,6 +203,9 @@ startupProbe:
   ## @param startupProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed
   ##
   failureThreshold: 10
+  ## @param startupProbe.path Path on which the probe is exposed, default is "/alive". Replace when using non-root path deployment
+  ##
+  path: /alive
 
 ## @param resources Resource configurations
 ##
