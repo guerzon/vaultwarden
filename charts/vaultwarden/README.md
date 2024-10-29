@@ -344,31 +344,34 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 ### Reliability configuration
 
-| Name                                 | Description                                                             | Value   |
-| ------------------------------------ | ----------------------------------------------------------------------- | ------- |
-| `livenessProbe.enabled`              | Enable liveness probe                                                   | `true`  |
-| `livenessProbe.initialDelaySeconds`  | Delay before liveness probe is initiated                                | `5`     |
-| `livenessProbe.timeoutSeconds`       | How long to wait for the probe to succeed                               | `1`     |
-| `livenessProbe.periodSeconds`        | How often to perform the probe                                          | `10`    |
-| `livenessProbe.successThreshold`     | Minimum consecutive successes for the probe to be considered successful | `1`     |
-| `livenessProbe.failureThreshold`     | Minimum consecutive failures for the probe to be considered failed      | `10`    |
-| `readinessProbe.enabled`             | Enable readiness probe                                                  | `true`  |
-| `readinessProbe.initialDelaySeconds` | Delay before readiness probe is initiated                               | `5`     |
-| `readinessProbe.timeoutSeconds`      | How long to wait for the probe to succeed                               | `1`     |
-| `readinessProbe.periodSeconds`       | How often to perform the probe                                          | `10`    |
-| `readinessProbe.successThreshold`    | Minimum consecutive successes for the probe to be considered successful | `1`     |
-| `readinessProbe.failureThreshold`    | Minimum consecutive failures for the probe to be considered failed      | `3`     |
-| `startupProbe.enabled`               | Enable startup probe                                                    | `false` |
-| `startupProbe.initialDelaySeconds`   | Delay before startup probe is initiated                                 | `5`     |
-| `startupProbe.timeoutSeconds`        | How long to wait for the probe to succeed                               | `1`     |
-| `startupProbe.periodSeconds`         | How often to perform the probe                                          | `10`    |
-| `startupProbe.successThreshold`      | Minimum consecutive successes for the probe to be considered successful | `1`     |
-| `startupProbe.failureThreshold`      | Minimum consecutive failures for the probe to be considered failed      | `10`    |
-| `resources`                          | Resource configurations                                                 | `{}`    |
-| `strategy`                           | Resource configurations                                                 | `{}`    |
-| `podDisruptionBudget.enabled`        | Enable PodDisruptionBudget settings                                     | `false` |
-| `podDisruptionBudget.minAvailable`   | Minimum number/percentage of pods that should remain scheduled.         | `1`     |
-| `podDisruptionBudget.maxUnavailable` | Maximum number/percentage of pods that may be made unavailable          | `nil`   |
+| Name                                 | Description                                                               | Value    |
+|--------------------------------------|---------------------------------------------------------------------------|----------|
+| `livenessProbe.enabled`              | Enable liveness probe                                                     | `true`   |
+| `livenessProbe.initialDelaySeconds`  | Delay before liveness probe is initiated                                  | `5`      |
+| `livenessProbe.timeoutSeconds`       | How long to wait for the probe to succeed                                 | `1`      |
+| `livenessProbe.periodSeconds`        | How often to perform the probe                                            | `10`     |
+| `livenessProbe.successThreshold`     | Minimum consecutive successes for the probe to be considered successful   | `1`      |
+| `livenessProbe.failureThreshold`     | Minimum consecutive failures for the probe to be considered failed        | `10`     |
+| `livenessProbe.path`                 | Path which probe tries to resolve, override when non-root path deployment | `/alive` |
+| `readinessProbe.enabled`             | Enable readiness probe                                                    | `true`   |
+| `readinessProbe.initialDelaySeconds` | Delay before readiness probe is initiated                                 | `5`      |
+| `readinessProbe.timeoutSeconds`      | How long to wait for the probe to succeed                                 | `1`      |
+| `readinessProbe.periodSeconds`       | How often to perform the probe                                            | `10`     |
+| `readinessProbe.successThreshold`    | Minimum consecutive successes for the probe to be considered successful   | `1`      |
+| `readinessProbe.failureThreshold`    | Minimum consecutive failures for the probe to be considered failed        | `3`      |
+| `readinessProbe.path`                | Path which probe tries to resolve, override when non-root path deployment | `/alive` |
+| `startupProbe.enabled`               | Enable startup probe                                                      | `false`  |
+| `startupProbe.initialDelaySeconds`   | Delay before startup probe is initiated                                   | `5`      |
+| `startupProbe.timeoutSeconds`        | How long to wait for the probe to succeed                                 | `1`      |
+| `startupProbe.periodSeconds`         | How often to perform the probe                                            | `10`     |
+| `startupProbe.successThreshold`      | Minimum consecutive successes for the probe to be considered successful   | `1`      |
+| `startupProbe.failureThreshold`      | Minimum consecutive failures for the probe to be considered failed        | `10`     |
+| `startupProbe.path`                  | Path which probe tries to resolve, override when non-root path deployment | `/alive` |
+| `resources`                          | Resource configurations                                                   | `{}`     |
+| `strategy`                           | Resource configurations                                                   | `{}`     |
+| `podDisruptionBudget.enabled`        | Enable PodDisruptionBudget settings                                       | `false`  |
+| `podDisruptionBudget.minAvailable`   | Minimum number/percentage of pods that should remain scheduled.           | `1`      |
+| `podDisruptionBudget.maxUnavailable` | Maximum number/percentage of pods that may be made unavailable            | `nil`    |
 
 ### Persistent data configuration
 

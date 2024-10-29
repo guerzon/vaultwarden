@@ -138,7 +138,7 @@ containers:
     {{- if .Values.livenessProbe.enabled }}
     livenessProbe:
       httpGet:
-        path: /alive
+        path: {{ .Values.livenessProbe.path }}
         port: http
       initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
       periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
@@ -149,7 +149,7 @@ containers:
     {{- if .Values.readinessProbe.enabled }}
     readinessProbe:
       httpGet:
-        path: /alive
+        path: {{ .Values.readinessProbe.path }}
         port: http
       initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
       periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
@@ -160,7 +160,7 @@ containers:
     {{- if .Values.startupProbe.enabled }}
     startupProbe:
       httpGet:
-        path: /alive
+        path: {{ .Values.startupProbe.path }}
         port: http
       initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
       periodSeconds: {{ .Values.startupProbe.periodSeconds }}
