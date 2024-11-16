@@ -43,7 +43,7 @@ See [LICENSE](./LICENSE).
 
 ## Author
 
-This Helm chart was created and maintained by [Lester Guerzon](https://blog.pidnull.io).
+This Helm chart was created and maintained by [Lester Guerzon](https://medium.com/@sreafterhours).
 
 ### Credits
 
