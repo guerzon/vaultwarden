@@ -146,11 +146,14 @@ ingress:
   hostname: vaultwarden.contoso.com
   additionalAnnotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
     alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:eu-central-1:ACCOUNT:certificate/LONGID"
 ```
 
-Detailed configuration options can be found in the [Exposure Parameters](#exposure-settings) section.
+Visit [this](https://medium.com/@sreafterhours/deploy-vaultwarden-to-amazon-eks-using-terraform-terragrunt-and-helm-69a0a7396625) article for a tutorial for deploying an EKS cluster and then installing this chart.
+
+Detailed configuration options can be found in the [Exposure Settings](#exposure-settings) section.
 
 ## Security
 
