@@ -26,3 +26,10 @@ spec:
 {{- if .Values.service.ipFamilyPolicy }}
   ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
 {{- end }}
+{{- if .Values.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.service.sessionAffinity }}
+{{- end }}
+{{- if .Values.service.sessionAffinityConfig }}
+  sessionAffinityConfig:
+  {{- toYaml .Values.service.sessionAffinityConfig | nindent 4 }}
+{{- end }}

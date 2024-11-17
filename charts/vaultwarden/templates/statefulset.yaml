@@ -16,7 +16,7 @@ metadata:
   {{- end }}
 spec:
   serviceName: vaultwarden
-  replicas: 1
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app.kubernetes.io/component: vaultwarden
