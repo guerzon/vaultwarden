@@ -40,6 +40,10 @@ image:
   ##
   extraVars: []
 
+## @param replicas Number of deployment replicas
+##
+replicas: 1
+
 ## @param fullnameOverride String to override the application name.
 ##
 fullnameOverride: ""
@@ -691,7 +695,18 @@ service:
   ##
   labels: {}
   ## @param service.ipFamilyPolicy IP family policy for the service
+  ##
   ipFamilyPolicy: "SingleStack"
+  ## @param service.sessionAffinity Session affinity
+  ##
+  # sessionAffinity: ClientIP
+  sessionAffinity: ""
+  ## @param service.sessionAffinity Session affinity configuration
+  ##
+  sessionAffinityConfig: {}
+  # sessionAffinityConfig:
+  #   clientIP:
+  #     timeoutSeconds: 10800
 
 ## Ingress configuration
 ## Refer to the README for some examples

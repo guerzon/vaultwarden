@@ -155,6 +155,20 @@ Visit [this](https://medium.com/@sreafterhours/deploy-vaultwarden-to-amazon-eks-
 
 Detailed configuration options can be found in the [Exposure Settings](#exposure-settings) section.
 
+## High Availability
+
+Set the following to run multiple deployment/statefulset replicas:
+
+```yaml
+replicas: 10
+
+service:
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+```
+
 ## Security
 
 ### Admin page
@@ -285,7 +299,7 @@ data:
 To use persistent storage for attachments, set the `attachments` dictionary. Optionally set a different path. Note that by default, the path is `/data/attachments`.
 
 ```yaml
-data:
+attachments:
   name: "vaultwarden-data"
   size: "15Gi"
   class: "local-path"
@@ -295,7 +309,7 @@ In case you want to keep the existing persistent volume claim during uninstall a
 (This will be ignored for StatefulSets and is only relevant for `resourceType: Deployment`)
 
 ```yaml
-data:
+attachments:
   name: "vaultwarden-data"
   size: "15Gi"
   class: "local-path"
