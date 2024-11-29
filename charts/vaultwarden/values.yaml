@@ -248,28 +248,32 @@ podDisruptionBudget:
 ## @section Persistent data configuration
 ##
 
-## @param data Data directory configuration, refer to values.yaml for parameters.
-##
-data:
-  {}
-  # name: "vaultwarden-data"
-  # size: "15Gi"
-  # class: ""
-  # path: "/data"
-  # keepPvc: false
-  # accessMode: "ReadWriteOnce"
 
-## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
-## By default, attachments/ is located inside the data directory.
-##
-attachments:
-  {}
-  # name: "vaultwarden-files"
-  # size: "100Gi"
-  # class: ""
-  # path: /files
-  # keepPvc: false
-  # accessMode: "ReadWriteOnce"
+storage:
+  existingVolumeClaim: ""
+  
+  ## @param data Data directory configuration, refer to values.yaml for parameters.
+  ##
+  data:
+    {}
+    # name: "vaultwarden-data"
+    # size: "15Gi"
+    # class: ""
+    # path: "/data"
+    # keepPvc: false
+    # accessMode: "ReadWriteOnce"
+
+  ## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
+  ## By default, attachments/ is located inside the data directory.
+  ##
+  attachments:
+    {}
+    # name: "vaultwarden-files"
+    # size: "100Gi"
+    # class: ""
+    # path: /files
+    # keepPvc: false
+    # accessMode: "ReadWriteOnce"
 
 ## @param webVaultEnabled Enable Web Vault
 ##
@@ -707,9 +711,6 @@ service:
   # sessionAffinityConfig:
   #   clientIP:
   #     timeoutSeconds: 10800
-
-storage:
-  existingVolumeClaim: ""
 
 ## Ingress configuration
 ## Refer to the README for some examples
