@@ -708,6 +708,9 @@ service:
   #   clientIP:
   #     timeoutSeconds: 10800
 
+storage:
+  existingVolumeClaim: ""
+
 ## Ingress configuration
 ## Refer to the README for some examples
 ##

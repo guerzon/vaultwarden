@@ -171,6 +171,12 @@ containers:
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 2 }}
     {{- end }}
+{{- if .Values.storage.existingVolumeClaim }}
+volumes:
+  - name: vaultwarden-data
+    persistentVolumeClaim:
+      claimName: {{ .Values.storage.existingVolumeClaim }}
+{{- end }}
 {{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ .Values.serviceAccount.name }}
 {{- end }}
