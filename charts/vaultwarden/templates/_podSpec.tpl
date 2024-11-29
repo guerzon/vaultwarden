@@ -118,16 +118,24 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
-    {{- if or (.Values.data) (.Values.attachments) }}
+    {{- if .Values.storage.existingVolumeClaim }}
     volumeMounts:
-      {{- with .Values.data }}
+      - name: vaultwarden-data
+        mountPath: {{ default "/data" .path }}
+      - name: vaultwarden-data
+        mountPath: {{ default "/data/attachments" .path }}
+    {{- else }}
+    {{- if or (.Values.storage.data) (.Values.storage.attachments) }}
+    volumeMounts:
+      {{- with .Values.storage.data }}
       - name: vaultwarden-data
         mountPath: {{ default "/data" .path }}
       {{- end }}
-      {{- with .Values.attachments }}
+      {{- with .Values.storage.attachments }}
       - name: vaultwarden-data
         mountPath: {{ default "/data/attachments" .path }}
       {{- end }}
+    {{- end }}
     {{- end }}
     resources:
     {{- toYaml .Values.resources | nindent 6 }}
