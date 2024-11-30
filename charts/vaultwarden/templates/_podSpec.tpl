@@ -119,11 +119,13 @@ containers:
         name: http
         protocol: TCP
     {{- if .Values.storage.existingVolumeClaim.claimName }}
+    {{- with .Values.storage.existingVolumeClaim }}
     volumeMounts:
       - name: {{ .claimName }}
         mountPath: {{ default "/data" .dataPath }}
       - name: {{ .claimName }}
         mountPath: {{ default "/data/attachments" .attachmentsPath }}
+    {{- end }}
     {{- else }}
     {{- if or (.Values.storage.data) (.Values.storage.attachments) }}
     volumeMounts:
