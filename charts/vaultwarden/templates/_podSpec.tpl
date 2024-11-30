@@ -118,16 +118,26 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
-    {{- if or (.Values.data) (.Values.attachments) }}
+    {{- if .Values.storage.existingVolumeClaim }}
+    {{- with .Values.storage.existingVolumeClaim }}
     volumeMounts:
-      {{- with .Values.data }}
+      - name: vaultwarden-data
+        mountPath: {{ default "/data" .dataPath }}
+      - name: vaultwarden-data
+        mountPath: {{ default "/data/attachments" .attachmentsPath }}
+    {{- end }}
+    {{- else }}
+    {{- if or (.Values.storage.data) (.Values.storage.attachments) }}
+    volumeMounts:
+      {{- with .Values.storage.data }}
       - name: {{ .name }}
         mountPath: {{ default "/data" .path }}
       {{- end }}
-      {{- with .Values.attachments }}
+      {{- with .Values.storage.attachments }}
       - name: {{ .name }}
         mountPath: {{ default "/data/attachments" .path }}
       {{- end }}
+    {{- end }}
     {{- end }}
     resources:
     {{- toYaml .Values.resources | nindent 6 }}
@@ -171,6 +181,14 @@ containers:
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 2 }}
     {{- end }}
+{{- if .Values.storage.existingVolumeClaim }}
+{{- with .Values.storage.existingVolumeClaim }}
+volumes:
+  - name: vaultwarden-data
+    persistentVolumeClaim:
+      claimName: {{ .claimName }}
+{{- end }}
+{{- end }}
 {{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ .Values.serviceAccount.name }}
 {{- end }}

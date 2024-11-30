@@ -1,7 +1,7 @@
 {{- define "vaultwarden.pvcSpec" }}
-{{- if (or .Values.data .Values.attachments) -}}
+{{- if (or .Values.storage.data .Values.storage.attachments) -}}
 volumeClaimTemplates:
-  {{- with .Values.data }}
+  {{- with .Values.storage.data }}
   - metadata:
       name: {{ .name }}
       labels:
@@ -24,7 +24,7 @@ volumeClaimTemplates:
       storageClassName: {{ . | quote }}
       {{- end }}
   {{- end }}
-  {{- with .Values.attachments }}
+  {{- with .Values.storage.attachments }}
   - metadata:
       name: {{ .name }}
       labels:

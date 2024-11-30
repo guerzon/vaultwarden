@@ -275,9 +275,11 @@ Detailed configuration options can be found in the [SMTP Configuration](#smtp-co
 
 ## Persistent storage
 
+### Building Persistant Storage Through Helm
+
 Vaultwarden requires persistent storage for its attachments and icons cache.
 
-To use persistent storage using a claim, set the `data` dictionary. Optionally set a different path using the `path` key. The following example sets the storage class to an already-installed Rancher's [local path storage](https://github.com/rancher/local-path-provisioner) provisioner.
+To use persistent storage using a claim, set the `storage.data` dictionary. Optionally set a different path using the `path` key. The following example sets the storage class to an already-installed Rancher's [local path storage](https://github.com/rancher/local-path-provisioner) provisioner.
 
 ```yaml
 data:
@@ -296,7 +298,7 @@ data:
   path: "/srv/vaultwarden-data"
 ```
 
-To use persistent storage for attachments, set the `attachments` dictionary. Optionally set a different path. Note that by default, the path is `/data/attachments`.
+To use persistent storage for attachments, set the `storage.attachments` dictionary. Optionally set a different path. Note that by default, the path is `/data/attachments`.
 
 ```yaml
 attachments:
@@ -314,6 +316,19 @@ attachments:
   size: "15Gi"
   class: "local-path"
   keepPvc: true
+```
+
+### Using an Existing Persistent Volume Claim
+
+In case you want to use an existing PVC to store your data and attachments (i.e. NAS), `storage.existingVolumeClaim` can be set 
+which will update the PodSpec's to use the provided PVC.  Note, that use of this value will ignore the values of both `storage.data` 
+and `storage.attachments` values.
+
+```yaml
+existingVolumeClaim:
+    claimName: "vaultwarden-pvc"
+    dataPath: "/data"
+    attachmentsPath: /data/attachments
 ```
 
 ## Uninstall

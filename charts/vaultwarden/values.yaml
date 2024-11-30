@@ -248,28 +248,40 @@ podDisruptionBudget:
 ## @section Persistent data configuration
 ##
 
-## @param data Data directory configuration, refer to values.yaml for parameters.
-##
-data:
-  {}
-  # name: "vaultwarden-data"
-  # size: "15Gi"
-  # class: ""
-  # path: "/data"
-  # keepPvc: false
-  # accessMode: "ReadWriteOnce"
 
-## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
-## By default, attachments/ is located inside the data directory.
-##
-attachments:
-  {}
-  # name: "vaultwarden-files"
-  # size: "100Gi"
-  # class: ""
-  # path: /files
-  # keepPvc: false
-  # accessMode: "ReadWriteOnce"
+storage:
+  ## @param existingVolumeClaim If defined, the values here will be used for the data and
+  ## attachments PV's. The custom values for data and attachments will be ignored if
+  ## a value is set here
+  ##
+  existingVolumeClaim:
+    {}
+    # claimName: "vaultwarden-pvc"
+    # dataPath: "/data"
+    # attachmentsPath: /data/attachments
+
+  ## @param data Data directory configuration, refer to values.yaml for parameters.
+  ##
+  data:
+    {}
+    # name: "vaultwarden-data"
+    # size: "15Gi"
+    # class: ""
+    # path: "/data"
+    # keepPvc: false
+    # accessMode: "ReadWriteOnce"
+
+  ## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
+  ## By default, attachments/ is located inside the data directory.
+  ##
+  attachments:
+    {}
+    # name: "vaultwarden-files"
+    # size: "100Gi"
+    # class: ""
+    # path: /files
+    # keepPvc: false
+    # accessMode: "ReadWriteOnce"
 
 ## @param webVaultEnabled Enable Web Vault
 ##
