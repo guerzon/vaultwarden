@@ -324,6 +324,13 @@ In case you want to use an existing PVC to store your data and attachments (i.e.
 which will update the PodSpec's to use the provided PVC.  Note, that use of this value will ignore the values of both `storage.data` 
 and `storage.attachments` values.
 
+```yaml
+existingVolumeClaim:
+    claimName: "vaultwarden-pvc"
+    dataPath: "/data"
+    attachmentsPath: /data/attachments
+```
+
 ## Uninstall
 
 To uninstall/delete the `vaultwarden-demo` release:
