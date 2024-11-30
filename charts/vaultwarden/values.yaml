@@ -250,11 +250,15 @@ podDisruptionBudget:
 
 
 storage:
-  ## @param existingVolumeClaim If defined, the value here will be used for the data and
+  ## @param existingVolumeClaim If defined, the values here will be used for the data and
   ## attachments PV's. The custom values for data and attachments will be ignored if
   ## a value is set here
   ##
-  existingVolumeClaim: ""
+  existingVolumeClaim:
+    {}
+    # claimName: "vaultwarden-pvc"
+    # dataPath: "/data"
+    # attachmentsPath: /data/attachments
 
   ## @param data Data directory configuration, refer to values.yaml for parameters.
   ##
