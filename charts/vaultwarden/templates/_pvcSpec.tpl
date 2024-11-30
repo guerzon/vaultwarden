@@ -1,5 +1,5 @@
 {{- define "vaultwarden.pvcSpec" }}
-{{- if (or .Values.data .Values.storage.attachments) -}}
+{{- if (or .Values.storage.data .Values.storage.attachments) -}}
 volumeClaimTemplates:
   {{- with .Values.storage.data }}
   - metadata:
