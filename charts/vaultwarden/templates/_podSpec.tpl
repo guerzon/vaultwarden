@@ -185,7 +185,7 @@ containers:
 volumes:
   - name: vaultwarden-data
     persistentVolumeClaim:
-      claimName: {{ .Values.storage.existingVolumeClaim }}
+      claimName: {{ .Values.storage.existingVolumeClaim.claimName }}
 {{- end }}
 {{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ .Values.serviceAccount.name }}
