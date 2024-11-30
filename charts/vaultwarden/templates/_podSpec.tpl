@@ -118,12 +118,12 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
-    {{- if .Values.storage.existingVolumeClaim }}
+    {{- if .Values.storage.existingVolumeClaim.claimName }}
     volumeMounts:
-      - name: vaultwarden-data
-        mountPath: {{ default "/data" .path }}
-      - name: vaultwarden-data
-        mountPath: {{ default "/data/attachments" .path }}
+      - name: {{ .claimName }}
+        mountPath: {{ default "/data" .dataPath }}
+      - name: {{ .claimName }}
+        mountPath: {{ default "/data/attachments" .attachmentsPath }}
     {{- else }}
     {{- if or (.Values.storage.data) (.Values.storage.attachments) }}
     volumeMounts:
