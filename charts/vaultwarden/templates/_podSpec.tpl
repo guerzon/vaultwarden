@@ -118,7 +118,7 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
-    {{- if .Values.storage.existingVolumeClaim.claimName }}
+    {{- if .Values.storage.existingVolumeClaim }}
     {{- with .Values.storage.existingVolumeClaim }}
     volumeMounts:
       - name: {{ .claimName }}
