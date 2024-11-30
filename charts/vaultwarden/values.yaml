@@ -254,7 +254,7 @@ storage:
   ## attachments PV's. The custom values for data and attachments will be ignored if
   ## a value is set here
   ##
-  existingVolumeClaim: 
+  existingVolumeClaim:
     {}
     # claimName: "vaultwarden-pvc"
     # dataPath: "/data"
