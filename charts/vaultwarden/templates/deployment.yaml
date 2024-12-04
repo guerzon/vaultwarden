@@ -40,11 +40,13 @@ spec:
         {{- end }}
     spec:
       {{- include "vaultwarden.podSpec" . | nindent 6 }}
-      {{- range $pvc := (fromYaml (include "vaultwarden.pvcSpec" .)).volumeClaimTemplates }}
+      {{- if not .Values.storage.existingVolumeClaim }}
       volumes:
+        {{- range $pvc := (fromYaml (include "vaultwarden.pvcSpec" .)).volumeClaimTemplates }}
         {{- $newName := printf "%s-%s-0" $pvc.metadata.name $.Release.Name }}
         - name: {{ $pvc.metadata.name }}
           persistentVolumeClaim:
             claimName: {{ $newName }}
+        {{- end }}
       {{- end }}
 {{- end }}
