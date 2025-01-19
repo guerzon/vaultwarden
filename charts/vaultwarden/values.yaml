@@ -257,8 +257,7 @@ storage:
   existingVolumeClaim:
     {}
     # claimName: "vaultwarden-pvc"
-    # dataPath: "/data"
-    # attachmentsPath: /data/attachments
+    # mountPath: "/data"
 
   ## @param data Data directory configuration, refer to values.yaml for parameters.
   ##
