@@ -122,9 +122,7 @@ containers:
     {{- with .Values.storage.existingVolumeClaim }}
     volumeMounts:
       - name: vaultwarden-data
-        mountPath: {{ default "/data" .dataPath }}
-      - name: vaultwarden-data
-        mountPath: {{ default "/data/attachments" .attachmentsPath }}
+        mountPath: {{ default "/data" .mountPath }}
     {{- end }}
     {{- else }}
     {{- if or (.Values.storage.data) (.Values.storage.attachments) }}

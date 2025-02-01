@@ -326,9 +326,8 @@ and `storage.attachments` values.
 
 ```yaml
 existingVolumeClaim:
-    claimName: "vaultwarden-pvc"
-    dataPath: "/data"
-    attachmentsPath: /data/attachments
+  claimName: "vaultwarden-pvc"
+  mountPath: "/data"
 ```
 
 ## Uninstall
