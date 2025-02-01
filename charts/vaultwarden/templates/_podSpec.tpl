@@ -19,13 +19,30 @@ tolerations:
 securityContext:
   {{- toYaml . | nindent 2 }}
 {{- end }}
-{{- with .Values.initContainers }}
+{{- if or .Values.initContainers (eq (include "vaultwarden.doBackup" .) "true") }}
 initContainers:
+{{- with .Values.initContainers }}
 {{- toYaml . | nindent 2 }}
+{{- end }}
+
+{{- if eq (include "vaultwarden.doBackup" .) "true" }}
+  # Copy rclone config from read-only secret mount to writable share
+  # https://github.com/rclone/rclone/issues/3655
+  - name: copy-config
+    image: busybox:latest
+    command: ["sh", "-c", "cp -v /src-config/rclone.conf /config/"]
+    volumeMounts:
+      - name: backup-secret-conf
+        mountPath: "/src-config/"
+        readOnly: true
+      - name: config
+        mountPath: "/config/"
+{{- end }}
 {{- end }}
 {{- if not .Values.enableServiceLinks }}
 enableServiceLinks: false
 {{- end }}
+
 containers:
   - image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
     imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -178,16 +195,77 @@ containers:
       successThreshold: {{ .Values.startupProbe.successThreshold }}
       failureThreshold: {{ .Values.startupProbe.failureThreshold }}
     {{- end }}
+  {{- if eq (include "vaultwarden.doBackup" .) "true" }}
+  {{- range .Values.backup.backups }}
+  - image: {{ $.Values.backup.image }}
+    name: backup-{{ .name }}
+    securityContext:
+      allowPrivilegeEscalation: false
+    env:
+      - name: DATA_DIR
+        value: {{ default "/data" .path | quote }}
+      - name: RCLONE_REMOTE_NAME
+        value: {{ $.Values.backup.remoteName | quote }}
+      - name: RCLONE_REMOTE_DIR
+        value: {{ .remoteDir | quote }}
+      - name: RCLONE_GLOBAL_FLAG
+        value: "{{ $.Values.backup.globalFlags }} --config /config/rclone.conf"
+      - name: CRON
+        value: {{ .cron | quote }}
+      - name: ZIP_PASSWORD
+        value: {{ $.Values.backup.zipPassword | quote }}
+      - name: BACKUP_KEEP_DAYS
+        value: {{ .keepDays | quote }}
+      - name: BACKUP_FILE_DATE_SUFFIX
+        value: {{ .fileDateSuffix | quote }}
+      - name: TIMEZONE
+        value: {{ $.Values.backup.timezone | quote }}
+      {{- if .healthCheckPing }}
+      - name: PING_URL
+        value: {{ (tpl .healthCheckPing  $) | quote }}
+      {{- end }}
+      {{- if $.Values.backup.smtp.enabled }}
+      - name: MAIL_SMTP_ENABLE
+        value: "true"
+      - name: MAIL_SMTP_VARIABLES
+        value: {{ $.Values.backup.smtp.smtpVariables | quote }}
+      - name: MAIL_TO
+        value: {{ $.Values.backup.smtp.mailTo | quote }}
+      - name: MAIL_WHEN_SUCCESS
+        value: {{ $.Values.backup.smtp.mailWhenSuccess | quote }}
+      - name: MAIL_WHEN_FAILURE
+        value: {{ $.Values.backup.smtp.mailWhenFailure | quote }}
+      {{- end }}
+      # When run as non-root, script cannot create crontabs in home folcer
+    volumeMounts:
+      - name: vaultwarden-data
+        mountPath: {{ default "/data" $.Values.storage.data.path }}
+      - name: config
+        mountPath: "/config/"
+  {{- end }}
+  {{- end }}
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 2 }}
     {{- end }}
-{{- if .Values.storage.existingVolumeClaim }}
-{{- with .Values.storage.existingVolumeClaim }}
+{{- if or .Values.storage.existingVolumeClaim (eq (include "vaultwarden.doBackup" .) "true" ) }}
 volumes:
+  {{- if .Values.storage.existingVolumeClaim }}
+  {{- with .Values.storage.existingVolumeClaim }}
   - name: vaultwarden-data
     persistentVolumeClaim:
       claimName: {{ .claimName }}
-{{- end }}
+  {{- end }}
+  {{- end }}
+  {{- if eq (include "vaultwarden.doBackup" .) "true" }}
+  - name: backup-secret-conf
+    secret:
+      secretName: {{ include "vaultwarden.fullname" . }}-rclone
+      optional: false
+      # readable by user/owner
+      defaultMode: 0400
+  - name: config
+    emptyDir: {}
+  {{- end }}
 {{- end }}
 {{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ .Values.serviceAccount.name }}

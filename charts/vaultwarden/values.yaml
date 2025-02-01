@@ -772,3 +772,52 @@ ingress:
   ##   - Add support for using cert-manager.
   ##   - Support for multiple TLS hostnames.
   ##
+
+## @section Backup Configuration
+## https://github.com/ttionya/vaultwarden-backup
+backup:
+  ## @param backup.enabled Enable backup
+  ##
+  enabled: false
+
+  ## @param backup.image Backup image FQDN
+  ##
+  image: "ttionya/vaultwarden-backup:1.22.0"
+
+  ## @param backup.rcloneConfig Raw rClone backup
+  ## Recommended to provide as an encrypted content
+  rcloneConfig: ""
+
+  remoteName: "vaultWarden"
+
+  globalFlags: ""
+
+  #  cron: "5 * * * *"
+
+  zipPassword: "changeme"
+
+  # https://blog.healthchecks.io/2021/09/new-feature-slug-urls/
+  # Obtain from https://healthchecks.io/projects/<project-id>/settings/
+  healthcheckPingKey: "get-from-healthchecks.io"
+
+  timezone: "UTC"
+
+  smtp:
+    enable: false
+    smtpVariables: ""
+    mailTo: ""
+    mailWhenSuccess: false
+    mailWhenFailure: true
+
+  ## An array for backups
+  ## Make sure they not happen at the same time!
+  ## e.g:
+  ## backups:
+  ##   - name: hourly
+  ##     remoteDir: "/BitwardenBackup/hourly/"
+  ##     cron: "5 * * * *"
+  ##     keepDays: 7
+  ##     fileDateSuffix:  "-%H-%M-%S"
+  ##     healthCheckPing: https://hc-ping.com/{ping_key}/vaultwarden-utility
+  ##
+  backups: []
