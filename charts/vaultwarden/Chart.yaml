@@ -13,5 +13,5 @@ maintainers:
   - name: guerzon
     email: guerzon@proton.me
     url: https://github.com/guerzon
-version: 0.31.5
+version: 0.31.6
 kubeVersion: ">=1.12.0-0"
