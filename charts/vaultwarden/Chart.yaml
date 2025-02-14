@@ -8,7 +8,7 @@ keywords:
 sources:
   - https://github.com/guerzon/vaultwarden
   - https://github.com/dani-garcia/vaultwarden
-appVersion: 1.33.1
+appVersion: 1.33.2
 maintainers:
   - name: guerzon
     email: guerzon@proton.me
