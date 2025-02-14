@@ -34,7 +34,7 @@ metadata:
     {{- if $ingress.tls }}
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    {{ - end }}
+    {{- end }}
     nginx.ingress.kubernetes.io/limit-connections: "25"
     nginx.ingress.kubernetes.io/limit-rps: "15"
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m
