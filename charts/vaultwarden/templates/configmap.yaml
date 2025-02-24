@@ -141,4 +141,15 @@ data:
   {{- if .Values.sso.enforceSSO }}
   SSO_FRONTEND: "override"
   {{- end }}
+  SSO_ROLES_ENABLED: {{ .Values.sso.roles.enabled | quote }}
+  SSO_ROLES_DEFAULT_TO_USER: {{ .Values.sso.roles.defaultToUser | quote }}
+  SSO_ROLES_TOKEN_PATH: {{ .Values.sso.roles.tokenPath | quote }}
+  SSO_ORGANIZATIONS_INVITE: {{ .Values.sso.organizations.enabled | quote }}
+  SSO_ORGANIZATIONS_REVOCATION: {{ .Values.sso.organizations.enableRevocation | quote }}
+  SSO_ORGANIZATIONS_TOKEN_PATH: {{ .Values.sso.organizations.tokenPath | quote }}
+  SSO_ORGANIZATIONS_ID_MAPPING: {{ .Values.sso.organizations.mappings | quote }}
+  SSO_ORGANIZATIONS_ALL_COLLECTIONS: {{ .Values.sso.organizations.inviteAll | quote }}
+  {{- if .Values.sso.organizations.inviteAutoAccept }}
+  ORGANIZATION_INVITE_AUTO_ACCEPT: {{ .Values.sso.organizations.inviteAutoAccept | quote }}
+  {{- end }}
   {{- end }}

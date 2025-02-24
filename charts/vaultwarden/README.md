@@ -583,3 +583,12 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `sso.clientId.existingSecretKey`     | When using an existing secret, specify the key which contains the client ID    | `""`                 |
 | `sso.clientSecret.value`             | Client secret string for the OpenID Connect Provider                           | `""`                 |
 | `sso.clientSecret.existingSecretKey` | When using existing secret, specify the key which contains the client secret   | `""`                 |
+| `sso.roles.enabled`                  | Enable role mapping from ID token claim (supports role "admin" and "user")     | `false`              |
+| `sso.roles.defaultToUser`            | Assign user role as fallback if no role found (users without role can't login) | `true`               |
+| `sso.roles.tokenPath`                | Specify the path to the roles claim inside the ID token                        | `""`                 |
+| `sso.organizations.enabled`          | Enable automatic organization mapping for SSO users.                           | `false`              |
+| `sso.organizations.inviteAll`        | Enable automatic invitation to all organizations in vaultwarden                | `false`               |
+| `sso.organizations.inviteAutoAccept` | Enable automatic acceptance of organization invites                            | `false`               |
+| `sso.organizations.enableRevocation` | Control if user membership from organizations can be revoked by the IDP        | `false`               |
+| `sso.organizations.tokenPath`        | Specify the path to the roles claim inside the ID token.                       | `""`                 |
+| `sso.organizations.mappings`         | Used to map group id's from a IDP. (format: "sso-id:vw-id;", seperated by ";") | `""`                 |

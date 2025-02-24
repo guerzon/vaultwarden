@@ -839,3 +839,37 @@ sso:
     ## @param sso.clientSecret.existingSecretKey When using an existing secret, specify the key which contains the password.
     ##
     existingSecretKey: ""
+  ## Client Roles for OpenID Connect authentication. (Only works with the release build from https://github.com/Timshel/vaultwarden as we await a PR)
+  ##
+  roles:
+    ## @param sso.roles.enabled boolean to enable/disable role mapping from ID token claim (supports currently role "admin" and "user")
+    ##
+    enabled: false
+    ## @param sso.roles.defaultToUser boolen to assign user role as fallback if no role claim was found. (users without a "user" role can't login).
+    ##
+    defaultToUser: true
+    ## @param sso.roles.tokenPath is used to specify the path to the roles claim inside the ID token.
+    ##
+    tokenPath: ""
+  ## Organisation invite for OpenID Connect authentication.
+  ##
+  organizations:
+    ## @param sso.organizations.enabled boolean to enable/disable automatic organization mapping for SSO users. (Only works with the release build from https://github.com/Timshel/vaultwarden as we await a PR)
+    ##
+    enabled: false
+    ## @param sso.organizations.inviteAll boolean to enable/disable automatic invitation to all organizations in vaultwarden. 
+    ##
+    inviteAll: false
+    ## @param sso.organizations.inviteAutoAccept boolean to enable/disable automatic acceptance of organization invites. 
+    ## ATTENTION: This will apply to non SSO users as well and organization acceptance will considered by default !!! 
+    ##
+    inviteAutoAccept: false
+    ## @param sso.organizations.enableRevocation boolen to control if user membership from organizations can be revoked by IDP
+    ##
+    enableRevocation: false
+    ## @param sso.organizations.tokenPath is used to specify the path to the groups claim inside the ID token.
+    ##
+    tokenPath: ""
+    ## @param sso.organizations.mappings is used to map IDP group id's to vaultwarden group id's. (format: "ProviderId:VaultwardenId;", seperated by ";")
+    ##
+    mappings: ""
