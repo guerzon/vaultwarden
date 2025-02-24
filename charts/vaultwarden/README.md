@@ -559,3 +559,27 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `ingress.tlsSecret`               | Kubernetes secret containing the SSL certificate when using the "nginx" class. | `""`                 |
 | `ingress.nginxAllowList`          | Comma-separated list of IP addresses and subnets to allow.                     | `""`                 |
 | `ingress.customHeadersConfigMap`  | ConfigMap containing custom headers to be added to the ingress.                | `{}`                 |
+
+### SSO OpenID Connect Configuration
+
+| Name                                 | Description                                                                    | Value                |
+| ------------------------------------ | ------------------------------------------------------------------------------ | -------------------- |
+| `sso.enabled`                        | Enables the SSO OpenID Connect configuration                                   | `false`              |
+| `sso.existingSecret`                 | Name of an existing secret containing the OpenID Connect client id and secret  | `""`                 |
+| `sso.onlySSO`                        | Disable the email+master-password login flow                                   | `false`              |
+| `sso.enforceSSO`                     | Show SSO login by default and don't ask for the users email                    | `false`              |
+| `sso.signupsMatchEmail`              | If SSO user signup should take control of existing account with given mail     | `false`              |
+| `sso.ignoreEmailVerification`        | Allow signup without mail verification (if claim `email_verified` is missing)  | `false`              |
+| `sso.authority`                      | The OpenID Discovery endpoint (without '/.well-known/openid-configuration')    | `""`                 |
+| `sso.scopes`                         | OpenID connect token scopes to use during requests                             | `"email profile"`    |
+| `sso.authorizeExtraParams`           | OpenID connect extra params fort he authorize redirect                         | `""`                 |
+| `sso.pkce`                           | Enable/Disable PKCE support for the authentication flow                        | `true`               |
+| `sso.trustedAudience`                | The Audience to trust for the ID token. (`client_id` is always trusted)        | `""`                 |
+| `sso.masterPasswordPolicy`           | The Master password policy for SSO ('enforceOnLogin' is not supported)         | `""`                 |
+| `sso.disableSessionHandling`         | Disable SSO session handling if you can not retrieve refresh_tokens from IDP   | `false`              |
+| `sso.cacheExpiration`                | Expiration time for SSO client cache, passing 0 disables the cache             | `0`                  |
+| `sso.debugTokens`                    | Enbable token logging to debug, vaultwarden log level must be set to default   | `false`              |
+| `sso.clientId.value`                 | Client ID string for the OpenID Connect Provider                               | `""`                 |
+| `sso.clientId.existingSecretKey`     | When using an existing secret, specify the key which contains the client ID    | `""`                 |
+| `sso.clientSecret.value`             | Client secret string for the OpenID Connect Provider                           | `""`                 |
+| `sso.clientSecret.existingSecretKey` | When using existing secret, specify the key which contains the client secret   | `""`                 |

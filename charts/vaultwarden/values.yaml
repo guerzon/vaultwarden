@@ -772,3 +772,70 @@ ingress:
   ##   - Add support for using cert-manager.
   ##   - Support for multiple TLS hostnames.
   ##
+
+## @section SSO OpenID Connect Configuration support for https://github.com/dani-garcia/vaultwarden/pull/3899
+##
+sso:
+  ## @param sso.enabled boolean to define if SSO is enabled or not.
+  ##
+  enabled: false
+  ## @param sso.existingSecret Name of an existing secret containing the OpenID Connect client id and secret. Also set sso.clientId.existingSecretKey and sso.clientSecret.existingSecretKey.
+  ##
+  existingSecret: ""
+  ## @param sso.onlySSO boolen to disable the email+master-password login flow.
+  ##
+  onlySSO: false
+  ## @param sso.enforceSSO boolen to enforce SSO authentication for all users (except admin token access).
+  ##
+  enforceSSO: false
+  ## @param sso.signupsMatchEmail boolen to define if SSO user signup should take control of existing account with given mail (only works during signup).
+  signupsMatchEmail: true
+  ## @param sso.ignoreEmailVerification boolean to define if signup without mail verification is allowed (this is needed if your SSO provider does not send the 'email_verified' claim).
+  ##
+  ignoreEmailVerification: false
+  ## @param sso.authority the OpenID Connect Discovery endpoint without '/.well-known/openid-configuration' and trailing '/'-
+  ## Example: https://account.example.com/realm/example
+  ##
+  authority: ""
+  ## @param sso.scopes OpenID connect scopes to use
+  ##
+  scopes: "email profile"
+  ## @param sso.authorizeExtraParams OpenID connect extra params fort he authorize redirect.
+  ##
+  authorizeExtraParams: ""
+  ## @param sso.pkce boolean to enable/disable PKCE for the auth flow
+  ##
+  pkce: true
+  ## @param sso.trustedAudience additional audience to trust for the ID token. (`client_id` is always trusted). Use single quote when writing the regex: `'^$'`.
+  ##
+  trustedAudience: ''
+  ## @param sso.masterPasswordPolicy optional master password policy for sso (currently 'enforceOnLogin' is not supported).
+  ##
+  masterPasswordPolicy: '{"enforceOnLogin":false,"minComplexity":3,"minLength":12,"requireLower":true,"requireNumbers":true,"requireSpecial":true,"requireUpper":true}'
+  ## @param sso.disableSessionHandling optional boolean to disable sso session handling  if you can not retrieve refresh_tokens (access token will have default lifetime form 2h and refresh token from 7 days)
+  ##
+  disableSessionHandling: false
+  ## @param sso.cacheExpiration expiration time for sso client cache, passing 0 disables the cache.
+  ##
+  cacheExpiration: 0
+  ## @param sso.debugTokens boolen to enbable token logging for debugging purpose
+  ##
+  debugTokens: false
+  ## Client ID for OpenID Connect authentication.
+  ##
+  clientId:
+    ## @param sso.clientId.value string for the client id of the OpenID Connect authentication.
+    ##
+    value: ""
+    ## @param sso.clientId.existingSecretKey When using an existing secret, specify the key which contains the password.
+    ##
+    existingSecretKey: ""
+  ## Client ID for OpenID Connect authentication.
+  ##
+  clientSecret:
+    ## @param sso.clientSecret.value string for the client id of the OpenID Connect authentication.
+    ##
+    value: ""
+    ## @param sso.clientSecret.existingSecretKey When using an existing secret, specify the key which contains the password.
+    ##
+    existingSecretKey: ""
