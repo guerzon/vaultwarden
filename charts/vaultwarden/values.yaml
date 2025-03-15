@@ -250,7 +250,7 @@ podDisruptionBudget:
 
 
 storage:
-  ## @param existingVolumeClaim If defined, the values here will be used for the data and
+  ## @param storage.existingVolumeClaim If defined, the values here will be used for the data and
   ## attachments PV's. The custom values for data and attachments will be ignored if
   ## a value is set here
   ##
@@ -260,7 +260,7 @@ storage:
     # dataPath: "/data"
     # attachmentsPath: /data/attachments
 
-  ## @param data Data directory configuration, refer to values.yaml for parameters.
+  ## @param storage.data Data directory configuration, refer to values.yaml for parameters.
   ##
   data:
     {}
@@ -271,7 +271,7 @@ storage:
     # keepPvc: false
     # accessMode: "ReadWriteOnce"
 
-  ## @param attachments Attachments directory configuration, refer to values.yaml for parameters.
+  ## @param storage.attachments Attachments directory configuration, refer to values.yaml for parameters.
   ## By default, attachments/ is located inside the data directory.
   ##
   attachments:
@@ -713,7 +713,7 @@ service:
   ##
   # sessionAffinity: ClientIP
   sessionAffinity: ""
-  ## @param service.sessionAffinity Session affinity configuration
+  ## @param service.sessionAffinityConfig Session affinity configuration
   ##
   sessionAffinityConfig: {}
   # sessionAffinityConfig:
