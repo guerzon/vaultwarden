@@ -72,13 +72,13 @@ You can also specify the connection string:
 ```yaml
 database:
   type: postgresql
-  uriOverride: "postgresql://appuser:apppassword@pg.contoso.eu:5433/qualdb"
+  uriOverride: "postgresql://appuser:apppassword@pg.contoso.eu:5432/qualdb"
 ```
 
 Alternatively, you could create a Kubernetes secret containing the database URI:
 
 ```bash
-DB_STRING="postgresql://appuser:apppassword@pg.contoso.eu:5433/qualdb"
+DB_STRING="postgresql://appuser:apppassword@pg.contoso.eu:5432/qualdb"
 kubectl -n vaultwarden create secret generic prod-db-creds --from-literal=secret-uri=$DB_STRING
 ```
 
