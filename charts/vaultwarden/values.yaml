@@ -39,6 +39,14 @@ image:
   ##     value: https://bananaguy.com/auth
   ##
   extraVars: []
+  ## @param image.extraVarsCM Vaultwarden image extra vars ConfigMap
+  ## Example:
+  ## extraVarsCM: "vaultwarden-extra-vars"
+  extraVarsCM: ""
+  ## @param image.extraVarsSecret Vaultwarden image extra vars Secret
+  ## Example:
+  ## extraVarsSecret: "vaultwarden-extra-vars"
+  extraVarsSecret: ""
 
 ## @param replicas Number of deployment replicas
 ##
