@@ -354,6 +354,8 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `image.pullSecrets`     | Specify docker-registry secrets                                                           | `[]`                 |
 | `image.extraSecrets`    | Vaultwarden image extra secrets                                                           | `[]`                 |
 | `image.extraVars`       | Vaultwarden image extra vars                                                              | `[]`                 |
+| `image.extraVarsCM`     | Vaultwarden image extra vars ConfigMap                                                    | `""`                 |
+| `image.extraVarsSecret` | Vaultwarden image extra vars Secret                                                       | `""`                 |
 | `replicas`              | Number of deployment replicas                                                             | `1`                  |
 | `fullnameOverride`      | String to override the application name.                                                  | `""`                 |
 | `resourceType`          | Can be either Deployment or StatefulSet                                                   | `""`                 |
