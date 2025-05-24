@@ -83,6 +83,20 @@ containers:
             name: {{ default (include "vaultwarden.fullname" .) .Values.smtp.existingSecret }}
             key: {{ default "SMTP_PASSWORD" .Values.smtp.password.existingSecretKey }}
       {{- end }}
+      {{- if and .Values.sso.enabled (or (.Values.sso.clientId.value) (.Values.sso.clientId.existingSecretKey) )}}
+      - name: SSO_CLIENT_ID
+        valueFrom:
+          secretKeyRef:
+            name: {{ default (include "vaultwarden.fullname" .) .Values.sso.existingSecret }}
+            key: {{ default "SSO_CLIENT_ID" .Values.sso.clientId.existingSecretKey }}
+      {{- end }}
+      {{- if and .Values.sso.enabled (or (.Values.sso.clientId.value) (.Values.sso.clientSecret.existingSecretKey) )}}
+      - name: SSO_CLIENT_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: {{ default (include "vaultwarden.fullname" .) .Values.sso.existingSecret }}
+            key: {{ default "SSO_CLIENT_SECRET" .Values.sso.clientSecret.existingSecretKey }}
+      {{- end }}
       {{- if .Values.adminToken }}
       - name: ADMIN_TOKEN
         valueFrom:

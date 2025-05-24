@@ -122,3 +122,34 @@ data:
   EMAIL_CHANGE_ALLOWED: {{ .Values.emailChangeAllowed | quote }}
   ADMIN_RATELIMIT_SECONDS: {{ .Values.adminRateLimitSeconds | quote }}
   ADMIN_RATELIMIT_MAX_BURST: {{ .Values.adminRateLimitMaxBurst | quote }}
+  {{- if .Values.sso.enabled }}
+  SSO_ENABLED: {{ .Values.sso.enabled | quote }}
+  SSO_ONLY: {{ .Values.sso.onlySSO | quote }}
+  SSO_SIGNUPS_MATCH_EMAIL: {{ .Values.sso.signupsMatchEmail | quote }}
+  SSO_ALLOW_UNKNOWN_EMAIL_VERIFICATION: {{ .Values.sso.ignoreEmailVerification | quote }}
+  SSO_AUTHORITY: {{ .Values.sso.authority | quote }}
+  SSO_SCOPES: {{ .Values.sso.scopes | quote }}
+  SSO_AUTHORIZE_EXTRA_PARAMS: {{ .Values.sso.authorizeExtraParams | quote }}
+  SSO_PKCE: {{ .Values.sso.pkce | quote }}
+  SSO_AUDIENCE_TRUSTED: {{ .Values.sso.trustedAudience | quote }}
+  {{- if .Values.sso.masterPasswordPolicy }}
+  SSO_MASTER_PASSWORD_POLICY: {{ .Values.sso.masterPasswordPolicy | quote }}
+  {{- end }}
+  SSO_AUTH_ONLY_NOT_SESSION: {{ .Values.sso.authOnly | quote }}
+  SSO_CLIENT_CACHE_EXPIRATION: {{ .Values.sso.cacheExpiration | quote }}
+  SSO_DEBUG_TOKENS: {{ .Values.sso.debugTokens | quote }}
+  {{- if .Values.sso.enforceSSO }}
+  SSO_FRONTEND: "override"
+  {{- end }}
+  SSO_ROLES_ENABLED: {{ .Values.sso.roles.enabled | quote }}
+  SSO_ROLES_DEFAULT_TO_USER: {{ .Values.sso.roles.defaultToUser | quote }}
+  SSO_ROLES_TOKEN_PATH: {{ .Values.sso.roles.tokenPath | quote }}
+  SSO_ORGANIZATIONS_INVITE: {{ .Values.sso.organizations.enabled | quote }}
+  SSO_ORGANIZATIONS_REVOCATION: {{ .Values.sso.organizations.enableRevocation | quote }}
+  SSO_ORGANIZATIONS_TOKEN_PATH: {{ .Values.sso.organizations.tokenPath | quote }}
+  SSO_ORGANIZATIONS_ID_MAPPING: {{ .Values.sso.organizations.mappings | quote }}
+  SSO_ORGANIZATIONS_ALL_COLLECTIONS: {{ .Values.sso.organizations.inviteAll | quote }}
+  {{- if .Values.sso.organizations.inviteAutoAccept }}
+  ORGANIZATION_INVITE_AUTO_ACCEPT: {{ .Values.sso.organizations.inviteAutoAccept | quote }}
+  {{- end }}
+  {{- end }}
