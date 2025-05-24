@@ -33,6 +33,14 @@ containers:
     envFrom:
       - configMapRef:
           name: {{ include "vaultwarden.fullname" . }}
+      {{- if .Values.image.extraVarsCM }}
+      - configMapRef:
+          name: {{ .Values.image.extraVarsCM }}
+      {{- end }}
+      {{- if .Values.image.extraVarsSecret }}
+      - secretRef:
+          name: {{ .Values.image.extraVarsSecret }}
+      {{- end }}
     env:
       {{- range .Values.image.extraVars }}
       - name: {{ .key }}
