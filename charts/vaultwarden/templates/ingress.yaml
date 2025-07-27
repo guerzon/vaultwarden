@@ -18,10 +18,6 @@ metadata:
     {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
     {{- end }}
   annotations:
-    ingress.kubernetes.io/rewrite-target: /
-    {{- if $ingress.tls }}
-    ingress.kubernetes.io/ssl-redirect: "true"
-    {{- end }}
     {{- if $ingress.additionalAnnotations }}
     {{- toYaml $ingress.additionalAnnotations | nindent 4 }}
     {{- end }}
