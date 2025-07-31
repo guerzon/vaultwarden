@@ -375,6 +375,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `securityContext`       | Default security options to run vault as read only container without privilege escalation | `{}`                 |
 | `dnsConfig`             | Pod DNS options                                                                           | `{}`                 |
 | `enableServiceLinks`    | Enable service links, Kubernetes default is true                                          | `true`               |
+| `extraObjects`          | List of extra Kubernetes objects to create                                                | `[]`                 |
 
 ### Reliability configuration
 
