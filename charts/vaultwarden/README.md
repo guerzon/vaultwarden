@@ -349,7 +349,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | ----------------------- | ----------------------------------------------------------------------------------------- | -------------------- |
 | `image.registry`        | Vaultwarden image registry                                                                | `docker.io`          |
 | `image.repository`      | Vaultwarden image repository                                                              | `vaultwarden/server` |
-| `image.tag`             | Vaultwarden image tag                                                                     | `1.33.2-alpine`      |
+| `image.tag`             | Vaultwarden image tag                                                                     | `1.34.1-alpine`      |
 | `image.pullPolicy`      | Vaultwarden image pull policy                                                             | `IfNotPresent`       |
 | `image.pullSecrets`     | Specify docker-registry secrets                                                           | `[]`                 |
 | `image.extraSecrets`    | Vaultwarden image extra secrets                                                           | `[]`                 |
