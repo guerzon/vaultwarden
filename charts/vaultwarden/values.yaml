@@ -141,6 +141,21 @@ dnsConfig: {}
 ##
 enableServiceLinks: true
 
+## Extra objects
+extraObjects: []
+  ## @param extraObjects List of extra Kubernetes objects to create
+  ## This can be used to add additional Kubernetes objects such as ConfigMaps, Secrets, or Custom Resources.
+  ## Example:
+  ## - apiVersion: isindir.github.com/v1alpha3
+  ##   kind: SopsSecret
+  ##   metadata:
+  ##     name: "{{ .Release.Name }}-sops-secret"
+  ##   spec:
+  ##     data:
+  ##       DB_STRING: ENC[AES256_GCM,data:******,iv:***,tag:***,type:str]
+  ##   sops: ...
+
+
 ## @section Reliability configuration
 ##
 
