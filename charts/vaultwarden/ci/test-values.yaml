@@ -1,0 +1,28 @@
+domain: "https://vaultwarden.contoso.com"
+
+ingress:
+  enabled: true
+  hostname: vaultwarden.contoso.com
+  class: "nginx"
+  customHeadersConfigMap:
+    Request-Id: $req_id
+
+adminToken:
+  value: "khit9gYQV6ax9LKTTm+s6QbZi5oiuR+3s1PEn9q3IRmCl9IQn7LmBpmFCOYTb7Mr"
+
+image:
+  pullSecrets:
+    - name: myRegKey
+
+yubico:
+  clientId: "ABCDE"
+  secretKey:
+    value: "12345"
+
+duo:
+  hostname: api.duohelp.com
+  iKey: "999888"
+  sKey:
+    value: "HELLO"
+
+enableServiceLinks: false

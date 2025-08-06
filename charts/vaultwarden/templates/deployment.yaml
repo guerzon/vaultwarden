@@ -15,7 +15,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app.kubernetes.io/component: vaultwarden
@@ -40,6 +40,7 @@ spec:
         {{- end }}
     spec:
       {{- include "vaultwarden.podSpec" . | nindent 6 }}
+      {{- if not .Values.storage.existingVolumeClaim }}
       volumes:
         {{- range $pvc := (fromYaml (include "vaultwarden.pvcSpec" .)).volumeClaimTemplates }}
         {{- $newName := printf "%s-%s-0" $pvc.metadata.name $.Release.Name }}
@@ -47,4 +48,5 @@ spec:
           persistentVolumeClaim:
             claimName: {{ $newName }}
         {{- end }}
+      {{- end }}
 {{- end }}

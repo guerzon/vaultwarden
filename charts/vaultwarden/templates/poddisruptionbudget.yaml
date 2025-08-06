@@ -18,5 +18,6 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      k8s-app: vaultwarden
+      app.kubernetes.io/component: vaultwarden
+      {{- include "vaultwarden.selectorLabels" . | nindent 6 }}
 {{- end }}

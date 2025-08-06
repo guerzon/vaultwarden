@@ -1,3 +1,12 @@
+{{- with .Values.ingress.customHeadersConfigMap }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: custom-headers-configmap
+data:
+  {{- toYaml . | nindent 2 }}
+---
+{{- end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -25,16 +34,11 @@ data:
   SMTP_ACCEPT_INVALID_HOSTNAMES: {{ .Values.smtp.acceptInvalidHostnames | quote }}
   SMTP_ACCEPT_INVALID_CERTS: {{ .Values.smtp.acceptInvalidCerts | quote }}
   {{- end }}
-  {{- if .Values.websocket.enabled }}
-  WEBSOCKET_ENABLED: "true"
-  WEBSOCKET_ADDRESS: {{ .Values.websocket.address | quote }}
-  WEBSOCKET_PORT: {{ .Values.websocket.port | quote }}
+  {{- if .Values.storage.data }}
+  DATA_FOLDER: {{ default "/data" .Values.storage.data.path | quote }}
   {{- end }}
-  {{- if .Values.data }}
-  DATA_FOLDER: {{ default "/data" .Values.data.path | quote }}
-  {{- end }}
-  {{- if .Values.attachments }}
-  ATTACHMENTS_FOLDER: {{ default "/data/attachments" .Values.attachments.path | quote }}
+  {{- if .Values.storage.attachments }}
+  ATTACHMENTS_FOLDER: {{ default "/data/attachments" .Values.storage.attachments.path | quote }}
   {{- end }}
   ROCKET_ADDRESS: {{ .Values.rocket.address | quote }}
   ROCKET_PORT: {{ .Values.rocket.port | quote }}
@@ -58,10 +62,8 @@ data:
   INVITATION_ORG_NAME: {{ .Values.invitationOrgName | quote }}
   ICON_BLACKLIST_NON_GLOBAL_IPS: {{ .Values.iconBlacklistNonGlobalIps | quote }}
   IP_HEADER: {{ .Values.ipHeader | quote }}
-  {{- if .Values.pushNotifications }}
+  {{- if .Values.pushNotifications.enabled }}
   PUSH_ENABLED: "true"
-  PUSH_INSTALLATION_ID: {{ .Values.pushNotifications.installationId | quote }}
-  PUSH_INSTALLATION_KEY: {{ .Values.pushNotifications.installationKey | quote }}
   {{- with .Values.pushNotifications.relayUri }}
   PUSH_RELAY_URI: {{ . | quote }}
   {{- end }}
@@ -69,16 +71,14 @@ data:
   PUSH_IDENTITY_URI: {{ . | quote }}
   {{- end }}
   {{- end }}
-  {{- if and .Values.yubico.clientId .Values.yubico.secretKey }}
+  {{- if and .Values.yubico.clientId (or .Values.yubico.secretKey.value .Values.yubico.secretKey.existingSecretKey) }}
   YUBICO_CLIENT_ID: {{ .Values.yubico.clientId | quote }}
-  YUBICO_SECRET_KEY: {{ .Values.yubico.secretKey | quote }}
   {{- if .Values.yubico.server }}
   YUBICO_SERVER: {{ .Values.yubico.server | quote }}
   {{- end }}
   {{- end }}
-  {{- if and .Values.duo.ikey .Values.duo.secretKey .Values.duo.hostname }}
-  DUO_IKEY: {{ .Values.duo.ikey | quote }}
-  DUO_SKEY: {{ .Values.duo.secretKey | quote }}
+  {{- if and .Values.duo.iKey .Values.duo.hostname (or .Values.duo.sKey.value .Values.duo.sKey.existingSecretKey) }}
+  DUO_IKEY: {{ .Values.duo.iKey | quote }}
   DUO_HOST: {{ .Values.duo.hostname | quote }}
   {{- end }}
   {{- with .Values.experimentalClientFeatureFlags }}

@@ -7,6 +7,7 @@ ingress:
   class: "alb"
   additionalAnnotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
     alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:eu-central-1:ACCOUNT:certificate/LONGID"
 
@@ -15,4 +16,4 @@ adminToken:
 
 image:
   pullSecrets:
-    - myRegKey
+    - name: myRegKey

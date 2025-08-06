@@ -1,5 +1,4 @@
 {{- $ingress := .Values.ingress -}}
-{{- $websocket := .Values.websocket -}}
 {{- $fullname := .Release.fullname -}}
 {{- if $ingress.enabled }}
 {{- $newAPIversion := .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
@@ -19,20 +18,18 @@ metadata:
     {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
     {{- end }}
   annotations:
-    ingress.kubernetes.io/rewrite-target: /
-    {{- if $ingress.tls }}
-    ingress.kubernetes.io/ssl-redirect: "true"
-    {{- end }}
     {{- if $ingress.additionalAnnotations }}
     {{- toYaml $ingress.additionalAnnotations | nindent 4 }}
     {{- end }}
     {{- if $ingress.nginxIngressAnnotations }}
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers "Request-Id: $req_id";
-    nginx.ingress.kubernetes.io/connection-proxy-header: "keep-alive"
+    {{- if $ingress.customHeadersConfigMap }}
+    nginx.ingress.kubernetes.io/custom-headers: {{ .Release.Namespace }}/custom-headers-configmap
+    {{- end }}
     nginx.ingress.kubernetes.io/enable-cors: "true"
+    {{- if $ingress.tls }}
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    {{- end }}
     nginx.ingress.kubernetes.io/limit-connections: "25"
     nginx.ingress.kubernetes.io/limit-rps: "15"
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m
@@ -68,15 +65,6 @@ spec:
               name: {{ include "vaultwarden.fullname" $ }}
               port:
                 name: "http"
-        {{- if $websocket.enabled }}
-        - path: {{ $ingress.pathWs }}
-          pathType: {{ $ingress.pathTypeWs }}
-          backend:
-            service:
-              name: {{ include "vaultwarden.fullname" $ }}
-              port:
-                name: "websocket"
-        {{- end }}
     {{- end }}
     - host: {{ $ingress.hostname | quote }}
       http:
@@ -88,13 +76,4 @@ spec:
               name: {{ include "vaultwarden.fullname" . }}
               port:
                 name: "http"
-        {{- if $websocket.enabled }}
-        - path: {{ $ingress.pathWs }}
-          pathType: {{ $ingress.pathTypeWs }}
-          backend:
-            service:
-              name: {{ include "vaultwarden.fullname" . }}
-              port:
-                name: "websocket"
-        {{- end }}
 {{- end }}

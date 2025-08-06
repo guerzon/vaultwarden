@@ -35,9 +35,11 @@ Example that uses the Alpine-based image `1.24.0-alpine` and an existing secret 
 
 ```yaml
 image:
+  registry: ghcr.io
+  repository: guerzon/vaultwarden
   tag: "1.24.0-alpine"
   pullSecrets:
-    - myRegKey
+    - name: myRegKey
 ```
 
 **Important**: specify the URL used by users with the `domain` variable, otherwise, some functionalities might not work:
@@ -46,7 +48,7 @@ image:
 domain: "https://vaultwarden.contoso.com:9443/"
 ```
 
-Detailed configuration options can be found in the [Vaultwarden settings](./charts/vaultwarden/README.md#vaultwarden-settings) section.
+Detailed configuration options can be found in the [General settings](#general-settings) section.
 
 ## Database options
 
@@ -89,7 +91,7 @@ database:
   existingSecretKey: "secret-uri"
 ```
 
-Detailed configuration options can be found in the [Database Configuration](./charts/vaultwarden/README.md#database-configuration) section.
+Detailed configuration options can be found in the [Database Configuration](#database-settings) section.
 
 ## SSL and Ingress
 
@@ -144,11 +146,28 @@ ingress:
   hostname: vaultwarden.contoso.com
   additionalAnnotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
     alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:eu-central-1:ACCOUNT:certificate/LONGID"
 ```
 
-Detailed configuration options can be found in the [Exposure Parameters](./charts/vaultwarden/README.md#exposure-parameters) section.
+Visit [this](https://medium.com/@sreafterhours/deploy-vaultwarden-to-amazon-eks-using-terraform-terragrunt-and-helm-69a0a7396625) article for a tutorial for deploying an EKS cluster and then installing this chart.
+
+Detailed configuration options can be found in the [Exposure Settings](#exposure-settings) section.
+
+## High Availability
+
+Set the following to run multiple deployment/statefulset replicas:
+
+```yaml
+replicas: 10
+
+service:
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+```
 
 ## Security
 
@@ -179,7 +198,47 @@ serviceAccount:
   name: "vaultwarden-svc"
 ```
 
-Detailed configuration options can be found in the [Security settings](./charts/vaultwarden/README.md#security-settings) section.
+### MFA/2FA settings
+
+You can configure YubiKey authentication as described [here](https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Yubikey-OTP-authentication). An example configuration is as follows:
+
+```yaml
+yubico:
+  clientId: "ABCDE"
+  secretKey:
+    value: "12345"
+```
+
+You could also use an existing Kubernetes secret:
+
+```yaml
+yubico:
+  clientId: "ABCDE"
+  existingSecret: "yubisecrets"
+  secretKey:
+    existingSecretKey: "YUBI"
+```
+
+You can configure Duo authentication as described [here](https://help.bitwarden.com/article/setup-two-step-login-duo/#create-a-duo-security-account). An example configuration is as follows:
+
+```yaml
+duo:
+  hostname: api.duohelp.com
+  iKey: "999888"
+  sKey:
+    value: "HELLO"
+```
+
+You could also use an existing Kubernetes secret:
+
+```yaml
+duo:
+  hostname: api.duohelp.com
+  iKey: "999888"
+  existingSecret: "duosecrets"
+  sKey:
+    existingSecretKey: "DUO"
+```
 
 ## Mail settings
 
@@ -190,19 +249,37 @@ smtp:
   host: mx01.contoso.com
   from: no-reply@contoso.com
   fromName: "Vault Administrator"
-  username: admin
-  password: password
+  username:
+    value: admin
+  password:
+    value: password
   acceptInvalidHostnames: "true"
   acceptInvalidCerts: "true"
 ```
 
-Detailed configuration options can be found in the [SMTP Configuration](./charts/vaultwarden/README.md#smtp-configuration) section.
+You could also use an existing Kubernetes secret that contains the SMTP username and password:
+
+```yaml
+smtp:
+  host: mx01.contoso.com
+  from: no-reply@contoso.com
+  fromName: "Vault Administrator"
+  existingSecret: smtpsecrets
+  username:
+    existingSecretKey: SMTP_USERNAME
+  password:
+    existingSecretKey: SMTP_PASSWORD
+```
+
+Detailed configuration options can be found in the [SMTP Configuration](#smtp-configuration) section.
 
 ## Persistent storage
 
+### Building Persistant Storage Through Helm
+
 Vaultwarden requires persistent storage for its attachments and icons cache.
 
-To use persistent storage using a claim, set the `data` dictionary. Optionally set a different path using the `path` key. The following example sets the storage class to an already-installed Rancher's [local path storage](https://github.com/rancher/local-path-provisioner) provisioner.
+To use persistent storage using a claim, set the `storage.data` dictionary. Optionally set a different path using the `path` key. The following example sets the storage class to an already-installed Rancher's [local path storage](https://github.com/rancher/local-path-provisioner) provisioner.
 
 ```yaml
 data:
@@ -221,10 +298,10 @@ data:
   path: "/srv/vaultwarden-data"
 ```
 
-To use persistent storage for attachments, set the `attachments` dictionary. Optionally set a different path. Note that by default, the path is `/data/attachments`.
+To use persistent storage for attachments, set the `storage.attachments` dictionary. Optionally set a different path. Note that by default, the path is `/data/attachments`.
 
 ```yaml
-data:
+attachments:
   name: "vaultwarden-data"
   size: "15Gi"
   class: "local-path"
@@ -234,11 +311,23 @@ In case you want to keep the existing persistent volume claim during uninstall a
 (This will be ignored for StatefulSets and is only relevant for `resourceType: Deployment`)
 
 ```yaml
-data:
+attachments:
   name: "vaultwarden-data"
   size: "15Gi"
   class: "local-path"
   keepPvc: true
+```
+
+### Using an Existing Persistent Volume Claim
+
+In case you want to use an existing PVC to store your data and attachments (i.e. NAS), `storage.existingVolumeClaim` can be set, which will update the PodSpec to use the provided PVC.  Note, that use of this value will ignore the values of both `storage.data` 
+and `storage.attachments` values.
+
+```yaml
+existingVolumeClaim:
+    claimName: "vaultwarden-pvc"
+    dataPath: "/data"
+    attachmentsPath: /data/attachments
 ```
 
 ## Uninstall
@@ -260,11 +349,14 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | ----------------------- | ----------------------------------------------------------------------------------------- | -------------------- |
 | `image.registry`        | Vaultwarden image registry                                                                | `docker.io`          |
 | `image.repository`      | Vaultwarden image repository                                                              | `vaultwarden/server` |
-| `image.tag`             | Vaultwarden image tag                                                                     | `1.30.3-alpine`      |
+| `image.tag`             | Vaultwarden image tag                                                                     | `1.34.1-alpine`      |
 | `image.pullPolicy`      | Vaultwarden image pull policy                                                             | `IfNotPresent`       |
-| `image.pullSecrets`     | Specify docker-registry secret names                                                      | `[]`                 |
+| `image.pullSecrets`     | Specify docker-registry secrets                                                           | `[]`                 |
 | `image.extraSecrets`    | Vaultwarden image extra secrets                                                           | `[]`                 |
 | `image.extraVars`       | Vaultwarden image extra vars                                                              | `[]`                 |
+| `image.extraVarsCM`     | Vaultwarden image extra vars ConfigMap                                                    | `""`                 |
+| `image.extraVarsSecret` | Vaultwarden image extra vars Secret                                                       | `""`                 |
+| `replicas`              | Number of deployment replicas                                                             | `1`                  |
 | `fullnameOverride`      | String to override the application name.                                                  | `""`                 |
 | `resourceType`          | Can be either Deployment or StatefulSet                                                   | `""`                 |
 | `commonAnnotations`     | Annotations for the deployment or statefulset                                             | `{}`                 |
@@ -282,42 +374,48 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `podSecurityContext`    | Pod security options                                                                      | `{}`                 |
 | `securityContext`       | Default security options to run vault as read only container without privilege escalation | `{}`                 |
 | `dnsConfig`             | Pod DNS options                                                                           | `{}`                 |
+| `enableServiceLinks`    | Enable service links, Kubernetes default is true                                          | `true`               |
+| `extraObjects`          | List of extra Kubernetes objects to create                                                | `[]`                 |
 
 ### Reliability configuration
 
-| Name                                 | Description                                                             | Value   |
-| ------------------------------------ | ----------------------------------------------------------------------- | ------- |
-| `livenessProbe.enabled`              | Enable liveness probe                                                   | `true`  |
-| `livenessProbe.initialDelaySeconds`  | Delay before liveness probe is initiated                                | `5`     |
-| `livenessProbe.timeoutSeconds`       | How long to wait for the probe to succeed                               | `1`     |
-| `livenessProbe.periodSeconds`        | How often to perform the probe                                          | `10`    |
-| `livenessProbe.successThreshold`     | Minimum consecutive successes for the probe to be considered successful | `1`     |
-| `livenessProbe.failureThreshold`     | Minimum consecutive failures for the probe to be considered failed      | `10`    |
-| `readinessProbe.enabled`             | Enable readiness probe                                                  | `true`  |
-| `readinessProbe.initialDelaySeconds` | Delay before readiness probe is initiated                               | `5`     |
-| `readinessProbe.timeoutSeconds`      | How long to wait for the probe to succeed                               | `1`     |
-| `readinessProbe.periodSeconds`       | How often to perform the probe                                          | `10`    |
-| `readinessProbe.successThreshold`    | Minimum consecutive successes for the probe to be considered successful | `1`     |
-| `readinessProbe.failureThreshold`    | Minimum consecutive failures for the probe to be considered failed      | `3`     |
-| `startupProbe.enabled`               | Enable startup probe                                                    | `false` |
-| `startupProbe.initialDelaySeconds`   | Delay before startup probe is initiated                                 | `5`     |
-| `startupProbe.timeoutSeconds`        | How long to wait for the probe to succeed                               | `1`     |
-| `startupProbe.periodSeconds`         | How often to perform the probe                                          | `10`    |
-| `startupProbe.successThreshold`      | Minimum consecutive successes for the probe to be considered successful | `1`     |
-| `startupProbe.failureThreshold`      | Minimum consecutive failures for the probe to be considered failed      | `10`    |
-| `resources`                          | Resource configurations                                                 | `{}`    |
-| `strategy`                           | Resource configurations                                                 | `{}`    |
-| `podDisruptionBudget.enabled`        | Enable PodDisruptionBudget settings                                     | `false` |
-| `podDisruptionBudget.minAvailable`   | Minimum number/percentage of pods that should remain scheduled.         | `1`     |
-| `podDisruptionBudget.maxUnavailable` | Maximum number/percentage of pods that may be made unavailable          | `nil`   |
+| Name                                 | Description                                                                                          | Value    |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------- | -------- |
+| `livenessProbe.enabled`              | Enable liveness probe                                                                                | `true`   |
+| `livenessProbe.initialDelaySeconds`  | Delay before liveness probe is initiated                                                             | `5`      |
+| `livenessProbe.timeoutSeconds`       | How long to wait for the probe to succeed                                                            | `1`      |
+| `livenessProbe.periodSeconds`        | How often to perform the probe                                                                       | `10`     |
+| `livenessProbe.successThreshold`     | Minimum consecutive successes for the probe to be considered successful                              | `1`      |
+| `livenessProbe.failureThreshold`     | Minimum consecutive failures for the probe to be considered failed                                   | `10`     |
+| `livenessProbe.path`                 | Path on which the probe is exposed, default is "/alive". Replace when using non-root path deployment | `/alive` |
+| `readinessProbe.enabled`             | Enable readiness probe                                                                               | `true`   |
+| `readinessProbe.initialDelaySeconds` | Delay before readiness probe is initiated                                                            | `5`      |
+| `readinessProbe.timeoutSeconds`      | How long to wait for the probe to succeed                                                            | `1`      |
+| `readinessProbe.periodSeconds`       | How often to perform the probe                                                                       | `10`     |
+| `readinessProbe.successThreshold`    | Minimum consecutive successes for the probe to be considered successful                              | `1`      |
+| `readinessProbe.failureThreshold`    | Minimum consecutive failures for the probe to be considered failed                                   | `3`      |
+| `readinessProbe.path`                | Path on which the probe is exposed, default is "/alive". Replace when using non-root path deployment | `/alive` |
+| `startupProbe.enabled`               | Enable startup probe                                                                                 | `false`  |
+| `startupProbe.initialDelaySeconds`   | Delay before startup probe is initiated                                                              | `5`      |
+| `startupProbe.timeoutSeconds`        | How long to wait for the probe to succeed                                                            | `1`      |
+| `startupProbe.periodSeconds`         | How often to perform the probe                                                                       | `10`     |
+| `startupProbe.successThreshold`      | Minimum consecutive successes for the probe to be considered successful                              | `1`      |
+| `startupProbe.failureThreshold`      | Minimum consecutive failures for the probe to be considered failed                                   | `10`     |
+| `startupProbe.path`                  | Path on which the probe is exposed, default is "/alive". Replace when using non-root path deployment | `/alive` |
+| `resources`                          | Resource configurations                                                                              | `{}`     |
+| `strategy`                           | Resource configurations                                                                              | `{}`     |
+| `podDisruptionBudget.enabled`        | Enable PodDisruptionBudget settings                                                                  | `false`  |
+| `podDisruptionBudget.minAvailable`   | Minimum number/percentage of pods that should remain scheduled.                                      | `1`      |
+| `podDisruptionBudget.maxUnavailable` | Maximum number/percentage of pods that may be made unavailable                                       | `nil`    |
 
 ### Persistent data configuration
 
-| Name              | Description                                                               | Value  |
-| ----------------- | ------------------------------------------------------------------------- | ------ |
-| `data`            | Data directory configuration, refer to values.yaml for parameters.        | `{}`   |
-| `attachments`     | Attachments directory configuration, refer to values.yaml for parameters. | `{}`   |
-| `webVaultEnabled` | Enable Web Vault                                                          | `true` |
+| Name                          | Description                                                               | Value  |
+| ----------------------------- | ------------------------------------------------------------------------- | ------ |
+| `storage.existingVolumeClaim` | If defined, the values here will be used for the data and                 | `{}`   |
+| `storage.data`                | Data directory configuration, refer to values.yaml for parameters.        | `{}`   |
+| `storage.attachments`         | Attachments directory configuration, refer to values.yaml for parameters. | `{}`   |
+| `webVaultEnabled`             | Enable Web Vault                                                          | `true` |
 
 ### Database settings
 
@@ -337,11 +435,18 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `database.connectionRetries`         | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`       |
 | `database.maxConnections`            | Define the size of the connection pool used for connecting to the database.                                                              | `10`       |
 
-### Push notifications
+### Push Notifications
 
-| Name                | Description                                                      | Value |
-| ------------------- | ---------------------------------------------------------------- | ----- |
-| `pushNotifications` | Enable mobile push notifications, see values.yaml for parameters | `{}`  |
+| Name                                                  | Description                                                                         | Value                            |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------- |
+| `pushNotifications.enabled`                           | Enable the push notification service                                                | `false`                          |
+| `pushNotifications.existingSecret`                    | Name of an existing secret containing the Bitwarden installation id and key         | `""`                             |
+| `pushNotifications.installationId.value`              | Bitwarden installation id string                                                    | `""`                             |
+| `pushNotifications.installationId.existingSecretKey`  | When using an existing secret, specify the key which contains the installation id.  | `""`                             |
+| `pushNotifications.installationKey.value`             | Bitwarden installation key string                                                   | `""`                             |
+| `pushNotifications.installationKey.existingSecretKey` | When using an existing secret, specify the key which contains the installation key. | `""`                             |
+| `pushNotifications.relayUri`                          | Change Bitwarden relay uri.                                                         | `https://push.bitwarden.com`     |
+| `pushNotifications.identityUri`                       | Change Bitwarden identity uri.                                                      | `https://identity.bitwarden.com` |
 
 ### Scheduled jobs
 
@@ -404,14 +509,18 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 ### MFA/2FA settings
 
-| Name               | Description                                                         | Value |
-| ------------------ | ------------------------------------------------------------------- | ----- |
-| `yubico.clientId`  | Yubico client ID                                                    | `""`  |
-| `yubico.secretKey` | Yubico secret key                                                   | `""`  |
-| `yubico.server`    | Specify a Yubico server, otherwise the default servers will be used | `""`  |
-| `duo.ikey`         | Duo Integration Key                                                 | `""`  |
-| `duo.secretKey`    | Duo Secret Key                                                      | `""`  |
-| `duo.hostname`     | Duo API hostname                                                    | `""`  |
+| Name                                 | Description                                                                                               | Value |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------- | ----- |
+| `yubico.clientId`                    | Yubico client ID                                                                                          | `""`  |
+| `yubico.existingSecret`              | Name of an existing secret containing the Yubico secret key. Also set yubico.secretKey.existingSecretKey. | `""`  |
+| `yubico.secretKey.value`             | secretKey plain text                                                                                      | `""`  |
+| `yubico.secretKey.existingSecretKey` | When using an existing secret, specify the key which contains the secretKey.                              | `""`  |
+| `yubico.server`                      | Specify a Yubico server, otherwise the default servers will be used                                       | `""`  |
+| `duo.iKey`                           | Duo Integration Key                                                                                       | `""`  |
+| `duo.existingSecret`                 | Name of an existing secret containing the Duo skey. Also set duo.sKey.existingSecretKey.                  | `""`  |
+| `duo.sKey.value`                     | sKey plain text                                                                                           | `""`  |
+| `duo.sKey.existingSecretKey`         | When using an existing secret, specify the key which contains the sKey.                                   | `""`  |
+| `duo.hostname`                       | Duo API hostname                                                                                          | `""`  |
 
 ### SMTP Configuration
 
@@ -436,9 +545,6 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 | Name                              | Description                                                                    | Value                |
 | --------------------------------- | ------------------------------------------------------------------------------ | -------------------- |
-| `websocket.enabled`               | Enable websocket notifications                                                 | `true`               |
-| `websocket.address`               | Websocket listen address                                                       | `0.0.0.0`            |
-| `websocket.port`                  | Websocket listen port                                                          | `3012`               |
 | `rocket.address`                  | Address to bind to                                                             | `0.0.0.0`            |
 | `rocket.port`                     | Rocket port                                                                    | `8080`               |
 | `rocket.workers`                  | Rocket number of workers                                                       | `10`                 |
@@ -446,6 +552,8 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `service.annotations`             | Additional annotations for the vaultwarden service                             | `{}`                 |
 | `service.labels`                  | Additional labels for the service                                              | `{}`                 |
 | `service.ipFamilyPolicy`          | IP family policy for the service                                               | `SingleStack`        |
+| `service.sessionAffinity`         | Session affinity                                                               | `""`                 |
+| `service.sessionAffinityConfig`   | Session affinity configuration                                                 | `{}`                 |
 | `ingress.enabled`                 | Deploy an ingress resource.                                                    | `false`              |
 | `ingress.class`                   | Ingress resource class                                                         | `nginx`              |
 | `ingress.nginxIngressAnnotations` | Add nginx specific ingress annotations                                         | `true`               |
@@ -455,8 +563,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `ingress.hostname`                | Hostname for the ingress.                                                      | `warden.contoso.com` |
 | `ingress.additionalHostnames`     | Additional hostnames for the ingress.                                          | `[]`                 |
 | `ingress.path`                    | Default application path for the ingress                                       | `/`                  |
-| `ingress.pathWs`                  | Path for the websocket ingress                                                 | `/notifications/hub` |
 | `ingress.pathType`                | Path type for the ingress                                                      | `Prefix`             |
-| `ingress.pathTypeWs`              | Path type for the ingress                                                      | `Exact`              |
 | `ingress.tlsSecret`               | Kubernetes secret containing the SSL certificate when using the "nginx" class. | `""`                 |
 | `ingress.nginxAllowList`          | Comma-separated list of IP addresses and subnets to allow.                     | `""`                 |
+| `ingress.customHeadersConfigMap`  | ConfigMap containing custom headers to be added to the ingress.                | `{}`                 |
