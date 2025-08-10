@@ -75,11 +75,12 @@ database:
   uriOverride: "postgresql://appuser:apppassword@pg.contoso.eu:5433/qualdb"
 ```
 
-Alternatively, you could create a Kubernetes secret containing the database URI:
+Alternatively, you can create a Kubernetes secret containing the connection string:
 
 ```bash
 DB_STRING="postgresql://appuser:apppassword@pg.contoso.eu:5433/qualdb"
-kubectl -n vaultwarden create secret generic prod-db-creds --from-literal=secret-uri=$DB_STRING
+kubectl -n vaultwarden create secret generic prod-db-connstring \
+  --from-literal=secret-uri=$DB_STRING
 ```
 
 Then pass the name of the secret and the key to the chart:
@@ -87,8 +88,26 @@ Then pass the name of the secret and the key to the chart:
 ```yaml
 database:
   type: postgresql
-  existingSecret: "prod-db-creds"
+  existingSecret: "prod-db-connstring"
   existingSecretKey: "secret-uri"
+```
+
+If you have a secret with only the credentials created like the following:
+
+```bash
+kubectl -n vaultwarden create secret generic prod-db-creds \
+  --from-literal=pgusername=username \
+	--from-literal=pgpassword=password
+```
+
+You can pass the keys for the username and password as follows:
+
+```yaml
+database:
+  type: postgresql
+  existingSecret: prod-db-creds
+  existingSecretUserKey: pgusername
+  existingSecretPasswordKey: pgpassword
 ```
 
 Detailed configuration options can be found in the [Database Configuration](#database-settings) section.
