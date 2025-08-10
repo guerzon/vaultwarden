@@ -123,7 +123,7 @@ containers:
         {{- else }}
         value: {{ .Values.database.username | quote }}
         {{- end }}
-        - name: PGPASSWORD
+      - name: PGPASSWORD
         {{- if .Values.database.existingSecretPasswordKey}}
         valueFrom:
           secretKeyRef:
