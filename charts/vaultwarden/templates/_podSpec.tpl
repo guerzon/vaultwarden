@@ -108,30 +108,30 @@ containers:
             key: {{ default "PUSH_INSTALLATION_KEY" .Values.pushNotifications.installationKey.existingSecretKey }}
       {{- end }}
       {{- if and ( eq .Values.database.type "postgresql") .Values.database.existingSecret (not .Values.database.existingSecretKey)}}
-            - name: DATABASE_URL
-              value: "postgresql://{{ .Values.database.host }}"
-            - name: PGPORT
-              value: {{ .Values.database.port | quote }}
-            - name: PGDATABASE
-              value: {{ .Values.database.dbName | quote }}
-            - name: PGUSER
-            {{- if .Values.database.existingSecretUserKey}}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.database.existingSecret | quote }}
-                  key: {{ .Values.database.existingSecretUserKey | quote }}
-            {{- else }}
-             value: {{ .Values.database.username | quote }}
-            {{- end }}
-            - name: PGPASSWORD
-            {{- if .Values.database.existingSecretPasswordKey}}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.database.existingSecret | quote }}
-                  key: {{ .Values.database.existingSecretPasswordKey | quote }}
-             {{- else }}
-             value: {{ .Values.database.password }}
-            {{- end }}
+      - name: DATABASE_URL
+        value: "postgresql://{{ .Values.database.host }}"
+      - name: PGPORT
+        value: {{ .Values.database.port | quote }}
+      - name: PGDATABASE
+        value: {{ .Values.database.dbName | quote }}
+      - name: PGUSER
+        {{- if .Values.database.existingSecretUserKey}}
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.database.existingSecret | quote }}
+            key: {{ .Values.database.existingSecretUserKey | quote }}
+        {{- else }}
+        value: {{ .Values.database.username | quote }}
+        {{- end }}
+        - name: PGPASSWORD
+        {{- if .Values.database.existingSecretPasswordKey}}
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.database.existingSecret | quote }}
+            key: {{ .Values.database.existingSecretPasswordKey | quote }}
+        {{- else }}
+        value: {{ .Values.database.password }}
+        {{- end }}
       {{- else if ne "default" .Values.database.type }}
       - name: DATABASE_URL
         {{- if .Values.database.existingSecret }}
