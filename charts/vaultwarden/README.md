@@ -75,11 +75,12 @@ database:
   uriOverride: "postgresql://appuser:apppassword@pg.contoso.eu:5433/qualdb"
 ```
 
-Alternatively, you could create a Kubernetes secret containing the database URI:
+Alternatively, you can create a Kubernetes secret containing the connection string:
 
 ```bash
 DB_STRING="postgresql://appuser:apppassword@pg.contoso.eu:5433/qualdb"
-kubectl -n vaultwarden create secret generic prod-db-creds --from-literal=secret-uri=$DB_STRING
+kubectl -n vaultwarden create secret generic prod-db-connstring \
+  --from-literal=secret-uri=$DB_STRING
 ```
 
 Then pass the name of the secret and the key to the chart:
@@ -87,8 +88,26 @@ Then pass the name of the secret and the key to the chart:
 ```yaml
 database:
   type: postgresql
-  existingSecret: "prod-db-creds"
+  existingSecret: "prod-db-connstring"
   existingSecretKey: "secret-uri"
+```
+
+If you have a secret with only the credentials created like the following:
+
+```bash
+kubectl -n vaultwarden create secret generic prod-db-creds \
+  --from-literal=pgusername=username \
+	--from-literal=pgpassword=password
+```
+
+You can pass the keys for the username and password as follows:
+
+```yaml
+database:
+  type: postgresql
+  existingSecret: prod-db-creds
+  existingSecretUserKey: pgusername
+  existingSecretPasswordKey: pgpassword
 ```
 
 Detailed configuration options can be found in the [Database Configuration](#database-settings) section.
@@ -349,7 +368,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | ----------------------- | ----------------------------------------------------------------------------------------- | -------------------- |
 | `image.registry`        | Vaultwarden image registry                                                                | `docker.io`          |
 | `image.repository`      | Vaultwarden image repository                                                              | `vaultwarden/server` |
-| `image.tag`             | Vaultwarden image tag                                                                     | `1.33.2-alpine`      |
+| `image.tag`             | Vaultwarden image tag                                                                     | `1.34.1-alpine`      |
 | `image.pullPolicy`      | Vaultwarden image pull policy                                                             | `IfNotPresent`       |
 | `image.pullSecrets`     | Specify docker-registry secrets                                                           | `[]`                 |
 | `image.extraSecrets`    | Vaultwarden image extra secrets                                                           | `[]`                 |
@@ -375,6 +394,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `securityContext`       | Default security options to run vault as read only container without privilege escalation | `{}`                 |
 | `dnsConfig`             | Pod DNS options                                                                           | `{}`                 |
 | `enableServiceLinks`    | Enable service links, Kubernetes default is true                                          | `true`               |
+| `extraObjects`          | List of extra Kubernetes objects to create                                                | `[]`                 |
 
 ### Reliability configuration
 
@@ -418,19 +438,21 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 ### Database settings
 
-| Name                         | Description                                                                                                                              | Value     |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| `database.type`              | Database type, either mysql or postgresql                                                                                                | `default` |
-| `database.host`              | Database hostname or IP address                                                                                                          | `""`      |
-| `database.port`              | Database port                                                                                                                            | `""`      |
-| `database.username`          | Database username                                                                                                                        | `""`      |
-| `database.password`          | Database password                                                                                                                        | `""`      |
-| `database.dbName`            | Database name                                                                                                                            | `""`      |
-| `database.uriOverride`       | Manually specify the DB connection string                                                                                                | `""`      |
-| `database.existingSecret`    | Name of an existing secret containing the database URI                                                                                   | `""`      |
-| `database.existingSecretKey` | Key in the existing secret                                                                                                               | `""`      |
-| `database.connectionRetries` | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`      |
-| `database.maxConnections`    | Define the size of the connection pool used for connecting to the database.                                                              | `10`      |
+| Name                                 | Description                                                                                                                              | Value      |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| `database.type`                      | Database type, either mysql or postgresql                                                                                                | `default`  |
+| `database.host`                      | Database hostname or IP address                                                                                                          | `""`       |
+| `database.port`                      | Database port                                                                                                                            | `""`       |
+| `database.username`                  | Database username                                                                                                                        | `""`       |
+| `database.password`                  | Database password                                                                                                                        | `""`       |
+| `database.dbName`                    | Database name                                                                                                                            | `""`       |
+| `database.uriOverride`               | Manually specify the DB connection string                                                                                                | `""`       |
+| `database.existingSecret`            | Name of an existing secret containing either a single key with the database uri, or a separate key for username and password             | `""`       |
+| `database.existingSecretKey`         | Key in the existing secret                                                                                                               | `""`       |
+| `database.existingSecretUserKey`     | Key in the existing secret                                                                                                               | `username` |
+| `database.existingSecretPasswordKey` | Key in the existing secret                                                                                                               | `password` |
+| `database.connectionRetries`         | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`       |
+| `database.maxConnections`            | Define the size of the connection pool used for connecting to the database.                                                              | `10`       |
 
 ### Push Notifications
 
