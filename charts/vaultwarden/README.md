@@ -385,6 +385,8 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `podLabels`             | Add extra labels to the pod                                                               | `{}`                 |
 | `initContainers`        | extra init containers for initializing the vaultwarden instance                           | `[]`                 |
 | `sidecars`              | extra containers running alongside the vaultwarden instance                               | `[]`                 |
+| `extraVolumes`          | Optionally specify extra list of additional volumes                                       | `[]`                 |
+| `extraVolumeMounts`     | Optionally specify extra list of additional volumeMounts                                  | `[]`                 |
 | `nodeSelector`          | Node labels for pod assignment                                                            | `{}`                 |
 | `affinity`              | Affinity for pod assignment                                                               | `{}`                 |
 | `tolerations`           | Tolerations for pod assignment                                                            | `[]`                 |
