@@ -151,11 +151,11 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
+    {{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumeMounts) }}
     volumeMounts:
     {{- with .Values.extraVolumeMounts }}
     {{- toYaml . | nindent 6 }}
     {{- end }}
-    {{- if .Values.storage.existingVolumeClaim }}
     {{- with .Values.storage.existingVolumeClaim }}
       - name: vaultwarden-data
         mountPath: {{ default "/data" .dataPath }}
@@ -164,6 +164,7 @@ containers:
     {{- end }}
     {{- else }}
     {{- if or (.Values.storage.data) (.Values.storage.attachments) }}
+    volumeMounts:
       {{- with .Values.storage.data }}
       - name: {{ .name }}
         mountPath: {{ default "/data" .path }}
@@ -216,11 +217,11 @@ containers:
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 2 }}
     {{- end }}
+{{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumes) }}
 volumes:
 {{- with .Values.extraVolumes }}
 {{- toYaml . | nindent 2 }}
 {{- end }}
-{{- if .Values.storage.existingVolumeClaim }}
 {{- with .Values.storage.existingVolumeClaim }}
   - name: vaultwarden-data
     persistentVolumeClaim:
