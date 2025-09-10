@@ -314,6 +314,21 @@ storage:
     # keepPvc: false
     # accessMode: "ReadWriteOnce"
 
+  ## Local shared storage (hostPath) configuration, refer to values.yaml for parameters.
+  ## When enabled, no PVCs are created/used. The specified hostPath must be mounted and available on every node
+  ## (e.g., a CephFS mount), enabling stateless scaling with a Deployment when used with an external database.
+  local:
+    ## @param storage.local.enabled Enable local shared storage (hostPath) instead of PVCs
+    enabled: false
+    ## @param storage.local.hostPath Absolute path on the node to mount (must exist or be created)
+    hostPath: "/mnt/cephfs/vaultwarden"
+    ## @param storage.local.type HostPath type. One of: DirectoryOrCreate, Directory, File, Socket, CharDevice, BlockDevice
+    type: "DirectoryOrCreate"
+    ## @param storage.local.dataPath Container mount path for the data folder
+    dataPath: "/data"
+    ## @param storage.local.attachmentsPath Container mount path for attachments folder
+    attachmentsPath: "/data/attachments"
+
 ## @param webVaultEnabled Enable Web Vault
 ##
 webVaultEnabled: "true"

@@ -41,8 +41,11 @@ spec:
         {{- end }}
     spec:
       {{- include "vaultwarden.podSpec" . | nindent 6 }}
+  {{- $pvcSpec := (fromYaml (include "vaultwarden.pvcSpec" .)) }}
+  {{- if $pvcSpec.volumeClaimTemplates }}
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Retain
     whenScaled: Retain
   {{- include "vaultwarden.pvcSpec" . | nindent 2 }}
+  {{- end }}
 {{- end }}

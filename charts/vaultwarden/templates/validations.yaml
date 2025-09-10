@@ -1,0 +1,4 @@
+# This file intentionally renders no resources. It only triggers validations.
+# The include below executes the checks defined in templates/_validation.tpl.
+# If an invalid combination is set, the `fail` function will abort rendering.
+# {{- include "vaultwarden.validations" . -}}

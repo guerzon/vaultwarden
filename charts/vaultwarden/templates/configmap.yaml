@@ -34,11 +34,16 @@ data:
   SMTP_ACCEPT_INVALID_HOSTNAMES: {{ .Values.smtp.acceptInvalidHostnames | quote }}
   SMTP_ACCEPT_INVALID_CERTS: {{ .Values.smtp.acceptInvalidCerts | quote }}
   {{- end }}
+  {{- if .Values.storage.local.enabled }}
+  DATA_FOLDER: {{ default "/data" .Values.storage.local.dataPath | quote }}
+  ATTACHMENTS_FOLDER: {{ default "/data/attachments" .Values.storage.local.attachmentsPath | quote }}
+  {{- else }}
   {{- if .Values.storage.data }}
   DATA_FOLDER: {{ default "/data" .Values.storage.data.path | quote }}
   {{- end }}
   {{- if .Values.storage.attachments }}
   ATTACHMENTS_FOLDER: {{ default "/data/attachments" .Values.storage.attachments.path | quote }}
+  {{- end }}
   {{- end }}
   ROCKET_ADDRESS: {{ .Values.rocket.address | quote }}
   ROCKET_PORT: {{ .Values.rocket.port | quote }}

@@ -85,7 +85,9 @@ Determine whether to use deployment or statefulset
 {{- if .Values.resourceType }}
 {{- .Values.resourceType }}
 {{- else }}
-{{- if (and (or .Values.storage.data .Values.storage.existingVolumeClaim) (ne .Values.database.type "default")) }}
+{{- if and (.Values.storage.local.enabled) (ne .Values.database.type "default") }}
+{{- "Deployment" }}
+{{- else if (and (or .Values.storage.data .Values.storage.existingVolumeClaim) (ne .Values.database.type "default")) }}
 {{- "Deployment" }}
 {{- else }}
 {{- "StatefulSet" }}

@@ -349,6 +349,40 @@ existingVolumeClaim:
     attachmentsPath: /data/attachments
 ```
 
+### Using a Local Shared Storage (hostPath / CephFS)
+
+If you already have a shared filesystem mounted on every node (e.g., CephFS), you can enable a local hostPath-based storage mode. In this mode, no PVCs are created or used; instead, the chart mounts a hostPath volume from the node into the container.
+
+Notes:
+
+- The `storage.local.hostPath` should point to the shared filesystem mount (e.g., the CephFS mount point) and be identically mounted on every node that may run the pod. With the default `type: DirectoryOrCreate`, Kubernetes will create the directory if it does not exist, but it will not perform the CephFS mount for you.
+- For safe horizontal scaling (multiple replicas), use an external database (`database.type` set to `mysql` or `postgresql`). When `storage.local.enabled=true` and an external database is configured, the chart will deploy a `Deployment` to support stateless scaling. If you remain on the default SQLite database, the chart will continue to use a `StatefulSet` by default to discourage multi-writer SQLite.
+- Ensure appropriate permissions on the host path (consider setting `podSecurityContext.fsGroup` or matching UID/GID).
+
+Minimal example using CephFS and an external PostgreSQL database with 3 replicas:
+
+```yaml
+replicas: 3
+
+database:
+  type: postgresql
+  host: pg.contoso.eu
+  port: 5432
+  username: appuser
+  password: apppassword
+  dbName: vw
+
+storage:
+  local:
+    enabled: true
+    hostPath: "/mnt/cephfs/vaultwarden"
+    # type can be one of: DirectoryOrCreate, Directory, File, Socket, CharDevice, BlockDevice
+    type: "DirectoryOrCreate"
+    # Optional container paths (defaults shown)
+    dataPath: "/data"
+    attachmentsPath: "/data/attachments"
+```
+
 ## Uninstall
 
 To uninstall/delete the `vaultwarden-demo` release:
@@ -368,7 +402,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | ----------------------- | ----------------------------------------------------------------------------------------- | -------------------- |
 | `image.registry`        | Vaultwarden image registry                                                                | `docker.io`          |
 | `image.repository`      | Vaultwarden image repository                                                              | `vaultwarden/server` |
-| `image.tag`             | Vaultwarden image tag                                                                     | `1.34.1-alpine`      |
+| `image.tag`             | Vaultwarden image tag                                                                     | `1.34.3-alpine`      |
 | `image.pullPolicy`      | Vaultwarden image pull policy                                                             | `IfNotPresent`       |
 | `image.pullSecrets`     | Specify docker-registry secrets                                                           | `[]`                 |
 | `image.extraSecrets`    | Vaultwarden image extra secrets                                                           | `[]`                 |
@@ -431,12 +465,17 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 ### Persistent data configuration
 
-| Name                          | Description                                                               | Value  |
-| ----------------------------- | ------------------------------------------------------------------------- | ------ |
-| `storage.existingVolumeClaim` | If defined, the values here will be used for the data and                 | `{}`   |
-| `storage.data`                | Data directory configuration, refer to values.yaml for parameters.        | `{}`   |
-| `storage.attachments`         | Attachments directory configuration, refer to values.yaml for parameters. | `{}`   |
-| `webVaultEnabled`             | Enable Web Vault                                                          | `true` |
+| Name                            | Description                                                                                | Value                     |
+| ------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------- |
+| `storage.existingVolumeClaim`   | If defined, the values here will be used for the data and                                  | `{}`                      |
+| `storage.data`                  | Data directory configuration, refer to values.yaml for parameters.                         | `{}`                      |
+| `storage.attachments`           | Attachments directory configuration, refer to values.yaml for parameters.                  | `{}`                      |
+| `storage.local.enabled`         | Enable local shared storage (hostPath) instead of PVCs                                     | `false`                   |
+| `storage.local.hostPath`        | Absolute path on the node to mount (must exist or be created)                              | `/mnt/cephfs/vaultwarden` |
+| `storage.local.type`            | HostPath type. One of: DirectoryOrCreate, Directory, File, Socket, CharDevice, BlockDevice | `DirectoryOrCreate`       |
+| `storage.local.dataPath`        | Container mount path for the data folder                                                   | `/data`                   |
+| `storage.local.attachmentsPath` | Container mount path for attachments folder                                                | `/data/attachments`       |
+| `webVaultEnabled`               | Enable Web Vault                                                                           | `true`                    |
 
 ### Database settings
 

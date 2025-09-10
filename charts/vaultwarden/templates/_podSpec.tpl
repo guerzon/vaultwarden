@@ -151,16 +151,24 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
-    {{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumeMounts) }}
+    {{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumeMounts) (.Values.storage.local.enabled) }}
     volumeMounts:
     {{- with .Values.extraVolumeMounts }}
     {{- toYaml . | nindent 6 }}
     {{- end }}
+    {{- if .Values.storage.local.enabled }}
+      - name: vaultwarden-local
+        mountPath: {{ default "/data" .Values.storage.local.dataPath }}
+      - name: vaultwarden-local
+        mountPath: {{ default "/data/attachments" .Values.storage.local.attachmentsPath }}
+    {{- end }}
+    {{- if and (not .Values.storage.local.enabled) (.Values.storage.existingVolumeClaim) }}
     {{- with .Values.storage.existingVolumeClaim }}
       - name: vaultwarden-data
         mountPath: {{ default "/data" .dataPath }}
       - name: vaultwarden-data
         mountPath: {{ default "/data/attachments" .attachmentsPath }}
+    {{- end }}
     {{- end }}
     {{- else }}
     {{- if or (.Values.storage.data) (.Values.storage.attachments) }}
@@ -217,15 +225,23 @@ containers:
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 2 }}
     {{- end }}
-{{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumes) }}
+{{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumes) (.Values.storage.local.enabled) }}
 volumes:
 {{- with .Values.extraVolumes }}
 {{- toYaml . | nindent 2 }}
 {{- end }}
+{{- if .Values.storage.local.enabled }}
+  - name: vaultwarden-local
+    hostPath:
+      path: {{ .Values.storage.local.hostPath }}
+      type: {{ .Values.storage.local.type | default "DirectoryOrCreate" | quote }}
+{{- end }}
+{{- if and (not .Values.storage.local.enabled) (.Values.storage.existingVolumeClaim) }}
 {{- with .Values.storage.existingVolumeClaim }}
   - name: vaultwarden-data
     persistentVolumeClaim:
       claimName: {{ .claimName }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- if .Values.serviceAccount.create }}

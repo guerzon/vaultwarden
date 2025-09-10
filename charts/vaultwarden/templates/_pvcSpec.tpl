@@ -1,4 +1,5 @@
 {{- define "vaultwarden.pvcSpec" }}
+{{- if not .Values.storage.local.enabled }}
 {{- if (or .Values.storage.data .Values.storage.attachments) -}}
 volumeClaimTemplates:
   {{- with .Values.storage.data }}
@@ -47,5 +48,6 @@ volumeClaimTemplates:
       storageClassName: {{ . | quote }}
       {{- end }}
   {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}

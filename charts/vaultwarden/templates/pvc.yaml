@@ -1,4 +1,4 @@
-{{- if eq (include "vaultwarden.resourceType" .) "Deployment" }}
+{{- if and (eq (include "vaultwarden.resourceType" .) "Deployment") (not .Values.storage.local.enabled) }}
 {{- range $pvc := (fromYaml (include "vaultwarden.pvcSpec" .)).volumeClaimTemplates }}
 ---
 apiVersion: v1
