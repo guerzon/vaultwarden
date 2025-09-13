@@ -13,7 +13,7 @@ image:
   ## @param image.tag Vaultwarden image tag
   ## Ref: https://hub.docker.com/r/vaultwarden/server/tags
   ##
-  tag: "1.33.2-alpine"
+  tag: "1.34.3-alpine"
   ## @param image.pullPolicy Vaultwarden image pull policy
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
   ##
@@ -39,6 +39,14 @@ image:
   ##     value: https://bananaguy.com/auth
   ##
   extraVars: []
+  ## @param image.extraVarsCM Vaultwarden image extra vars ConfigMap
+  ## Example:
+  ## extraVarsCM: "vaultwarden-extra-vars"
+  extraVarsCM: ""
+  ## @param image.extraVarsSecret Vaultwarden image extra vars Secret
+  ## Example:
+  ## extraVarsSecret: "vaultwarden-extra-vars"
+  extraVarsSecret: ""
 
 ## @param replicas Number of deployment replicas
 ##
@@ -80,6 +88,14 @@ initContainers: []
 ## @param sidecars extra containers running alongside the vaultwarden instance
 ##
 sidecars: []
+
+## @param extraVolumes Optionally specify extra list of additional volumes
+##
+extraVolumes: []
+
+## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts
+##
+extraVolumeMounts: []
 
 ## @param nodeSelector Node labels for pod assignment
 ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -132,6 +148,21 @@ dnsConfig: {}
 ## Ref: https://kubernetes.io/docs/tutorials/services/connect-applications-service/#accessing-the-service
 ##
 enableServiceLinks: true
+
+## Extra objects
+extraObjects: []
+  ## @param extraObjects List of extra Kubernetes objects to create
+  ## This can be used to add additional Kubernetes objects such as ConfigMaps, Secrets, or Custom Resources.
+  ## Example:
+  ## - apiVersion: isindir.github.com/v1alpha3
+  ##   kind: SopsSecret
+  ##   metadata:
+  ##     name: "{{ .Release.Name }}-sops-secret"
+  ##   spec:
+  ##     data:
+  ##       DB_STRING: ENC[AES256_GCM,data:******,iv:***,tag:***,type:str]
+  ##   sops: ...
+
 
 ## @section Reliability configuration
 ##
@@ -313,12 +344,18 @@ database:
   ## @param database.uriOverride Manually specify the DB connection string
   ##
   uriOverride: ""
-  ## @param database.existingSecret Name of an existing secret containing the database URI
+  ## @param database.existingSecret Name of an existing secret containing either a single key with the database uri, or a separate key for username and password
   ##
   existingSecret: ""
   ## @param database.existingSecretKey Key in the existing secret
   ##
   existingSecretKey: ""
+  ## @param database.existingSecretUserKey Key in the existing secret
+  ##
+  existingSecretUserKey: username
+  ## @param database.existingSecretPasswordKey Key in the existing secret
+  ##
+  existingSecretPasswordKey: password
   ## @param database.connectionRetries Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely.
   ##
   connectionRetries: 15

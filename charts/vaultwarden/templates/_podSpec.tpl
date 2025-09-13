@@ -33,6 +33,14 @@ containers:
     envFrom:
       - configMapRef:
           name: {{ include "vaultwarden.fullname" . }}
+      {{- if .Values.image.extraVarsCM }}
+      - configMapRef:
+          name: {{ .Values.image.extraVarsCM }}
+      {{- end }}
+      {{- if .Values.image.extraVarsSecret }}
+      - secretRef:
+          name: {{ .Values.image.extraVarsSecret }}
+      {{- end }}
     env:
       {{- range .Values.image.extraVars }}
       - name: {{ .key }}
@@ -113,7 +121,32 @@ containers:
             name: {{ default (include "vaultwarden.fullname" .) .Values.pushNotifications.existingSecret }}
             key: {{ default "PUSH_INSTALLATION_KEY" .Values.pushNotifications.installationKey.existingSecretKey }}
       {{- end }}
-      {{- if ne "default" .Values.database.type }}
+      {{- if and ( eq .Values.database.type "postgresql") .Values.database.existingSecret (not .Values.database.existingSecretKey)}}
+      - name: DATABASE_URL
+        value: "postgresql://{{ .Values.database.host }}"
+      - name: PGPORT
+        value: {{ .Values.database.port | quote }}
+      - name: PGDATABASE
+        value: {{ .Values.database.dbName | quote }}
+      - name: PGUSER
+        {{- if .Values.database.existingSecretUserKey}}
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.database.existingSecret | quote }}
+            key: {{ .Values.database.existingSecretUserKey | quote }}
+        {{- else }}
+        value: {{ .Values.database.username | quote }}
+        {{- end }}
+      - name: PGPASSWORD
+        {{- if .Values.database.existingSecretPasswordKey}}
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.database.existingSecret | quote }}
+            key: {{ .Values.database.existingSecretPasswordKey | quote }}
+        {{- else }}
+        value: {{ .Values.database.password }}
+        {{- end }}
+      {{- else if ne "default" .Values.database.type }}
       - name: DATABASE_URL
         {{- if .Values.database.existingSecret }}
         valueFrom:
@@ -132,9 +165,12 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
-    {{- if .Values.storage.existingVolumeClaim }}
-    {{- with .Values.storage.existingVolumeClaim }}
+    {{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumeMounts) }}
     volumeMounts:
+    {{- with .Values.extraVolumeMounts }}
+    {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.storage.existingVolumeClaim }}
       - name: vaultwarden-data
         mountPath: {{ default "/data" .dataPath }}
       - name: vaultwarden-data
@@ -195,9 +231,12 @@ containers:
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 2 }}
     {{- end }}
-{{- if .Values.storage.existingVolumeClaim }}
-{{- with .Values.storage.existingVolumeClaim }}
+{{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumes) }}
 volumes:
+{{- with .Values.extraVolumes }}
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with .Values.storage.existingVolumeClaim }}
   - name: vaultwarden-data
     persistentVolumeClaim:
       claimName: {{ .claimName }}
