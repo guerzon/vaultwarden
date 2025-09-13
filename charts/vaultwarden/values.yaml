@@ -894,11 +894,11 @@ sso:
     ## @param sso.organizations.enabled boolean to enable/disable automatic organization mapping for SSO users. (Only works with the release build from https://github.com/Timshel/vaultwarden as we await a PR)
     ##
     enabled: false
-    ## @param sso.organizations.inviteAll boolean to enable/disable automatic invitation to all organizations in vaultwarden. 
+    ## @param sso.organizations.inviteAll boolean to enable/disable automatic invitation to all organizations in vaultwarden.
     ##
     inviteAll: false
-    ## @param sso.organizations.inviteAutoAccept boolean to enable/disable automatic acceptance of organization invites. 
-    ## ATTENTION: This will apply to non SSO users as well and organization acceptance will considered by default !!! 
+    ## @param sso.organizations.inviteAutoAccept boolean to enable/disable automatic acceptance of organization invites.
+    ## ATTENTION: This will apply to non SSO users as well and organization acceptance will considered by default !!!
     ##
     inviteAutoAccept: false
     ## @param sso.organizations.enableRevocation boolen to control if user membership from organizations can be revoked by IDP
