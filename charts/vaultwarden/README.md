@@ -390,6 +390,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `nodeSelector`          | Node labels for pod assignment                                                            | `{}`                 |
 | `affinity`              | Affinity for pod assignment                                                               | `{}`                 |
 | `tolerations`           | Tolerations for pod assignment                                                            | `[]`                 |
+| `priorityClassName`     | Assign a priority class to pods                                                           | `""`                |
 | `serviceAccount.create` | Create a service account                                                                  | `true`               |
 | `serviceAccount.name`   | Name of the service account to create                                                     | `vaultwarden-svc`    |
 | `podSecurityContext`    | Pod security options                                                                      | `{}`                 |

@@ -15,6 +15,9 @@ affinity:
 tolerations:
 {{- toYaml . | nindent 2 }}
 {{- end }}
+{{- with .Values.priorityClassName }}
+priorityClassName: {{ . | quote }}
+{{- end }}
 {{- with .Values.podSecurityContext }}
 securityContext:
   {{- toYaml . | nindent 2 }}

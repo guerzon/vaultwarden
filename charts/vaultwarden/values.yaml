@@ -112,6 +112,11 @@ affinity: {}
 ##
 tolerations: []
 
+## @param priorityClassName Assign a priority class to pods
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
+##
+priorityClassName: ""
+
 ## @param serviceAccount.create Create a service account
 ## @param serviceAccount.name Name of the service account to create
 ##
