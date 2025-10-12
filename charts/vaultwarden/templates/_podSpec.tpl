@@ -162,7 +162,7 @@ containers:
     {{- with .Values.storage.existingVolumeClaim }}
       - name: vaultwarden-data
         mountPath: {{ default "/data" .dataPath }}
-      - name: vaultwarden-data
+      - name: vaultwarden-attachments
         mountPath: {{ default "/data/attachments" .attachmentsPath }}
     {{- end }}
     {{- else }}
