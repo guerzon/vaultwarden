@@ -286,15 +286,13 @@ podDisruptionBudget:
 
 
 storage:
-  ## @param storage.existingVolumeClaim If defined, the values here will be used for the data and
-  ## attachments PV's. The custom values for data and attachments will be ignored if
-  ## a value is set here
+  ## @param storage.existingVolumeClaim If defined, the values here will be used for the data PV.
+  ## The custom values for `data` be ignored if a value is set for `existingVolumeClaim`
   ##
   existingVolumeClaim:
     {}
     # claimName: "vaultwarden-pvc"
     # dataPath: "/data"
-    # attachmentsPath: /data/attachments
 
   ## @param storage.data Data directory configuration, refer to values.yaml for parameters.
   ##
@@ -304,18 +302,6 @@ storage:
     # size: "15Gi"
     # class: ""
     # path: "/data"
-    # keepPvc: false
-    # accessMode: "ReadWriteOnce"
-
-  ## @param storage.attachments Attachments directory configuration, refer to values.yaml for parameters.
-  ## By default, attachments/ is located inside the data directory.
-  ##
-  attachments:
-    {}
-    # name: "vaultwarden-files"
-    # size: "100Gi"
-    # class: ""
-    # path: /files
     # keepPvc: false
     # accessMode: "ReadWriteOnce"
 
