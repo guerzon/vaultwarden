@@ -300,10 +300,14 @@ Vaultwarden requires persistent storage for its attachments and icons cache.
 
 To use persistent storage using a claim, set the `storage.data` dictionary. Optionally set a different path using the `path` key. The following example sets the storage class to an already-installed Rancher's [local path storage](https://github.com/rancher/local-path-provisioner) provisioner.
 
+> [!NOTE]
+> If you change the `path` of mounted data, be sure to update the `DATA_FOLDER`
+> environment variable to match (via the `extraVars` values param).
+
 ```yaml
 data:
   name: "vaultwarden-data"
-  size: "15Gi"
+  size: "100Gi"
   class: "local-path"
 ```
 
@@ -312,41 +316,22 @@ Example for AWS:
 ```yaml
 data:
   name: "vaultwarden-data"
-  size: "10Gi"
+  size: "100Gi"
   class: "gp2"
   path: "/srv/vaultwarden-data"
-```
-
-To use persistent storage for attachments, set the `storage.attachments` dictionary. Optionally set a different path. Note that by default, the path is `/data/attachments`.
-
-```yaml
-attachments:
-  name: "vaultwarden-data"
-  size: "15Gi"
-  class: "local-path"
 ```
 
 In case you want to keep the existing persistent volume claim during uninstall and redeployments, set the option `keepPvc: true`
 (This will be ignored for StatefulSets and is only relevant for `resourceType: Deployment`)
 
-```yaml
-attachments:
-  name: "vaultwarden-data"
-  size: "15Gi"
-  class: "local-path"
-  keepPvc: true
-```
-
 ### Using an Existing Persistent Volume Claim
 
-In case you want to use an existing PVC to store your data and attachments (i.e. NAS), `storage.existingVolumeClaim` can be set, which will update the PodSpec to use the provided PVC.  Note, that use of this value will ignore the values of both `storage.data` 
-and `storage.attachments` values.
+In case you want to use an existing PVC to store your data and attachments (i.e. NAS), `storage.existingVolumeClaim` can be set, which will update the PodSpec to use the provided PVC.  Note, that use of this value will ignore the value of `storage.data`.
 
 ```yaml
 existingVolumeClaim:
     claimName: "vaultwarden-pvc"
     dataPath: "/data"
-    attachmentsPath: /data/attachments
 ```
 
 ## Uninstall
@@ -436,7 +421,6 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | ----------------------------- | ------------------------------------------------------------------------- | ------ |
 | `storage.existingVolumeClaim` | If defined, the values here will be used for the data and                 | `{}`   |
 | `storage.data`                | Data directory configuration, refer to values.yaml for parameters.        | `{}`   |
-| `storage.attachments`         | Attachments directory configuration, refer to values.yaml for parameters. | `{}`   |
 | `webVaultEnabled`             | Enable Web Vault                                                          | `true` |
 
 ### Database settings
