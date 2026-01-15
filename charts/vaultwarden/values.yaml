@@ -725,6 +725,40 @@ smtp:
   ##
   debug: false
 
+## @section SSO Configuration
+##
+sso:
+  ## @param sso.enabled Enable SSO
+  enabled: false
+  ## @param sso.only Only allow SSO login
+  only: false
+  ## @param sso.clientId SSO client ID
+  clientId: ""
+  ## @param sso.clientSecret SSO client secret
+  clientSecret: ""
+  ## @param sso.signupsMatchEmail Require SSO signups to match email
+  signupsMatchEmail: true
+  ## @param sso.allowUnknownEmailVerification Allow unknown email verification
+  allowUnknownEmailVerification: false
+  ## @param sso.authority SSO authority URL
+  authority: ""
+  ## @param sso.scopes SSO scopes
+  scopes: "email profile"
+  ## @param sso.authorizeExtraParams Extra params for SSO authorize
+  authorizeExtraParams: ""
+  ## @param sso.pkce Enable PKCE for SSO
+  pkce: true
+  ## @param sso.audienceTrusted Trusted audience for SSO
+  audienceTrusted: ""
+  ## @param sso.masterPasswordPolicy SSO master password policy
+  masterPasswordPolicy: ""
+  ## @param sso.authOnlyNotSession SSO auth only, not session
+  authOnlyNotSession: false
+  ## @param sso.clientCacheExpiration SSO client cache expiration
+  clientCacheExpiration: "0"
+  ## @param sso.debugTokens Enable SSO debug tokens
+  debugTokens: false
+
 ## @section Exposure settings
 ##
 
