@@ -294,7 +294,6 @@ storage:
     {}
     # claimName: "vaultwarden-pvc"
     # dataPath: "/data"
-    # attachmentsPath: /data/attachments
 
   ## @param storage.data Data directory configuration, refer to values.yaml for parameters.
   ##

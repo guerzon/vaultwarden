@@ -346,7 +346,6 @@ and `storage.attachments` values.
 existingVolumeClaim:
     claimName: "vaultwarden-pvc"
     dataPath: "/data"
-    attachmentsPath: /data/attachments
 ```
 
 ## Uninstall
