@@ -342,11 +342,31 @@ attachments:
 In case you want to use an existing PVC to store your data and attachments (i.e. NAS), `storage.existingVolumeClaim` can be set, which will update the PodSpec to use the provided PVC.  Note, that use of this value will ignore the values of both `storage.data` 
 and `storage.attachments` values.
 
+This only supports mounting a single PVC for data - if attachments are in a different volume, please mount it using extraVolumeMounts.
+
+While using existingVolumeClaim the data directories are hardcoded, so be aware to mount the data-pvc on "/data" (using `storage.existingVolumeClaim.dataPath`) and attachments-pvc on "/data/attachments"!
+
+
 ```yaml
 existingVolumeClaim:
     claimName: "vaultwarden-pvc"
     dataPath: "/data"
-    attachmentsPath: /data/attachments
+```
+
+Example restoring both data and attachments volumes:
+
+```yaml
+storage:
+  existingVolumeClaim:
+      claimName: "existing-data-pvc"
+      dataPath: "/data"
+extraVolumeMounts:
+  - name: vaultwarden-attachments
+    mountPath: "/data/attachments"
+extraVolumes:
+  - name: vaultwarden-attachments
+    persistentVolumeClaim:
+      claimName: "existing-attachments-pvc"
 ```
 
 ## Uninstall
