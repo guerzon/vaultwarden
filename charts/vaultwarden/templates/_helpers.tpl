@@ -92,3 +92,10 @@ Determine whether to use deployment or statefulset
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{/*
+Do backup? Needs backup enabled and persistence
+*/}}
+{{- define "vaultwarden.doBackup" -}}
+  {{- and .Values.backup.enabled (hasKey .Values.storage "data") -}}
+{{- end }}
