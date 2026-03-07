@@ -135,7 +135,7 @@ data:
   {{- if .Values.sso.masterPasswordPolicy }}
   SSO_MASTER_PASSWORD_POLICY: {{ .Values.sso.masterPasswordPolicy | quote }}
   {{- end }}
-  SSO_AUTH_ONLY_NOT_SESSION: {{ .Values.sso.authOnly | quote }}
+  SSO_AUTH_ONLY_NOT_SESSION: {{ .Values.sso.disableSessionHandling | quote }}
   SSO_CLIENT_CACHE_EXPIRATION: {{ .Values.sso.cacheExpiration | quote }}
   SSO_DEBUG_TOKENS: {{ .Values.sso.debugTokens | quote }}
   {{- if .Values.sso.enforceSSO }}
