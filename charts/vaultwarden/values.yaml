@@ -286,15 +286,17 @@ podDisruptionBudget:
 
 
 storage:
-  ## @param storage.existingVolumeClaim If defined, the values here will be used for the data and
-  ## attachments PV's. The custom values for data and attachments will be ignored if
-  ## a value is set here
+  ## @param storage.existingVolumeClaim If defined, the values here will be used for the data PV.
+  ## The custom values for data and attachments will be ignored if
+  ## a value is set here. This only supports mounting a single PVC for data. 
+  ## If attachments are in a different volume, please mount it using extraVolumeMounts.
+  ## Using existingVolumeClaim the data directories are hardcoded, 
+  ## please mount data-pvc on "/data" and attachments-pvc on "/data/attachments"!
   ##
   existingVolumeClaim:
     {}
     # claimName: "vaultwarden-pvc"
     # dataPath: "/data"
-    # attachmentsPath: /data/attachments
 
   ## @param storage.data Data directory configuration, refer to values.yaml for parameters.
   ##
