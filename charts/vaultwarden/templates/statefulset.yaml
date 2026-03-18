@@ -41,6 +41,17 @@ spec:
         {{- end }}
     spec:
       {{- include "vaultwarden.podSpec" . | nindent 6 }}
+      {{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumes) }}
+      volumes:
+        {{- with .Values.storage.existingVolumeClaim }}
+        - name: vaultwarden-data
+          persistentVolumeClaim:
+            claimName: {{ .claimName }}
+        {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Retain
     whenScaled: Retain
