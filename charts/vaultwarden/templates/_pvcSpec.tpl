@@ -14,6 +14,9 @@ volumeClaimTemplates:
         {{- if .keepPvc }}
         helm.sh/resource-policy: keep
         {{- end }}
+        {{- with .annotations }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
     spec:
       accessModes:
         - {{ .accessMode | quote }}
@@ -36,6 +39,9 @@ volumeClaimTemplates:
         meta.helm.sh/release-namespace: {{ $.Release.Namespace | quote }}
         {{- if .keepPvc }}
         helm.sh/resource-policy: keep
+        {{- end }}
+        {{- with .annotations }}
+        {{- . | toYaml | nindent 8 }}
         {{- end }}
     spec:
       accessModes:

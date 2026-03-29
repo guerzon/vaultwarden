@@ -337,6 +337,27 @@ attachments:
   keepPvc: true
 ```
 
+
+You can add additional annotations to the `data` and `attachments` PVCs using the `annotations` key. These will be directly injected so ensure they values are all strings.
+
+
+```yaml
+data:
+  name: "vaultwarden-data"
+  size: "15Gi"
+  class: "local-path"
+  annotations:
+    example.com/additional-annotation: 'true'
+
+attachments:
+  name: "vaultwarden-attachments"
+  size: "15Gi"
+  class: "local-path"
+  annotations:
+    example.com/additional-annotation: 'true'
+```
+
+
 ### Using an Existing Persistent Volume Claim
 
 In case you want to use an existing PVC to store your data and attachments (i.e. NAS), `storage.existingVolumeClaim` can be set, which will update the PodSpec to use the provided PVC.  Note, that use of this value will ignore the values of both `storage.data` 
