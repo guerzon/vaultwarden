@@ -765,6 +765,14 @@ rocket:
   address: "0.0.0.0"
   port: "8080"
   workers: "10"
+  tls:
+    ## @param rocket.tls.secretName Name of the kubernetes.io/tls secret to use for HTTPS.
+    ## If unset, Vaultwarden service listens to HTTP.
+    ##
+    secretName: ""
+    ## @param rocket.tls.path Path to mount TLS secrets within the container
+    ##
+    path: "/certs"
 
 ## Service configuration
 service:
