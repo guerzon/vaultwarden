@@ -41,12 +41,17 @@ spec:
         {{- end }}
     spec:
       {{- include "vaultwarden.podSpec" . | nindent 6 }}
-      {{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumes) }}
+      {{- if or (.Values.storage.existingVolumeClaim) (.Values.rocket.tls.secretName) (.Values.extraVolumes) }}
       volumes:
         {{- with .Values.storage.existingVolumeClaim }}
         - name: vaultwarden-data
           persistentVolumeClaim:
             claimName: {{ .claimName }}
+        {{- end }}
+        {{- if .Values.rocket.tls.secretName }}
+        - name: vaultwarden-tls
+          secret:
+            secretName: {{ .Values.rocket.tls.secretName }}
         {{- end }}
         {{- with .Values.extraVolumes }}
         {{- toYaml . | nindent 8 }}
