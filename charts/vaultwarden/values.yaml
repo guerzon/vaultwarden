@@ -736,6 +736,20 @@ rocket:
   address: "0.0.0.0"
   port: "8080"
   workers: "10"
+  tls:
+    ## @param rocket.tls.secretName Name of the secret with TLS key and certificate
+    ## If unset, TLS is disabled.
+    ##
+    secretName: ""
+    ## @param rocket.tls.secretName Key of the TLS key within the secret
+    ##
+    keyTLSKey: "tls.key"
+    ## @param rocket.tls.secretName Key of the TLS certificate within the secret
+    ##
+    keyTLSCert: "tls.crt"
+    ## @param rocket.tls.path Path to mount TLS secrets within the container
+    ##
+    path: "/certs"
 
 ## Service configuration
 service:
