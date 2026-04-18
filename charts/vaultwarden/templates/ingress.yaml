@@ -64,7 +64,11 @@ spec:
             service:
               name: {{ include "vaultwarden.fullname" $ }}
               port:
+                {{- if .Values.rocket.tls.secretName }}
+                name: "https"
+                {{- else }}
                 name: "http"
+                {{- end }}
     {{- end }}
     - host: {{ $ingress.hostname | quote }}
       http:
@@ -75,5 +79,9 @@ spec:
             service:
               name: {{ include "vaultwarden.fullname" . }}
               port:
+                {{- if .Values.rocket.tls.secretName }}
+                name: "https"
+                {{- else }}
                 name: "http"
+                {{- end }}
 {{- end }}

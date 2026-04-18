@@ -43,6 +43,11 @@ data:
   ROCKET_ADDRESS: {{ .Values.rocket.address | quote }}
   ROCKET_PORT: {{ .Values.rocket.port | quote }}
   ROCKET_WORKERS: {{ .Values.rocket.workers | quote }}
+  {{- if .Values.rocket.tls.secretName }}
+  {{- with .Values.rocket.tls }}
+  ROCKET_TLS: '{certs="{{ .path }}/{{ .keyTLSCert }}",key="{{ .path }}/{{ .keyTLSKey }}"}'
+  {{- end }}
+  {{- end }}
   SHOW_PASSWORD_HINT: {{ .Values.showPassHint | quote }}
   SIGNUPS_ALLOWED: {{ .Values.signupsAllowed | quote }}
   INVITATIONS_ALLOWED: {{ .Values.invitationsAllowed | quote }}
