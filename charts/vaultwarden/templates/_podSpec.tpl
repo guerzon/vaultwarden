@@ -168,20 +168,16 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
-    {{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumeMounts) }}
+    {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.storage.attachments) (.Values.extraVolumeMounts) }}
     volumeMounts:
-    {{- with .Values.extraVolumeMounts }}
-    {{- toYaml . | nindent 6 }}
     {{- end }}
-    {{- with .Values.storage.existingVolumeClaim }}
+    {{- if .Values.storage.existingVolumeClaim }}
+      {{- with .Values.storage.existingVolumeClaim }}
       - name: vaultwarden-data
         mountPath: {{ default "/data" .dataPath }}
-      - name: vaultwarden-data
-        mountPath: {{ default "/data/attachments" .attachmentsPath }}
-    {{- end }}
+      {{- end }}
     {{- else }}
     {{- if or (.Values.storage.data) (.Values.storage.attachments) }}
-    volumeMounts:
       {{- with .Values.storage.data }}
       - name: {{ .name }}
         mountPath: {{ default "/data" .path }}
@@ -191,6 +187,9 @@ containers:
         mountPath: {{ default "/data/attachments" .path }}
       {{- end }}
     {{- end }}
+    {{- end }}
+    {{- with .Values.extraVolumeMounts }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     resources:
     {{- toYaml .Values.resources | nindent 6 }}
@@ -234,17 +233,6 @@ containers:
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 2 }}
     {{- end }}
-{{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumes) }}
-volumes:
-{{- with .Values.extraVolumes }}
-{{- toYaml . | nindent 2 }}
-{{- end }}
-{{- with .Values.storage.existingVolumeClaim }}
-  - name: vaultwarden-data
-    persistentVolumeClaim:
-      claimName: {{ .claimName }}
-{{- end }}
-{{- end }}
 {{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ .Values.serviceAccount.name }}
 {{- end }}
