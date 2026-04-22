@@ -13,6 +13,14 @@ jobs:
   template-validate:
     name: Template Validation
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-values:
+          - charts/vaultwarden/ci/test-values.yaml
+          - charts/vaultwarden/ci/test-values-statefulset.yaml
+          - charts/vaultwarden/ci/test-values-no-ingress.yaml
+          - charts/vaultwarden/ci/test-values-postgresql.yaml
+          - charts/vaultwarden/ci/test-values-tls.yaml
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -24,7 +32,7 @@ jobs:
 
       - name: Run template validation
         run: |
-          helm template charts/vaultwarden -f charts/vaultwarden/ci/test-values.yaml > /tmp/manifest.yaml
+          helm template charts/vaultwarden -f ${{ matrix.test-values }} > /tmp/manifest.yaml
           echo "Template validation passed"
 
       - name: Install kubeconform
@@ -34,7 +42,7 @@ jobs:
 
       - name: Validate manifests with kubeconform
         run: |
-          helm template charts/vaultwarden -f charts/vaultwarden/ci/test-values.yaml | \
+          helm template charts/vaultwarden -f ${{ matrix.test-values }} | \
           kubeconform --strict
 
   lint:
@@ -68,6 +76,11 @@ jobs:
   install:
     name: Install Test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-values:
+          - charts/vaultwarden/ci/test-values.yaml
+          - charts/vaultwarden/ci/test-values-no-ingress.yaml
     steps:
       - name: Checkout
         uses: actions/checkout@v3
