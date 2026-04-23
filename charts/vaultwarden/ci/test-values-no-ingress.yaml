@@ -5,5 +5,4 @@ replicas: 1
 ingress:
   enabled: false
 
-persistence:
-  enabled: false
+storage: {}

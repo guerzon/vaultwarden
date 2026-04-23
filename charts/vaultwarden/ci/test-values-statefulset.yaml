@@ -3,9 +3,9 @@ domain: "https://vaultwarden.contoso.com"
 resourceType: "StatefulSet"
 replicas: 1
 
-persistence:
-  enabled: true
-  size: 10Gi
+storage:
+  data:
+    size: "10Gi"
 
 ingress:
   enabled: false

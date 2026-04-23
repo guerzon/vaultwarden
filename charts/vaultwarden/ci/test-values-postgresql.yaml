@@ -6,10 +6,9 @@ database:
   port: 5432
   username: "vaultwarden"
   password: "changeme"
-  name: "vaultwarden"
+  dbName: "vaultwarden"
 
-persistence:
-  enabled: false
+storage: {}
 
 ingress:
   enabled: true

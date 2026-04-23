@@ -1,17 +1,12 @@
 domain: "https://vaultwarden.contoso.com"
 
-tls:
-  enabled: true
-  certificateName: "vaultwarden-cert"
-
 ingress:
   enabled: true
   hostname: vaultwarden.contoso.com
   class: "nginx"
-  tls:
-    enabled: true
-    certificateName: "vaultwarden-cert"
+  tls: true
+  tlsSecret: "vaultwarden-cert"
 
-persistence:
-  enabled: true
-  size: 5Gi
+storage:
+  data:
+    size: "5Gi"
