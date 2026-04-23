@@ -20,7 +20,9 @@ metadata:
     {{- . | toYaml | nindent 4 }}
 {{- end }}
 data:
+  {{- if .Values.domain }}
   DOMAIN: {{ .Values.domain | quote }}
+  {{- end }}
   {{- if and .Values.smtp.host .Values.smtp.from }}
   SMTP_HOST: {{ .Values.smtp.host | quote }}
   SMTP_SECURITY: {{ .Values.smtp.security | quote }}
