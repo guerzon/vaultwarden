@@ -4,11 +4,47 @@ on:
   pull_request:
     paths:
       - 'charts/**'
+      - '.github/workflows/ci-helm-lint-test.yml'
 
 permissions:
   contents: read
 
 jobs:
+  template-validate:
+    name: Template Validation
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-values:
+          - charts/vaultwarden/ci/test-values.yaml
+          - charts/vaultwarden/ci/test-values-statefulset.yaml
+          - charts/vaultwarden/ci/test-values-no-ingress.yaml
+          - charts/vaultwarden/ci/test-values-postgresql.yaml
+          - charts/vaultwarden/ci/test-values-tls.yaml
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3.5
+
+      - name: Run template validation
+        run: |
+          helm template charts/vaultwarden -f ${{ matrix.test-values }} > /tmp/manifest.yaml
+          echo "Template validation passed"
+
+      - name: Install kubeconform
+        run: |
+          go install github.com/yannh/kubeconform/cmd/kubeconform@latest
+          echo "${HOME}/go/bin" >> $GITHUB_PATH
+
+      - name: Validate manifests with kubeconform
+        run: |
+          helm template charts/vaultwarden -f ${{ matrix.test-values }} | \
+          kubeconform --strict
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -36,6 +72,34 @@ jobs:
         id: lint
         if: steps.list-changed.outputs.changed == 'true'
         run: ct lint --target-branch ${{ github.event.repository.default_branch }}
+
+  install:
+    name: Install Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-values:
+          - charts/vaultwarden/ci/test-values.yaml
+          - charts/vaultwarden/ci/test-values-no-ingress.yaml
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3.5
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.6.0
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.8.0

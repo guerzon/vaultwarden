@@ -1,0 +1,6 @@
+---
+# Chart Testing configuration
+# Ref: https://github.com/helm/chart-testing/blob/main/doc/ct_lint.md
+
+validate:
+  strict: true
