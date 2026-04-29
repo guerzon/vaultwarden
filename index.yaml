@@ -2,6 +2,28 @@ apiVersion: v1
 entries:
   vaultwarden:
   - apiVersion: v2
+    appVersion: 1.35.8
+    created: "2026-04-29T04:30:57.537357747Z"
+    description: vaultwarden is an unofficial Bitwarden-compatible server written
+      in Rust
+    digest: 0ad1e5711673e533f0fdfdc7fbcdcee084161d8b17c4a9ada413e78d168d25c7
+    keywords:
+    - Rust
+    - vaultwarden
+    kubeVersion: '>=1.12.0-0'
+    maintainers:
+    - email: guerzon@proton.me
+      name: guerzon
+      url: https://github.com/guerzon
+    name: vaultwarden
+    sources:
+    - https://github.com/guerzon/vaultwarden
+    - https://github.com/dani-garcia/vaultwarden
+    type: application
+    urls:
+    - https://github.com/guerzon/vaultwarden/releases/download/v0.36.3/vaultwarden-0.36.3.tgz
+    version: 0.36.3
+  - apiVersion: v2
     appVersion: 1.35.7
     created: "2026-04-23T13:52:35.484716076Z"
     description: vaultwarden is an unofficial Bitwarden-compatible server written
@@ -1515,4 +1537,4 @@ entries:
     urls:
     - https://github.com/guerzon/vaultwarden/releases/download/v0.15.0/vaultwarden-0.15.0.tgz
     version: 0.15.0
-generated: "2026-04-23T13:52:35.485009744Z"
+generated: "2026-04-29T04:30:57.537642919Z"
