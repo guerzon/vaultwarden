@@ -1,0 +1,12 @@
+domain: "https://vaultwarden.contoso.com"
+
+ingress:
+  enabled: true
+  hostname: vaultwarden.contoso.com
+  class: "nginx"
+  tls: true
+  tlsSecret: "vaultwarden-cert"
+
+storage:
+  data:
+    size: "5Gi"
