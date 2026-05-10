@@ -854,9 +854,9 @@ sso:
   ## @param sso.masterPasswordPolicy optional master password policy for sso (currently 'enforceOnLogin' is not supported).
   ##
   masterPasswordPolicy: '{"enforceOnLogin":false,"minComplexity":3,"minLength":12,"requireLower":true,"requireNumbers":true,"requireSpecial":true,"requireUpper":true}'
-  ## @param sso.disableSessionHandling optional boolean to disable sso session handling  if you can not retrieve refresh_tokens (access token will have default lifetime form 2h and refresh token from 7 days)
+  ## @param sso.authOnly optional boolean to disable sso session handling  if you can not retrieve refresh_tokens (access token will have default lifetime form 2h and refresh token from 7 days)
   ##
-  disableSessionHandling: false
+  authOnly: false
   ## @param sso.cacheExpiration expiration time for sso client cache, passing 0 disables the cache.
   ##
   cacheExpiration: 0
