@@ -71,7 +71,7 @@ containers:
           secretKeyRef:
             name: {{ default (include "vaultwarden.fullname" .) .Values.duo.existingSecret }}
             key: {{ default "DUO_SKEY" .Values.duo.sKey.existingSecretKey }}
-      {{- end }}  
+      {{- end }}
       {{- if or (.Values.smtp.username.value) (.Values.smtp.username.existingSecretKey )}}
       - name: SMTP_USERNAME
         valueFrom:
@@ -168,7 +168,7 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
-    {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.storage.attachments) (.Values.extraVolumeMounts) }}
+    {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.storage.attachments) (.Values.rocket.tls.secretName) (.Values.extraVolumeMounts) }}
     volumeMounts:
     {{- end }}
     {{- if .Values.storage.existingVolumeClaim }}
@@ -188,6 +188,10 @@ containers:
       {{- end }}
     {{- end }}
     {{- end }}
+    {{- if .Values.rocket.tls.secretName }}
+      - name: vaultwarden-tls
+        mountPath: {{ .Values.rocket.tls.path }}
+    {{- end }}
     {{- with .Values.extraVolumeMounts }}
       {{- toYaml . | nindent 6 }}
     {{- end }}
@@ -202,6 +206,11 @@ containers:
       httpGet:
         path: {{ .Values.livenessProbe.path }}
         port: http
+        {{- if .Values.rocket.tls.secretName }}
+        scheme: HTTPS
+        {{- else }}
+        scheme: HTTP
+        {{- end }}
       initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
       periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
       timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
@@ -213,6 +222,11 @@ containers:
       httpGet:
         path: {{ .Values.readinessProbe.path }}
         port: http
+        {{- if .Values.rocket.tls.secretName }}
+        scheme: HTTPS
+        {{- else }}
+        scheme: HTTP
+        {{- end }}
       initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
       periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
       timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
@@ -233,6 +247,12 @@ containers:
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 2 }}
     {{- end }}
+{{- if .Values.rocket.tls.secretName }}
+volumes:
+  - name: vaultwarden-tls
+    secret:
+      secretName: {{ .Values.rocket.tls.secretName }}
+{{- end }}
 {{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ .Values.serviceAccount.name }}
 {{- end }}
