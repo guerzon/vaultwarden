@@ -3,5 +3,18 @@
 Thanks for installing {{ .Chart.Name }}.
 
 You have named your release: {{ .Release.Name }}.
+{{- if .Values.ingress.enabled }}
 
 Vaultwarden is accessible here: {{ .Values.ingress.hostname }}
+{{- else if .Values.httpRoute.enabled }}
+{{- if .Values.httpRoute.hostnames }}
+
+Vaultwarden is accessible here: {{ index .Values.httpRoute.hostnames 0 }}
+{{- else }}
+
+Vaultwarden is accessible via the configured Gateway (HTTPRoute has no hostnames set).
+{{- end }}
+{{- else }}
+
+Vaultwarden is deployed. To expose it externally, enable ingress or httpRoute in your values.
+{{- end }}

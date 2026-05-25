@@ -815,6 +815,55 @@ ingress:
   ##   - Support for multiple TLS hostnames.
   ##
 
+## @section Kubernetes Gateway API Configuration
+## Ref: https://gateway-api.sigs.k8s.io/
+##
+
+httpRoute:
+  ## @param httpRoute.enabled Deploy an HTTPRoute resource (Kubernetes Gateway API).
+  ## Requires the Gateway API CRDs to be installed in the cluster.
+  ## Ref: https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api
+  ##
+  enabled: false
+  ## @param httpRoute.labels Additional labels for the HTTPRoute resource.
+  ##
+  labels: {}
+  ## @param httpRoute.additionalAnnotations Additional annotations for the HTTPRoute resource.
+  ##
+  additionalAnnotations: {}
+  ## @param httpRoute.parentRefs List of parent Gateway references. Required when enabled.
+  ## Ref: https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.ParentReference
+  ## Example:
+  ## parentRefs:
+  ##   - name: my-gateway
+  ##     namespace: gateway-system
+  ##     sectionName: https
+  ##
+  parentRefs: []
+  ## @param httpRoute.hostnames Hostnames this HTTPRoute should match.
+  ## Equivalent to the host field in an Ingress rule. Leave empty to match all hostnames.
+  ## Example:
+  ## hostnames:
+  ##   - "vw.example.com"
+  ##
+  hostnames: []
+  ## @param httpRoute.path Default path prefix for the routing rule. Used only when httpRoute.rules is not set.
+  ##
+  path: "/"
+  ## @param httpRoute.rules Custom routing rules. When set, overrides the default rule generated from httpRoute.path.
+  ## Ref: https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.HTTPRouteRule
+  ## Example:
+  ## rules:
+  ##   - matches:
+  ##       - path:
+  ##           type: PathPrefix
+  ##           value: /
+  ##     backendRefs:
+  ##       - name: my-service
+  ##         port: 80
+  ##
+  rules: []
+
 ## @section SSO OpenID Connect Configuration support for https://github.com/dani-garcia/vaultwarden/pull/3899
 ##
 sso:
