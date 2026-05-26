@@ -569,6 +569,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `smtp.authMechanism`              | SMTP authentication mechanism                                                                                                                       | `Plain`    |
 | `smtp.acceptInvalidHostnames`     | Accept Invalid Hostnames                                                                                                                            | `false`    |
 | `smtp.acceptInvalidCerts`         | Accept Invalid Certificates                                                                                                                         | `false`    |
+| `smtp.heloName`                   | HELO Hostname: override the pod hostname used in the SMTP HELO command                                                                              | `""`       |
 | `smtp.debug`                      | SMTP debugging                                                                                                                                      | `false`    |
 
 ### Exposure settings

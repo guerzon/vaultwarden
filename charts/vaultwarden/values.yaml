@@ -750,6 +750,9 @@ smtp:
   ## @param smtp.acceptInvalidCerts Accept Invalid Certificates
   ##
   acceptInvalidCerts: "false"
+  ## @param smtp.heloName HELO Hostname: override the pod hostname used in the SMTP HELO command
+  ##
+  heloName: ""
   ## @param smtp.debug SMTP debugging
   ##
   debug: false

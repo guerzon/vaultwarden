@@ -35,6 +35,9 @@ data:
   SMTP_DEBUG: {{ .Values.smtp.debug | quote }}
   SMTP_ACCEPT_INVALID_HOSTNAMES: {{ .Values.smtp.acceptInvalidHostnames | quote }}
   SMTP_ACCEPT_INVALID_CERTS: {{ .Values.smtp.acceptInvalidCerts | quote }}
+  {{- if .Values.smtp.heloName }}
+  HELO_NAME: {{ .Values.smtp.heloName | quote }}
+  {{- end }}
   {{- end }}
   {{- if .Values.storage.data }}
   DATA_FOLDER: {{ default "/data" .Values.storage.data.path | quote }}
