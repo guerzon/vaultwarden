@@ -109,7 +109,7 @@ data:
   {{- with .Values.timeZone }}
   TZ: {{ . | quote }}
   {{- end }}
-  {{- with .Values.hibpApiKey }}
+  {{- with include "vaultwarden.hibpApiKeyLegacy" . }}
   HIBP_API_KEY: {{ . | quote }}
   {{- end }}
   {{- with .Values.orgAttachmentLimit }}

@@ -441,9 +441,23 @@ domain: ""
 ##
 sendsAllowed: "true"
 
-## @param hibpApiKey HaveIBeenPwned API Key
+## @param hibpApiKey HaveIBeenPwned API Key (legacy). Prefer `hibp.value` or `hibp.existingSecret`.
 ##
 hibpApiKey: ""
+
+## HaveIBeenPwned API Key
+##
+hibp:
+  ## @param hibp.existingSecret Name of an existing secret containing the HaveIBeenPwned API key. Also set hibp.existingSecretKey.
+  ##
+  existingSecret: ""
+  ## @param hibp.existingSecretKey When using an existing secret, specify the key which contains the API key.
+  ## Example: HIBP_API_KEY
+  ##
+  existingSecretKey: ""
+  ## @param hibp.value HaveIBeenPwned API Key plain text
+  ##
+  value: ""
 
 ## @param orgAttachmentLimit Max Kilobytes of attachment storage allowed per organization.
 ## When this limit is reached, organization members will not be allowed to upload further attachments for ciphers owned by that organization.
