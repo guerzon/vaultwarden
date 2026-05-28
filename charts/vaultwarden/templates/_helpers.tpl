@@ -92,3 +92,21 @@ Determine whether to use deployment or statefulset
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{/*
+Return true when the HIBP API key should be sourced from a Kubernetes Secret.
+*/}}
+{{- define "vaultwarden.hibpUseSecret" -}}
+{{- if or .Values.hibp.value .Values.hibp.existingSecret .Values.hibp.existingSecretKey -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the legacy hibpApiKey string value when hibpApiKey is set and hibp is not configured.
+*/}}
+{{- define "vaultwarden.hibpApiKeyLegacy" -}}
+{{- if and (not (include "vaultwarden.hibpUseSecret" .)) (kindIs "string" .Values.hibpApiKey) .Values.hibpApiKey -}}
+{{- .Values.hibpApiKey -}}
+{{- end -}}
+{{- end -}}

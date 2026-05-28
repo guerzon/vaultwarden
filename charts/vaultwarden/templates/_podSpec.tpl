@@ -86,6 +86,15 @@ containers:
             name: {{ default (include "vaultwarden.fullname" .) .Values.smtp.existingSecret }}
             key: {{ default "SMTP_PASSWORD" .Values.smtp.password.existingSecretKey }}
       {{- end }}
+      {{- if eq (include "vaultwarden.hibpUseSecret" .) "true" }}
+      {{- if or (.Values.hibp.value) (.Values.hibp.existingSecretKey) (.Values.hibp.existingSecret) }}
+      - name: HIBP_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: {{ default (include "vaultwarden.fullname" .) .Values.hibp.existingSecret }}
+            key: {{ default "HIBP_API_KEY" .Values.hibp.existingSecretKey }}
+      {{- end }}
+      {{- end }}
       {{- if and .Values.sso.enabled (or (.Values.sso.clientId.value) (.Values.sso.clientId.existingSecretKey) )}}
       - name: SSO_CLIENT_ID
         valueFrom:
