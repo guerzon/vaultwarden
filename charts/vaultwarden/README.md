@@ -590,6 +590,18 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `ingress.nginxAllowList`          | Comma-separated list of IP addresses and subnets to allow.                     | `""`                 |
 | `ingress.customHeadersConfigMap`  | ConfigMap containing custom headers to be added to the ingress.                | `{}`                 |
 
+### Kubernetes Gateway API Configuration
+
+| Name                              | Description                                                                               | Value   |
+| --------------------------------- | ----------------------------------------------------------------------------------------- | ------- |
+| `httpRoute.enabled`               | Deploy an HTTPRoute resource (Kubernetes Gateway API).                                    | `false` |
+| `httpRoute.labels`                | Additional labels for the HTTPRoute resource.                                             | `{}`    |
+| `httpRoute.additionalAnnotations` | Additional annotations for the HTTPRoute resource.                                        | `{}`    |
+| `httpRoute.parentRefs`            | List of parent Gateway references. Required when enabled.                                 | `[]`    |
+| `httpRoute.hostnames`             | Hostnames this HTTPRoute should match.                                                    | `[]`    |
+| `httpRoute.path`                  | Default path prefix for the routing rule. Used only when httpRoute.rules is not set.      | `/`     |
+| `httpRoute.rules`                 | Custom routing rules. When set, overrides the default rule generated from httpRoute.path. | `[]`    |
+
 ### SSO OpenID Connect Configuration support for https://github.com/dani-garcia/vaultwarden/pull/3899
 
 | Name                                 | Description                                                                                                                                                              | Value                                                                                                                                           |
