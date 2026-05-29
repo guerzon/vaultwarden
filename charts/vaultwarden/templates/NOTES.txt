@@ -6,13 +6,29 @@ You have named your release: {{ .Release.Name }}.
 {{- if .Values.ingress.enabled }}
 
 Vaultwarden is accessible here: {{ .Values.ingress.hostname }}
-{{- else if .Values.httpRoute.enabled }}
+{{- else if .Values.httpRoute }}
+{{- if hasKey .Values.httpRoute "enabled" }}
+{{- /* Flat shape (v0.37.0) */ -}}
+{{- if .Values.httpRoute.enabled }}
 {{- if .Values.httpRoute.hostnames }}
 
 Vaultwarden is accessible here: {{ index .Values.httpRoute.hostnames 0 }}
 {{- else }}
 
 Vaultwarden is accessible via the configured Gateway (HTTPRoute has no hostnames set).
+{{- end }}
+{{- else }}
+
+Vaultwarden is deployed. To expose it externally, enable ingress or httpRoute in your values.
+{{- end }}
+{{- else }}
+{{- /* Map shape — print a line for each non-redirect enabled route that has hostnames */ -}}
+{{- range $name, $route := .Values.httpRoute }}
+{{- if and (kindIs "map" $route) $route.enabled (not $route.httpsRedirect) $route.hostnames }}
+
+Vaultwarden ({{ $name }}) is accessible here: {{ index $route.hostnames 0 }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{- else }}
 
