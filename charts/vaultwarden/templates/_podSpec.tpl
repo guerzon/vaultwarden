@@ -86,6 +86,15 @@ containers:
             name: {{ default (include "vaultwarden.fullname" .) .Values.smtp.existingSecret }}
             key: {{ default "SMTP_PASSWORD" .Values.smtp.password.existingSecretKey }}
       {{- end }}
+      {{- if eq (include "vaultwarden.hibpUseSecret" .) "true" }}
+      {{- if or (.Values.hibp.value) (.Values.hibp.existingSecretKey) (.Values.hibp.existingSecret) }}
+      - name: HIBP_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: {{ default (include "vaultwarden.fullname" .) .Values.hibp.existingSecret }}
+            key: {{ default "HIBP_API_KEY" .Values.hibp.existingSecretKey }}
+      {{- end }}
+      {{- end }}
       {{- if and .Values.sso.enabled (or (.Values.sso.clientId.value) (.Values.sso.clientId.existingSecretKey) )}}
       - name: SSO_CLIENT_ID
         valueFrom:
@@ -168,20 +177,16 @@ containers:
       - containerPort: 8080
         name: http
         protocol: TCP
-    {{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumeMounts) }}
+    {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.storage.attachments) (.Values.extraVolumeMounts) }}
     volumeMounts:
-    {{- with .Values.extraVolumeMounts }}
-    {{- toYaml . | nindent 6 }}
     {{- end }}
-    {{- with .Values.storage.existingVolumeClaim }}
+    {{- if .Values.storage.existingVolumeClaim }}
+      {{- with .Values.storage.existingVolumeClaim }}
       - name: vaultwarden-data
         mountPath: {{ default "/data" .dataPath }}
-      - name: vaultwarden-data
-        mountPath: {{ default "/data/attachments" .attachmentsPath }}
-    {{- end }}
+      {{- end }}
     {{- else }}
     {{- if or (.Values.storage.data) (.Values.storage.attachments) }}
-    volumeMounts:
       {{- with .Values.storage.data }}
       - name: {{ .name }}
         mountPath: {{ default "/data" .path }}
@@ -191,6 +196,9 @@ containers:
         mountPath: {{ default "/data/attachments" .path }}
       {{- end }}
     {{- end }}
+    {{- end }}
+    {{- with .Values.extraVolumeMounts }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     resources:
     {{- toYaml .Values.resources | nindent 6 }}
@@ -234,17 +242,6 @@ containers:
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 2 }}
     {{- end }}
-{{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumes) }}
-volumes:
-{{- with .Values.extraVolumes }}
-{{- toYaml . | nindent 2 }}
-{{- end }}
-{{- with .Values.storage.existingVolumeClaim }}
-  - name: vaultwarden-data
-    persistentVolumeClaim:
-      claimName: {{ .claimName }}
-{{- end }}
-{{- end }}
 {{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ .Values.serviceAccount.name }}
 {{- end }}

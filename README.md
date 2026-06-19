@@ -43,7 +43,11 @@ See [LICENSE](./LICENSE).
 
 ## Author
 
-This Helm chart was created and maintained by [Lester Guerzon](https://medium.com/@sreafterhours).
+This Helm chart was created and maintained by [Lester Guerzon](https://guerzon.net).
+
+### Maintainers
+
+Interested in maintaining this chart? Drop me an email at lester@guerzon[.]net.
 
 ### Credits
 

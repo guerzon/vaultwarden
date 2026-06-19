@@ -13,7 +13,7 @@ image:
   ## @param image.tag Vaultwarden image tag
   ## Ref: https://hub.docker.com/r/vaultwarden/server/tags
   ##
-  tag: "1.35.4-alpine"
+  tag: "1.36.0-alpine"
   ## @param image.pullPolicy Vaultwarden image pull policy
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
   ##
@@ -286,15 +286,15 @@ podDisruptionBudget:
 
 
 storage:
-  ## @param storage.existingVolumeClaim If defined, the values here will be used for the data and
-  ## attachments PV's. The custom values for data and attachments will be ignored if
-  ## a value is set here
+  ## @param storage.existingVolumeClaim If defined, the values here will be used for the data PV.
+  ## The custom values for data and attachments will be ignored if a value is set here.
+  ## This only supports mounting a single PVC for data.
+  ## If attachments are in a different volume, please mount it using extraVolumeMounts.
   ##
   existingVolumeClaim:
     {}
     # claimName: "vaultwarden-pvc"
     # dataPath: "/data"
-    # attachmentsPath: /data/attachments
 
   ## @param storage.data Data directory configuration, refer to values.yaml for parameters.
   ##
@@ -441,9 +441,23 @@ domain: ""
 ##
 sendsAllowed: "true"
 
-## @param hibpApiKey HaveIBeenPwned API Key
+## @param hibpApiKey HaveIBeenPwned API Key (legacy). Prefer `hibp.value` or `hibp.existingSecret`.
 ##
 hibpApiKey: ""
+
+## HaveIBeenPwned API Key
+##
+hibp:
+  ## @param hibp.existingSecret Name of an existing secret containing the HaveIBeenPwned API key. Also set hibp.existingSecretKey.
+  ##
+  existingSecret: ""
+  ## @param hibp.existingSecretKey When using an existing secret, specify the key which contains the API key.
+  ## Example: HIBP_API_KEY
+  ##
+  existingSecretKey: ""
+  ## @param hibp.value HaveIBeenPwned API Key plain text
+  ##
+  value: ""
 
 ## @param orgAttachmentLimit Max Kilobytes of attachment storage allowed per organization.
 ## When this limit is reached, organization members will not be allowed to upload further attachments for ciphers owned by that organization.
@@ -814,6 +828,61 @@ ingress:
   ##   - Add support for using cert-manager.
   ##   - Support for multiple TLS hostnames.
   ##
+
+## @section Kubernetes Gateway API Configuration
+## Ref: https://gateway-api.sigs.k8s.io/
+##
+
+## @param httpRoute HTTPRoute configuration. Supports two shapes — see examples below.
+## Requires Gateway API CRDs to be installed in the cluster.
+## Ref: https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api
+##
+## Shape 1 — Flat (single HTTPRoute, backward-compatible with chart v0.37.0):
+## httpRoute:
+##   enabled: true
+##   labels: {}
+##   additionalAnnotations: {}
+##   parentRefs:
+##     - name: my-gateway
+##       namespace: gateway-system
+##       sectionName: https
+##   hostnames:
+##     - vw.example.com
+##   path: /
+##   rules: []           # full override; takes precedence over path and httpsRedirect
+##   httpsRedirect: false
+##
+## Shape 2 — Map (multiple named HTTPRoutes, e.g. HTTPS backend + HTTP-to-HTTPS redirect):
+## httpRoute:
+##   main:
+##     enabled: true
+##     parentRefs:
+##       - name: my-gateway
+##         namespace: gateway-system
+##         sectionName: https
+##     hostnames:
+##       - vw.example.com
+##     path: /
+##     rules: []
+##     httpsRedirect: false
+##     apiVersion: gateway.networking.k8s.io/v1   # optional override
+##     kind: HTTPRoute                             # optional override
+##     labels: {}
+##     additionalAnnotations: {}
+##   redirect:
+##     enabled: true
+##     parentRefs:
+##       - name: my-gateway
+##         namespace: gateway-system
+##         sectionName: http
+##     hostnames:
+##       - vw.example.com
+##     httpsRedirect: true   # emits a 301 RequestRedirect filter; no backendRefs
+##
+## Route naming: the "main" route uses the chart's fullname; all other routes get a
+## "-<name>" suffix (e.g. "<release>-vaultwarden-redirect").
+##
+httpRoute: {}
 
 ## @section SSO OpenID Connect Configuration support for https://github.com/dani-garcia/vaultwarden/pull/3899
 ##

@@ -368,7 +368,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | ----------------------- | ----------------------------------------------------------------------------------------- | -------------------- |
 | `image.registry`        | Vaultwarden image registry                                                                | `docker.io`          |
 | `image.repository`      | Vaultwarden image repository                                                              | `vaultwarden/server` |
-| `image.tag`             | Vaultwarden image tag                                                                     | `1.34.1-alpine`      |
+| `image.tag`             | Vaultwarden image tag                                                                     | `1.36.0-alpine`      |
 | `image.pullPolicy`      | Vaultwarden image pull policy                                                             | `IfNotPresent`       |
 | `image.pullSecrets`     | Specify docker-registry secrets                                                           | `[]`                 |
 | `image.extraSecrets`    | Vaultwarden image extra secrets                                                           | `[]`                 |
@@ -390,7 +390,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `nodeSelector`          | Node labels for pod assignment                                                            | `{}`                 |
 | `affinity`              | Affinity for pod assignment                                                               | `{}`                 |
 | `tolerations`           | Tolerations for pod assignment                                                            | `[]`                 |
-| `priorityClassName`     | Assign a priority class to pods                                                           | `""`                |
+| `priorityClassName`     | Assign a priority class to pods                                                           | `""`                 |
 | `serviceAccount.create` | Create a service account                                                                  | `true`               |
 | `serviceAccount.name`   | Name of the service account to create                                                     | `vaultwarden-svc`    |
 | `podSecurityContext`    | Pod security options                                                                      | `{}`                 |
@@ -434,7 +434,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 | Name                          | Description                                                               | Value  |
 | ----------------------------- | ------------------------------------------------------------------------- | ------ |
-| `storage.existingVolumeClaim` | If defined, the values here will be used for the data and                 | `{}`   |
+| `storage.existingVolumeClaim` | If defined, the values here will be used for the data PV.                 | `{}`   |
 | `storage.data`                | Data directory configuration, refer to values.yaml for parameters.        | `{}`   |
 | `storage.attachments`         | Attachments directory configuration, refer to values.yaml for parameters. | `{}`   |
 | `webVaultEnabled`             | Enable Web Vault                                                          | `true` |
@@ -481,26 +481,29 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 ### General settings
 
-| Name                        | Description                                                                                  | Value         |
-| --------------------------- | -------------------------------------------------------------------------------------------- | ------------- |
-| `domain`                    | Domain name where the application is accessed                                                | `""`          |
-| `sendsAllowed`              | Controls whether users are allowed to create Bitwarden Sends.                                | `true`        |
-| `hibpApiKey`                | HaveIBeenPwned API Key                                                                       | `""`          |
-| `orgAttachmentLimit`        | Max Kilobytes of attachment storage allowed per organization.                                | `""`          |
-| `userAttachmentLimit`       | Max kilobytes of attachment storage allowed per user.                                        | `""`          |
-| `userSendLimit`             | Max kilobytes of send storage allowed per user.                                              | `""`          |
-| `trashAutoDeleteDays`       | Number of days to wait before auto-deleting a trashed item.                                  | `""`          |
-| `signupsAllowed`            | By default, anyone who can access your instance can register for a new account.              | `true`        |
-| `signupsVerify`             | Whether to require account verification for newly-registered users.                          | `true`        |
-| `signupDomains`             | List of domain names for users allowed to register. For example:                             | `""`          |
-| `orgEventsEnabled`          | Controls whether event logging is enabled for organizations                                  | `false`       |
-| `orgCreationUsers`          | Controls which users can create new orgs.                                                    | `""`          |
-| `invitationsAllowed`        | Even when registration is disabled, organization administrators or owners can                | `true`        |
-| `invitationOrgName`         | String Name shown in the invitation emails that don't come from a specific organization      | `Vaultwarden` |
-| `invitationExpirationHours` | The number of hours after which an organization invite token, emergency access invite token, | `120`         |
-| `emergencyAccessAllowed`    | Controls whether users can enable emergency access to their accounts.                        | `true`        |
-| `emailChangeAllowed`        | Controls whether users can change their email.                                               | `true`        |
-| `showPassHint`              | Controls whether a password hint should be shown directly in the web page if                 | `false`       |
+| Name                        | Description                                                                                        | Value         |
+| --------------------------- | -------------------------------------------------------------------------------------------------- | ------------- |
+| `domain`                    | Domain name where the application is accessed                                                      | `""`          |
+| `sendsAllowed`              | Controls whether users are allowed to create Bitwarden Sends.                                      | `true`        |
+| `hibpApiKey`                | HaveIBeenPwned API Key (legacy). Prefer `hibp.value` or `hibp.existingSecret`.                     | `""`          |
+| `hibp.existingSecret`       | Name of an existing secret containing the HaveIBeenPwned API key. Also set hibp.existingSecretKey. | `""`          |
+| `hibp.existingSecretKey`    | When using an existing secret, specify the key which contains the API key.                         | `""`          |
+| `hibp.value`                | HaveIBeenPwned API Key plain text                                                                  | `""`          |
+| `orgAttachmentLimit`        | Max Kilobytes of attachment storage allowed per organization.                                      | `""`          |
+| `userAttachmentLimit`       | Max kilobytes of attachment storage allowed per user.                                              | `""`          |
+| `userSendLimit`             | Max kilobytes of send storage allowed per user.                                                    | `""`          |
+| `trashAutoDeleteDays`       | Number of days to wait before auto-deleting a trashed item.                                        | `""`          |
+| `signupsAllowed`            | By default, anyone who can access your instance can register for a new account.                    | `true`        |
+| `signupsVerify`             | Whether to require account verification for newly-registered users.                                | `true`        |
+| `signupDomains`             | List of domain names for users allowed to register. For example:                                   | `""`          |
+| `orgEventsEnabled`          | Controls whether event logging is enabled for organizations                                        | `false`       |
+| `orgCreationUsers`          | Controls which users can create new orgs.                                                          | `""`          |
+| `invitationsAllowed`        | Even when registration is disabled, organization administrators or owners can                      | `true`        |
+| `invitationOrgName`         | String Name shown in the invitation emails that don't come from a specific organization            | `Vaultwarden` |
+| `invitationExpirationHours` | The number of hours after which an organization invite token, emergency access invite token,       | `120`         |
+| `emergencyAccessAllowed`    | Controls whether users can enable emergency access to their accounts.                              | `true`        |
+| `emailChangeAllowed`        | Controls whether users can change their email.                                                     | `true`        |
+| `showPassHint`              | Controls whether a password hint should be shown directly in the web page if                       | `false`       |
 
 ### Advanced settings
 
@@ -589,6 +592,12 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `ingress.tlsSecret`               | Kubernetes secret containing the SSL certificate when using the "nginx" class. | `""`                 |
 | `ingress.nginxAllowList`          | Comma-separated list of IP addresses and subnets to allow.                     | `""`                 |
 | `ingress.customHeadersConfigMap`  | ConfigMap containing custom headers to be added to the ingress.                | `{}`                 |
+
+### Kubernetes Gateway API Configuration
+
+| Name        | Description                                                        | Value |
+| ----------- | ------------------------------------------------------------------ | ----- |
+| `httpRoute` | HTTPRoute configuration. Supports two shapes — see examples below. | `{}`  |
 
 ### SSO OpenID Connect Configuration support for https://github.com/dani-garcia/vaultwarden/pull/3899
 
