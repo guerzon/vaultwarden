@@ -11,7 +11,7 @@ sources:
 appVersion: 1.36.0
 maintainers:
   - name: guerzon
-    email: guerzon@proton.me
+    email: lester@guerzon.net
     url: https://github.com/guerzon
-version: 0.39.1
+version: 0.40.0
 kubeVersion: ">=1.12.0-0"
