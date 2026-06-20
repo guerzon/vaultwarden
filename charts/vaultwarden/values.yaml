@@ -121,8 +121,8 @@ priorityClassName: ""
 ## @param serviceAccount.name Name of the service account to create
 ##
 serviceAccount:
-  create: true
-  name: "vaultwarden-svc"
+  create: false
+  name: ""
 
 ## @param podSecurityContext Pod security options
 ##
