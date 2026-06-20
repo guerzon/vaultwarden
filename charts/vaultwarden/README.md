@@ -205,7 +205,7 @@ adminToken:
   value: "khit9gYQV6ax9LKTTm+s6QbZi5oiuR+3s1PEn9q3IRmCl9IQn7LmBpmFCOYTb7Mr"
 ```
 
-You can also [disable](https://github.com/dani-garcia/vaultwarden/wiki/Disable-admin-token) the admin token by passing `--set adminToken=null` to `helm`. Doing so will pass the disable the authentication to the admin page. Do this if you know what you are doing.
+By default, the admin token is empty. Hence, the admin page is disabled by default.
 
 ### Service account
 
