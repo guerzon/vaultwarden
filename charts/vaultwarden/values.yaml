@@ -600,9 +600,8 @@ adminToken:
   ##
   existingSecretKey: ""
   ## @param adminToken.value Plain or argon2 string containing the admin token.
-  ## This example is the argon2 has of "R@ndomTokenString" (no quotes).
   ##
-  value: "$argon2id$v=19$m=19456,t=2,p=1$Vkx1VkE4RmhDMUhwNm9YVlhPQkVOZk1Yc1duSDdGRVYzd0Y5ZkgwaVg0Yz0$PK+h1ANCbzzmEKaiQfCjWw+hWFaMKvLhG2PjRanH5Kk"
+  value: ""
 
 ## @param adminRateLimitSeconds Number of seconds, on average, between admin login requests from the same IP address before rate limiting kicks in.
 ##
