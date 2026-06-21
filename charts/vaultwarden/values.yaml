@@ -367,6 +367,22 @@ database:
   ## @param database.maxConnections Define the size of the connection pool used for connecting to the database.
   ##
   maxConnections: 10
+  ## @param database.enableWal Enable Write-Ahead Logging (WAL) for the database
+  ## Note: Read wiki documentation before enabling
+  ##
+  enableWal: true
+  ## @param database.timeout Timeout when acquiring database connection (seconds)
+  ##
+  timeout: 30
+  ## @param database.idleTimeout Timeout before idle connections are closed (seconds)
+  ##
+  idleTimeout: 600
+  ## @param database.minConnections Minimum size of the connection pool
+  ##
+  minConnections: 2
+  ## @param database.connInit Database connection initialization SQL statements
+  ##
+  connInit: ""
 
 ## @section Push Notifications
 ## Supported since 1.29.0.

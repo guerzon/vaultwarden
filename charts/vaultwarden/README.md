@@ -456,6 +456,11 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `database.existingSecretPasswordKey` | Key in the existing secret                                                                                                               | `password` |
 | `database.connectionRetries`         | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`       |
 | `database.maxConnections`            | Define the size of the connection pool used for connecting to the database.                                                              | `10`       |
+| `database.enableWal`                 | Enable Write-Ahead Logging (WAL) for the database                                                                                        | `true`     |
+| `database.timeout`                   | Timeout when acquiring database connection (seconds)                                                                                     | `30`       |
+| `database.idleTimeout`               | Timeout before idle connections are closed (seconds)                                                                                     | `600`      |
+| `database.minConnections`            | Minimum size of the connection pool                                                                                                      | `2`        |
+| `database.connInit`                  | Database connection initialization SQL statements                                                                                        | `""`       |
 
 ### Push Notifications
 

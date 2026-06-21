@@ -42,6 +42,9 @@ data:
   {{- if .Values.storage.attachments }}
   ATTACHMENTS_FOLDER: {{ default "/data/attachments" .Values.storage.attachments.path | quote }}
   {{- end }}
+  {{- with .Values.database.uriOverride }}
+  DATABASE_URL: {{ . | quote }}
+  {{- end }}
   ROCKET_ADDRESS: {{ .Values.rocket.address | quote }}
   ROCKET_PORT: {{ .Values.rocket.port | quote }}
   ROCKET_WORKERS: {{ .Values.rocket.workers | quote }}
@@ -61,6 +64,21 @@ data:
   {{- end }}
   DB_CONNECTION_RETRIES: {{ .Values.database.connectionRetries | quote }}
   DATABASE_MAX_CONNS: {{ .Values.database.maxConnections | quote }}
+  {{- with .Values.database.timeout }}
+  DATABASE_TIMEOUT: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.database.idleTimeout }}
+  DATABASE_IDLE_TIMEOUT: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.database.minConnections }}
+  DATABASE_MIN_CONNS: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.database.enableWal }}
+  ENABLE_DB_WAL: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.database.connInit }}
+  DATABASE_CONN_INIT: {{ . | quote }}
+  {{- end }}
   INVITATION_ORG_NAME: {{ .Values.invitationOrgName | quote }}
   ICON_BLACKLIST_NON_GLOBAL_IPS: {{ .Values.iconBlacklistNonGlobalIps | quote }}
   IP_HEADER: {{ .Values.ipHeader | quote }}
