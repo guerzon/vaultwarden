@@ -15,7 +15,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  serviceName: vaultwarden
+  serviceName: {{ include "vaultwarden.fullname" . }}
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
