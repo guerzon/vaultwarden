@@ -174,7 +174,7 @@ containers:
         {{- end }}
       {{- end }}
     ports:
-      - containerPort: 8080
+      - containerPort: {{ .Values.rocket.port }}
         name: http
         protocol: TCP
     {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.storage.attachments) (.Values.extraVolumeMounts) }}

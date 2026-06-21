@@ -22,7 +22,7 @@ spec:
     - name: "http"
       port: 80
       protocol: TCP
-      targetPort: 8080
+      targetPort: {{ .Values.rocket.port }}
 {{- if .Values.service.ipFamilyPolicy }}
   ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
 {{- end }}
