@@ -578,6 +578,8 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `rocket.address`                  | Address to bind to                                                             | `0.0.0.0`            |
 | `rocket.port`                     | Rocket port                                                                    | `8080`               |
 | `rocket.workers`                  | Rocket number of workers                                                       | `10`                 |
+| `rocket.tls.secretName`           | Name of the kubernetes.io/tls secret to use for HTTPS.                         | `""`                 |
+| `rocket.tls.path`                 | Path to mount TLS secrets within the container                                 | `/certs`             |
 | `service.type`                    | Service type                                                                   | `ClusterIP`          |
 | `service.annotations`             | Additional annotations for the vaultwarden service                             | `{}`                 |
 | `service.labels`                  | Additional labels for the service                                              | `{}`                 |
