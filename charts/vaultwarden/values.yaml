@@ -976,3 +976,17 @@ sso:
     ## @param sso.clientSecret.existingSecretKey When using an existing secret, specify the key which contains the password.
     ##
     existingSecretKey: ""
+
+## PostgreSQL subchart configuration (auto-deploy)
+## @section PostgreSQL subchart settings
+postgresql:
+  enabled: false
+  auth:
+    postgresPassword: "change-me"
+    database: "vaultwarden"
+  primary:
+    persistence:
+      size: 10Gi
+  service:
+    ports:
+      postgresql: 5432

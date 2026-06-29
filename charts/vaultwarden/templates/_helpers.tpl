@@ -110,3 +110,26 @@ Return the legacy hibpApiKey string value when hibpApiKey is set and hibp is not
 {{- .Values.hibpApiKey -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "vaultwarden.dbString" -}}
+{{- if .Values.postgresql.enabled -}}
+  {{- printf "postgresql://%s:%s@%s-postgresql.%s.svc.cluster.local:%d/%s" 
+      "postgres" 
+      .Values.postgresql.auth.postgresPassword 
+      .Release.Name 
+      .Release.Namespace 
+      (int .Values.postgresql.service.ports.postgresql) 
+      .Values.postgresql.auth.database -}}
+{{- else -}}
+  {{- if .Values.database.existingSecret -}}
+    {{- include "vaultwarden.dbSecret" . -}}
+  {{- else -}}
+    {{- printf "postgresql://%s:%s@%s:%d/%s" 
+        .Values.database.username 
+        .Values.database.password 
+        .Values.database.host 
+        (int .Values.database.port) 
+        .Values.database.dbName -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}

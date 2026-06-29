@@ -1,0 +1,21 @@
+postgresql:
+  enabled: true
+  image:
+    repository: postgres
+    tag: 15-alpine
+  auth:
+    postgresPassword: "test-password"
+  primary:
+    persistence:
+      enabled: false
+    extraEnvVars:
+      - name: POSTGRES_DB
+        value: vaultwarden
+    extraVolumes:
+      - name: run-postgresql
+        emptyDir: {}
+    extraVolumeMounts:
+      - name: run-postgresql
+        mountPath: /var/run/postgresql
+ingress:
+  enabled: false

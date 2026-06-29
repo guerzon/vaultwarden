@@ -45,8 +45,10 @@ data:
   {{- if .Values.storage.attachments }}
   ATTACHMENTS_FOLDER: {{ default "/data/attachments" .Values.storage.attachments.path | quote }}
   {{- end }}
-  {{- with .Values.database.uriOverride }}
-  DATABASE_URL: {{ . | quote }}
+  {{- if .Values.database.uriOverride }}
+  DATABASE_URL: {{ .Values.database.uriOverride | quote }}
+  {{- else }}
+  DATABASE_URL: {{ include "vaultwarden.dbString" . | quote }}
   {{- end }}
   ROCKET_ADDRESS: {{ .Values.rocket.address | quote }}
   ROCKET_PORT: {{ .Values.rocket.port | quote }}
