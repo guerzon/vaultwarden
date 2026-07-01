@@ -64,7 +64,7 @@ spec:
             service:
               name: {{ include "vaultwarden.fullname" $ }}
               port:
-                {{- if .Values.rocket.tls.secretName }}
+                {{- if $.Values.rocket.tls.secretName }}
                 name: "https"
                 {{- else }}
                 name: "http"
