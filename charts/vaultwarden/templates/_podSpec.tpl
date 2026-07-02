@@ -15,6 +15,10 @@ affinity:
 tolerations:
 {{- toYaml . | nindent 2 }}
 {{- end }}
+{{- with .Values.topologySpreadConstraints }}
+topologySpreadConstraints:
+{{- toYaml . | nindent 2 }}
+{{- end }}
 {{- with .Values.priorityClassName }}
 priorityClassName: {{ . | quote }}
 {{- end }}

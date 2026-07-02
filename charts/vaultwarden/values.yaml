@@ -112,6 +112,11 @@ affinity: {}
 ##
 tolerations: []
 
+## @param topologySpreadConstraints Topology spread constraints for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+##
+topologySpreadConstraints: []
+
 ## @param priorityClassName Assign a priority class to pods
 ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
 ##
