@@ -205,7 +205,7 @@ adminToken:
   value: "khit9gYQV6ax9LKTTm+s6QbZi5oiuR+3s1PEn9q3IRmCl9IQn7LmBpmFCOYTb7Mr"
 ```
 
-You can also [disable](https://github.com/dani-garcia/vaultwarden/wiki/Disable-admin-token) the admin token by passing `--set adminToken=null` to `helm`. Doing so will pass the disable the authentication to the admin page. Do this if you know what you are doing.
+By default, the admin token is empty. Hence, the admin page is disabled by default.
 
 ### Service account
 
@@ -368,7 +368,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | ----------------------- | ----------------------------------------------------------------------------------------- | -------------------- |
 | `image.registry`        | Vaultwarden image registry                                                                | `docker.io`          |
 | `image.repository`      | Vaultwarden image repository                                                              | `vaultwarden/server` |
-| `image.tag`             | Vaultwarden image tag                                                                     | `1.34.1-alpine`      |
+| `image.tag`             | Vaultwarden image tag                                                                     | `1.37.0-alpine`      |
 | `image.pullPolicy`      | Vaultwarden image pull policy                                                             | `IfNotPresent`       |
 | `image.pullSecrets`     | Specify docker-registry secrets                                                           | `[]`                 |
 | `image.extraSecrets`    | Vaultwarden image extra secrets                                                           | `[]`                 |
@@ -390,7 +390,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `nodeSelector`          | Node labels for pod assignment                                                            | `{}`                 |
 | `affinity`              | Affinity for pod assignment                                                               | `{}`                 |
 | `tolerations`           | Tolerations for pod assignment                                                            | `[]`                 |
-| `priorityClassName`     | Assign a priority class to pods                                                           | `""`                |
+| `priorityClassName`     | Assign a priority class to pods                                                           | `""`                 |
 | `serviceAccount.create` | Create a service account                                                                  | `true`               |
 | `serviceAccount.name`   | Name of the service account to create                                                     | `vaultwarden-svc`    |
 | `podSecurityContext`    | Pod security options                                                                      | `{}`                 |
@@ -434,7 +434,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 | Name                          | Description                                                               | Value  |
 | ----------------------------- | ------------------------------------------------------------------------- | ------ |
-| `storage.existingVolumeClaim` | If defined, the values here will be used for the data and                 | `{}`   |
+| `storage.existingVolumeClaim` | If defined, the values here will be used for the data PV.                 | `{}`   |
 | `storage.data`                | Data directory configuration, refer to values.yaml for parameters.        | `{}`   |
 | `storage.attachments`         | Attachments directory configuration, refer to values.yaml for parameters. | `{}`   |
 | `webVaultEnabled`             | Enable Web Vault                                                          | `true` |
@@ -456,6 +456,11 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `database.existingSecretPasswordKey` | Key in the existing secret                                                                                                               | `password` |
 | `database.connectionRetries`         | Number of times to retry the database connection during startup, with 1 second delay between each retry, set to 0 to retry indefinitely. | `15`       |
 | `database.maxConnections`            | Define the size of the connection pool used for connecting to the database.                                                              | `10`       |
+| `database.enableWal`                 | Enable Write-Ahead Logging (WAL) for the database                                                                                        | `true`     |
+| `database.timeout`                   | Timeout when acquiring database connection (seconds)                                                                                     | `30`       |
+| `database.idleTimeout`               | Timeout before idle connections are closed (seconds)                                                                                     | `600`      |
+| `database.minConnections`            | Minimum size of the connection pool                                                                                                      | `2`        |
+| `database.connInit`                  | Database connection initialization SQL statements                                                                                        | `""`       |
 
 ### Push Notifications
 
@@ -481,47 +486,50 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 
 ### General settings
 
-| Name                        | Description                                                                                  | Value         |
-| --------------------------- | -------------------------------------------------------------------------------------------- | ------------- |
-| `domain`                    | Domain name where the application is accessed                                                | `""`          |
-| `sendsAllowed`              | Controls whether users are allowed to create Bitwarden Sends.                                | `true`        |
-| `hibpApiKey`                | HaveIBeenPwned API Key                                                                       | `""`          |
-| `orgAttachmentLimit`        | Max Kilobytes of attachment storage allowed per organization.                                | `""`          |
-| `userAttachmentLimit`       | Max kilobytes of attachment storage allowed per user.                                        | `""`          |
-| `userSendLimit`             | Max kilobytes of send storage allowed per user.                                              | `""`          |
-| `trashAutoDeleteDays`       | Number of days to wait before auto-deleting a trashed item.                                  | `""`          |
-| `signupsAllowed`            | By default, anyone who can access your instance can register for a new account.              | `true`        |
-| `signupsVerify`             | Whether to require account verification for newly-registered users.                          | `true`        |
-| `signupDomains`             | List of domain names for users allowed to register. For example:                             | `""`          |
-| `orgEventsEnabled`          | Controls whether event logging is enabled for organizations                                  | `false`       |
-| `orgCreationUsers`          | Controls which users can create new orgs.                                                    | `""`          |
-| `invitationsAllowed`        | Even when registration is disabled, organization administrators or owners can                | `true`        |
-| `invitationOrgName`         | String Name shown in the invitation emails that don't come from a specific organization      | `Vaultwarden` |
-| `invitationExpirationHours` | The number of hours after which an organization invite token, emergency access invite token, | `120`         |
-| `emergencyAccessAllowed`    | Controls whether users can enable emergency access to their accounts.                        | `true`        |
-| `emailChangeAllowed`        | Controls whether users can change their email.                                               | `true`        |
-| `showPassHint`              | Controls whether a password hint should be shown directly in the web page if                 | `false`       |
+| Name                        | Description                                                                                        | Value         |
+| --------------------------- | -------------------------------------------------------------------------------------------------- | ------------- |
+| `domain`                    | Domain name where the application is accessed                                                      | `""`          |
+| `sendsAllowed`              | Controls whether users are allowed to create Bitwarden Sends.                                      | `true`        |
+| `hibpApiKey`                | HaveIBeenPwned API Key (legacy). Prefer `hibp.value` or `hibp.existingSecret`.                     | `""`          |
+| `hibp.existingSecret`       | Name of an existing secret containing the HaveIBeenPwned API key. Also set hibp.existingSecretKey. | `""`          |
+| `hibp.existingSecretKey`    | When using an existing secret, specify the key which contains the API key.                         | `""`          |
+| `hibp.value`                | HaveIBeenPwned API Key plain text                                                                  | `""`          |
+| `orgAttachmentLimit`        | Max Kilobytes of attachment storage allowed per organization.                                      | `""`          |
+| `userAttachmentLimit`       | Max kilobytes of attachment storage allowed per user.                                              | `""`          |
+| `userSendLimit`             | Max kilobytes of send storage allowed per user.                                                    | `""`          |
+| `trashAutoDeleteDays`       | Number of days to wait before auto-deleting a trashed item.                                        | `""`          |
+| `signupsAllowed`            | By default, anyone who can access your instance can register for a new account.                    | `true`        |
+| `signupsVerify`             | Whether to require account verification for newly-registered users.                                | `true`        |
+| `signupDomains`             | List of domain names for users allowed to register. For example:                                   | `""`          |
+| `orgEventsEnabled`          | Controls whether event logging is enabled for organizations                                        | `false`       |
+| `orgCreationUsers`          | Controls which users can create new orgs.                                                          | `""`          |
+| `invitationsAllowed`        | Even when registration is disabled, organization administrators or owners can                      | `true`        |
+| `invitationOrgName`         | String Name shown in the invitation emails that don't come from a specific organization            | `Vaultwarden` |
+| `invitationExpirationHours` | The number of hours after which an organization invite token, emergency access invite token,       | `120`         |
+| `emergencyAccessAllowed`    | Controls whether users can enable emergency access to their accounts.                              | `true`        |
+| `emailChangeAllowed`        | Controls whether users can change their email.                                                     | `true`        |
+| `showPassHint`              | Controls whether a password hint should be shown directly in the web page if                       | `false`       |
 
 ### Advanced settings
 
-| Name                             | Description                                                                                                                                          | Value                                                                                                                                    |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `ipHeader`                       | Client IP Header, used to identify the IP of the client                                                                                              | `X-Real-IP`                                                                                                                              |
-| `iconService`                    | The predefined icon services are: internal, bitwarden, duckduckgo, google.                                                                           | `internal`                                                                                                                               |
-| `iconRedirectCode`               | Icon redirect code                                                                                                                                   | `302`                                                                                                                                    |
-| `iconBlacklistNonGlobalIps`      | Whether block non-global IPs.                                                                                                                        | `true`                                                                                                                                   |
-| `experimentalClientFeatureFlags` | Comma separated list of experimental features to enable in clients, make sure to check which features are already enabled by default (.env.template) | `nil`                                                                                                                                    |
-| `requireDeviceEmail`             | Require new device emails. When a user logs in an email is required to be sent.                                                                      | `false`                                                                                                                                  |
-| `extendedLogging`                | Enable extended logging, which shows timestamps and targets in the logs                                                                              | `true`                                                                                                                                   |
-| `logTimestampFormat`             | Timestamp format used in extended logging.                                                                                                           | `%Y-%m-%d %H:%M:%S.%3f`                                                                                                                  |
-| `logging.logLevel`               | Specify the log level                                                                                                                                | `""`                                                                                                                                     |
-| `logging.logFile`                | Log to a file                                                                                                                                        | `""`                                                                                                                                     |
-| `adminToken.existingSecret`      | Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey.                                             | `""`                                                                                                                                     |
-| `adminToken.existingSecretKey`   | When using adminToken.existingSecret, specify the key containing the token.                                                                          | `""`                                                                                                                                     |
-| `adminToken.value`               | Plain or argon2 string containing the admin token.                                                                                                   | `$argon2id$v=19$m=19456,t=2,p=1$Vkx1VkE4RmhDMUhwNm9YVlhPQkVOZk1Yc1duSDdGRVYzd0Y5ZkgwaVg0Yz0$PK+h1ANCbzzmEKaiQfCjWw+hWFaMKvLhG2PjRanH5Kk` |
-| `adminRateLimitSeconds`          | Number of seconds, on average, between admin login requests from the same IP address before rate limiting kicks in.                                  | `300`                                                                                                                                    |
-| `adminRateLimitMaxBurst`         | Allow a burst of requests of up to this size, while maintaining the average indicated by adminRateLimitSeconds.                                      | `3`                                                                                                                                      |
-| `timeZone`                       | Specify timezone different from the default (UTC).                                                                                                   | `""`                                                                                                                                     |
+| Name                             | Description                                                                                                                                          | Value                   |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `ipHeader`                       | Client IP Header, used to identify the IP of the client                                                                                              | `X-Real-IP`             |
+| `iconService`                    | The predefined icon services are: internal, bitwarden, duckduckgo, google.                                                                           | `internal`              |
+| `iconRedirectCode`               | Icon redirect code                                                                                                                                   | `302`                   |
+| `iconBlacklistNonGlobalIps`      | Whether block non-global IPs.                                                                                                                        | `true`                  |
+| `experimentalClientFeatureFlags` | Comma separated list of experimental features to enable in clients, make sure to check which features are already enabled by default (.env.template) | `nil`                   |
+| `requireDeviceEmail`             | Require new device emails. When a user logs in an email is required to be sent.                                                                      | `false`                 |
+| `extendedLogging`                | Enable extended logging, which shows timestamps and targets in the logs                                                                              | `true`                  |
+| `logTimestampFormat`             | Timestamp format used in extended logging.                                                                                                           | `%Y-%m-%d %H:%M:%S.%3f` |
+| `logging.logLevel`               | Specify the log level                                                                                                                                | `""`                    |
+| `logging.logFile`                | Log to a file                                                                                                                                        | `""`                    |
+| `adminToken.existingSecret`      | Specify an existing Kubernetes secret containing the admin token. Also set adminToken.existingSecretKey.                                             | `""`                    |
+| `adminToken.existingSecretKey`   | When using adminToken.existingSecret, specify the key containing the token.                                                                          | `""`                    |
+| `adminToken.value`               | Plain or argon2 string containing the admin token.                                                                                                   | `""`                    |
+| `adminRateLimitSeconds`          | Number of seconds, on average, between admin login requests from the same IP address before rate limiting kicks in.                                  | `300`                   |
+| `adminRateLimitMaxBurst`         | Allow a burst of requests of up to this size, while maintaining the average indicated by adminRateLimitSeconds.                                      | `3`                     |
+| `timeZone`                       | Specify timezone different from the default (UTC).                                                                                                   | `""`                    |
 
 ### BETA Features
 
@@ -561,6 +569,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `smtp.authMechanism`              | SMTP authentication mechanism                                                                                                                       | `Plain`    |
 | `smtp.acceptInvalidHostnames`     | Accept Invalid Hostnames                                                                                                                            | `false`    |
 | `smtp.acceptInvalidCerts`         | Accept Invalid Certificates                                                                                                                         | `false`    |
+| `smtp.heloName`                   | HELO Hostname: override the pod hostname used in the SMTP HELO command                                                                              | `""`       |
 | `smtp.debug`                      | SMTP debugging                                                                                                                                      | `false`    |
 
 ### Exposure settings
@@ -570,6 +579,8 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `rocket.address`                  | Address to bind to                                                             | `0.0.0.0`            |
 | `rocket.port`                     | Rocket port                                                                    | `8080`               |
 | `rocket.workers`                  | Rocket number of workers                                                       | `10`                 |
+| `rocket.tls.secretName`           | Name of the kubernetes.io/tls secret to use for HTTPS.                         | `""`                 |
+| `rocket.tls.path`                 | Path to mount TLS secrets within the container                                 | `/certs`             |
 | `service.type`                    | Service type                                                                   | `ClusterIP`          |
 | `service.annotations`             | Additional annotations for the vaultwarden service                             | `{}`                 |
 | `service.labels`                  | Additional labels for the service                                              | `{}`                 |
@@ -589,3 +600,33 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | `ingress.tlsSecret`               | Kubernetes secret containing the SSL certificate when using the "nginx" class. | `""`                 |
 | `ingress.nginxAllowList`          | Comma-separated list of IP addresses and subnets to allow.                     | `""`                 |
 | `ingress.customHeadersConfigMap`  | ConfigMap containing custom headers to be added to the ingress.                | `{}`                 |
+
+### Kubernetes Gateway API Configuration
+
+| Name        | Description                                                        | Value |
+| ----------- | ------------------------------------------------------------------ | ----- |
+| `httpRoute` | HTTPRoute configuration. Supports two shapes — see examples below. | `{}`  |
+
+### SSO OpenID Connect Configuration support for https://github.com/dani-garcia/vaultwarden/pull/3899
+
+| Name                                 | Description                                                                                                                                                              | Value                                                                                                                                           |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sso.enabled`                        | boolean to define if SSO is enabled or not.                                                                                                                              | `false`                                                                                                                                         |
+| `sso.existingSecret`                 | Name of an existing secret containing the OpenID Connect client id and secret. Also set sso.clientId.existingSecretKey and sso.clientSecret.existingSecretKey.           | `""`                                                                                                                                            |
+| `sso.onlySSO`                        | boolen to disable the email+master-password login flow.                                                                                                                  | `false`                                                                                                                                         |
+| `sso.enforceSSO`                     | boolen to enforce SSO authentication for all users (except admin token access).                                                                                          | `false`                                                                                                                                         |
+| `sso.signupsMatchEmail`              | boolen to define if SSO user signup should take control of existing account with given mail (only works during signup).                                                  | `true`                                                                                                                                          |
+| `sso.ignoreEmailVerification`        | boolean to define if signup without mail verification is allowed (this is needed if your SSO provider does not send the 'email_verified' claim).                         | `false`                                                                                                                                         |
+| `sso.authority`                      | the OpenID Connect Discovery endpoint without '/.well-known/openid-configuration' and trailing '/'-                                                                      | `""`                                                                                                                                            |
+| `sso.scopes`                         | OpenID connect scopes to use                                                                                                                                             | `email profile`                                                                                                                                 |
+| `sso.authorizeExtraParams`           | OpenID connect extra params fort he authorize redirect.                                                                                                                  | `""`                                                                                                                                            |
+| `sso.pkce`                           | boolean to enable/disable PKCE for the auth flow                                                                                                                         | `true`                                                                                                                                          |
+| `sso.trustedAudience`                | additional audience to trust for the ID token. (`client_id` is always trusted). Use single quote when writing the regex: `'^$'`.                                         | `""`                                                                                                                                            |
+| `sso.masterPasswordPolicy`           | optional master password policy for sso (currently 'enforceOnLogin' is not supported).                                                                                   | `{"enforceOnLogin":false,"minComplexity":3,"minLength":12,"requireLower":true,"requireNumbers":true,"requireSpecial":true,"requireUpper":true}` |
+| `sso.disableSessionHandling`         | optional boolean to disable sso session handling  if you can not retrieve refresh_tokens (access token will have default lifetime form 2h and refresh token from 7 days) | `false`                                                                                                                                         |
+| `sso.cacheExpiration`                | expiration time for sso client cache, passing 0 disables the cache.                                                                                                      | `0`                                                                                                                                             |
+| `sso.debugTokens`                    | boolen to enbable token logging for debugging purpose                                                                                                                    | `false`                                                                                                                                         |
+| `sso.clientId.value`                 | string for the client id of the OpenID Connect authentication.                                                                                                           | `""`                                                                                                                                            |
+| `sso.clientId.existingSecretKey`     | When using an existing secret, specify the key which contains the password.                                                                                              | `""`                                                                                                                                            |
+| `sso.clientSecret.value`             | string for the client id of the OpenID Connect authentication.                                                                                                           | `""`                                                                                                                                            |
+| `sso.clientSecret.existingSecretKey` | When using an existing secret, specify the key which contains the password.                                                                                              | `""`                                                                                                                                            |

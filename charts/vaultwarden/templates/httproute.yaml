@@ -1,0 +1,95 @@
+{{- define "vaultwarden.httpRoute.rules" -}}
+{{- $route := .route -}}
+{{- $fullName := .fullName -}}
+{{- if $route.rules -}}
+{{ toYaml $route.rules }}
+{{- else if $route.httpsRedirect -}}
+- matches:
+    - path:
+        type: PathPrefix
+        value: {{ default "/" $route.path | quote }}
+  filters:
+    - type: RequestRedirect
+      requestRedirect:
+        scheme: https
+        statusCode: 301
+{{- else -}}
+- matches:
+    - path:
+        type: PathPrefix
+        value: {{ default "/" $route.path | quote }}
+  backendRefs:
+    - name: {{ $fullName }}
+      port: 80
+{{- end -}}
+{{- end -}}
+{{- $root := . -}}
+{{- $httpRoute := .Values.httpRoute -}}
+{{- if and $httpRoute (kindIs "map" $httpRoute) -}}
+{{- if hasKey $httpRoute "enabled" -}}
+{{- /* Legacy flat shape (v0.37.0) */ -}}
+{{- if $httpRoute.enabled -}}
+{{- if empty $httpRoute.parentRefs -}}
+{{- fail "httpRoute.parentRefs must be configured when httpRoute.enabled is true" -}}
+{{- end }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "vaultwarden.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: vaultwarden
+    {{- include "vaultwarden.labels" . | nindent 4 }}
+    {{- range $key, $value := $httpRoute.labels }}
+    {{- printf "%s: %s" $key (tpl $value $root | quote) | nindent 4 }}
+    {{- end }}
+  {{- if $httpRoute.additionalAnnotations }}
+  annotations:
+    {{- toYaml $httpRoute.additionalAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- toYaml $httpRoute.parentRefs | nindent 4 }}
+  {{- if $httpRoute.hostnames }}
+  hostnames:
+    {{- toYaml $httpRoute.hostnames | nindent 4 }}
+  {{- end }}
+  rules:
+    {{- include "vaultwarden.httpRoute.rules" (dict "route" $httpRoute "fullName" (include "vaultwarden.fullname" $root)) | nindent 4 }}
+{{- end -}}
+{{- else -}}
+{{- /* Map shape (v0.38.0+) — range over named routes */ -}}
+{{- range $name, $route := $httpRoute -}}
+{{- if and (kindIs "map" $route) $route.enabled -}}
+{{- if empty $route.parentRefs -}}
+{{- fail (printf "httpRoute.%s.parentRefs must be configured when route is enabled" $name) -}}
+{{- end }}
+---
+apiVersion: {{ $route.apiVersion | default "gateway.networking.k8s.io/v1" }}
+kind: {{ $route.kind | default "HTTPRoute" }}
+metadata:
+  name: {{ include "vaultwarden.fullname" $root }}{{ if ne $name "main" }}-{{ $name }}{{ end }}
+  namespace: {{ $root.Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: vaultwarden
+    {{- include "vaultwarden.labels" $root | nindent 4 }}
+    {{- range $key, $value := $route.labels }}
+    {{- printf "%s: %s" $key (tpl $value $root | quote) | nindent 4 }}
+    {{- end }}
+  {{- if $route.additionalAnnotations }}
+  annotations:
+    {{- toYaml $route.additionalAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- toYaml $route.parentRefs | nindent 4 }}
+  {{- if $route.hostnames }}
+  hostnames:
+    {{- toYaml $route.hostnames | nindent 4 }}
+  {{- end }}
+  rules:
+    {{- include "vaultwarden.httpRoute.rules" (dict "route" $route "fullName" (include "vaultwarden.fullname" $root)) | nindent 4 }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

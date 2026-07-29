@@ -88,7 +88,7 @@ containers:
           secretKeyRef:
             name: {{ default (include "vaultwarden.fullname" .) .Values.duo.existingSecret }}
             key: {{ default "DUO_SKEY" .Values.duo.sKey.existingSecretKey }}
-      {{- end }}  
+      {{- end }}
       {{- if or (.Values.smtp.username.value) (.Values.smtp.username.existingSecretKey )}}
       - name: SMTP_USERNAME
         valueFrom:
@@ -102,6 +102,29 @@ containers:
           secretKeyRef:
             name: {{ default (include "vaultwarden.fullname" .) .Values.smtp.existingSecret }}
             key: {{ default "SMTP_PASSWORD" .Values.smtp.password.existingSecretKey }}
+      {{- end }}
+      {{- if eq (include "vaultwarden.hibpUseSecret" .) "true" }}
+      {{- if or (.Values.hibp.value) (.Values.hibp.existingSecretKey) (.Values.hibp.existingSecret) }}
+      - name: HIBP_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: {{ default (include "vaultwarden.fullname" .) .Values.hibp.existingSecret }}
+            key: {{ default "HIBP_API_KEY" .Values.hibp.existingSecretKey }}
+      {{- end }}
+      {{- end }}
+      {{- if and .Values.sso.enabled (or (.Values.sso.clientId.value) (.Values.sso.clientId.existingSecretKey) )}}
+      - name: SSO_CLIENT_ID
+        valueFrom:
+          secretKeyRef:
+            name: {{ default (include "vaultwarden.fullname" .) .Values.sso.existingSecret }}
+            key: {{ default "SSO_CLIENT_ID" .Values.sso.clientId.existingSecretKey }}
+      {{- end }}
+      {{- if and .Values.sso.enabled (or (.Values.sso.clientId.value) (.Values.sso.clientSecret.existingSecretKey) )}}
+      - name: SSO_CLIENT_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: {{ default (include "vaultwarden.fullname" .) .Values.sso.existingSecret }}
+            key: {{ default "SSO_CLIENT_SECRET" .Values.sso.clientSecret.existingSecretKey }}
       {{- end }}
       {{- if .Values.adminToken }}
       - name: ADMIN_TOKEN
@@ -168,23 +191,19 @@ containers:
         {{- end }}
       {{- end }}
     ports:
-      - containerPort: 8080
+      - containerPort: {{ .Values.rocket.port }}
         name: http
         protocol: TCP
-    {{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumeMounts) }}
+    {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.storage.attachments) (.Values.rocket.tls.secretName) (.Values.extraVolumeMounts) }}
     volumeMounts:
-    {{- with .Values.extraVolumeMounts }}
-    {{- toYaml . | nindent 6 }}
     {{- end }}
-    {{- with .Values.storage.existingVolumeClaim }}
+    {{- if .Values.storage.existingVolumeClaim }}
+      {{- with .Values.storage.existingVolumeClaim }}
       - name: vaultwarden-data
         mountPath: {{ default "/data" .dataPath }}
-      - name: vaultwarden-data
-        mountPath: {{ default "/data/attachments" .attachmentsPath }}
-    {{- end }}
+      {{- end }}
     {{- else }}
     {{- if or (.Values.storage.data) (.Values.storage.attachments) }}
-    volumeMounts:
       {{- with .Values.storage.data }}
       - name: {{ .name }}
         mountPath: {{ default "/data" .path }}
@@ -194,6 +213,13 @@ containers:
         mountPath: {{ default "/data/attachments" .path }}
       {{- end }}
     {{- end }}
+    {{- end }}
+    {{- if .Values.rocket.tls.secretName }}
+      - name: vaultwarden-tls
+        mountPath: {{ .Values.rocket.tls.path }}
+    {{- end }}
+    {{- with .Values.extraVolumeMounts }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     resources:
     {{- toYaml .Values.resources | nindent 6 }}
@@ -206,6 +232,11 @@ containers:
       httpGet:
         path: {{ .Values.livenessProbe.path }}
         port: http
+        {{- if .Values.rocket.tls.secretName }}
+        scheme: HTTPS
+        {{- else }}
+        scheme: HTTP
+        {{- end }}
       initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
       periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
       timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
@@ -217,6 +248,11 @@ containers:
       httpGet:
         path: {{ .Values.readinessProbe.path }}
         port: http
+        {{- if .Values.rocket.tls.secretName }}
+        scheme: HTTPS
+        {{- else }}
+        scheme: HTTP
+        {{- end }}
       initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
       periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
       timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
@@ -286,29 +322,6 @@ containers:
     {{- with .Values.sidecars }}
     {{- toYaml . | nindent 2 }}
     {{- end }}
-{{- if or (.Values.storage.existingVolumeClaim) (.Values.extraVolumes) (eq (include "vaultwarden.doBackup" .) "true") }}
-volumes:
-{{- with .Values.extraVolumes }}
-{{- toYaml . | nindent 2 }}
-{{- end }}
-{{- if .Values.storage.existingVolumeClaim }}
-{{- with .Values.storage.existingVolumeClaim }}
-  - name: vaultwarden-data
-    persistentVolumeClaim:
-      claimName: {{ .claimName }}
-{{- end }}
-{{- end }}
-{{- if eq (include "vaultwarden.doBackup" .) "true" }}
-  - name: backup-secret-conf
-    secret:
-      secretName: {{ include "vaultwarden.fullname" . }}-rclone
-      optional: false
-      # readable by user/owner
-      defaultMode: 0400
-  - name: config
-    emptyDir: {}
-{{- end }}
-{{- end }}
 {{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ .Values.serviceAccount.name }}
 {{- end }}

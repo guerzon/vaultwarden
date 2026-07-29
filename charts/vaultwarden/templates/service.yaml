@@ -19,10 +19,15 @@ spec:
     app.kubernetes.io/component: vaultwarden
     {{- include "vaultwarden.selectorLabels" . | nindent 4 }}
   ports:
+{{- if .Values.rocket.tls.secretName }}
+    - name: "https"
+      port: 443
+{{- else }}
     - name: "http"
       port: 80
+{{- end }}
       protocol: TCP
-      targetPort: 8080
+      targetPort: {{ .Values.rocket.port }}
 {{- if .Values.service.ipFamilyPolicy }}
   ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
 {{- end }}

@@ -40,13 +40,39 @@ spec:
         {{- end }}
     spec:
       {{- include "vaultwarden.podSpec" . | nindent 6 }}
-      {{- if not .Values.storage.existingVolumeClaim }}
+      {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.storage.attachments) (.Values.rocket.tls.secretName) (.Values.extraVolumes) (eq (include "vaultwarden.doBackup" .) "true") }}
       volumes:
+        {{- if .Values.storage.existingVolumeClaim }}
+        {{- with .Values.storage.existingVolumeClaim }}
+        - name: vaultwarden-data
+          persistentVolumeClaim:
+            claimName: {{ .claimName }}
+        {{- end }}
+        {{- else }}
         {{- range $pvc := (fromYaml (include "vaultwarden.pvcSpec" .)).volumeClaimTemplates }}
         {{- $newName := printf "%s-%s-0" $pvc.metadata.name $.Release.Name }}
         - name: {{ $pvc.metadata.name }}
           persistentVolumeClaim:
             claimName: {{ $newName }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.rocket.tls.secretName }}
+        - name: vaultwarden-tls
+          secret:
+            secretName: {{ .Values.rocket.tls.secretName }}
+        {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if eq (include "vaultwarden.doBackup" .) "true" }}
+        - name: backup-secret-conf
+          secret:
+            secretName: {{ include "vaultwarden.fullname" . }}-rclone
+            optional: false
+            # readable by user/owner
+            defaultMode: 0400
+        - name: config
+          emptyDir: {}
         {{- end }}
       {{- end }}
 {{- end }}

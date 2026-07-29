@@ -15,7 +15,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  serviceName: vaultwarden
+  serviceName: {{ include "vaultwarden.fullname" . }}
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
@@ -41,6 +41,32 @@ spec:
         {{- end }}
     spec:
       {{- include "vaultwarden.podSpec" . | nindent 6 }}
+      {{- if or (.Values.storage.existingVolumeClaim) (.Values.rocket.tls.secretName) (.Values.extraVolumes) (eq (include "vaultwarden.doBackup" .) "true") }}
+      volumes:
+        {{- with .Values.storage.existingVolumeClaim }}
+        - name: vaultwarden-data
+          persistentVolumeClaim:
+            claimName: {{ .claimName }}
+        {{- end }}
+        {{- if .Values.rocket.tls.secretName }}
+        - name: vaultwarden-tls
+          secret:
+            secretName: {{ .Values.rocket.tls.secretName }}
+        {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if eq (include "vaultwarden.doBackup" .) "true" }}
+        - name: backup-secret-conf
+          secret:
+            secretName: {{ include "vaultwarden.fullname" . }}-rclone
+            optional: false
+            # readable by user/owner
+            defaultMode: 0400
+        - name: config
+          emptyDir: {}
+        {{- end }}
+      {{- end }}
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Retain
     whenScaled: Retain

@@ -13,7 +13,7 @@ image:
   ## @param image.tag Vaultwarden image tag
   ## Ref: https://hub.docker.com/r/vaultwarden/server/tags
   ##
-  tag: "1.35.3-alpine"
+  tag: "1.37.0-alpine"
   ## @param image.pullPolicy Vaultwarden image pull policy
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
   ##
@@ -286,15 +286,15 @@ podDisruptionBudget:
 
 
 storage:
-  ## @param storage.existingVolumeClaim If defined, the values here will be used for the data and
-  ## attachments PV's. The custom values for data and attachments will be ignored if
-  ## a value is set here
+  ## @param storage.existingVolumeClaim If defined, the values here will be used for the data PV.
+  ## The custom values for data and attachments will be ignored if a value is set here.
+  ## This only supports mounting a single PVC for data.
+  ## If attachments are in a different volume, please mount it using extraVolumeMounts.
   ##
   existingVolumeClaim:
     {}
     # claimName: "vaultwarden-pvc"
     # dataPath: "/data"
-    # attachmentsPath: /data/attachments
 
   ## @param storage.data Data directory configuration, refer to values.yaml for parameters.
   ##
@@ -367,6 +367,22 @@ database:
   ## @param database.maxConnections Define the size of the connection pool used for connecting to the database.
   ##
   maxConnections: 10
+  ## @param database.enableWal Enable Write-Ahead Logging (WAL) for the database
+  ## Note: Read wiki documentation before enabling
+  ##
+  enableWal: true
+  ## @param database.timeout Timeout when acquiring database connection (seconds)
+  ##
+  timeout: 30
+  ## @param database.idleTimeout Timeout before idle connections are closed (seconds)
+  ##
+  idleTimeout: 600
+  ## @param database.minConnections Minimum size of the connection pool
+  ##
+  minConnections: 2
+  ## @param database.connInit Database connection initialization SQL statements
+  ##
+  connInit: ""
 
 ## @section Push Notifications
 ## Supported since 1.29.0.
@@ -441,9 +457,23 @@ domain: ""
 ##
 sendsAllowed: "true"
 
-## @param hibpApiKey HaveIBeenPwned API Key
+## @param hibpApiKey HaveIBeenPwned API Key (legacy). Prefer `hibp.value` or `hibp.existingSecret`.
 ##
 hibpApiKey: ""
+
+## HaveIBeenPwned API Key
+##
+hibp:
+  ## @param hibp.existingSecret Name of an existing secret containing the HaveIBeenPwned API key. Also set hibp.existingSecretKey.
+  ##
+  existingSecret: ""
+  ## @param hibp.existingSecretKey When using an existing secret, specify the key which contains the API key.
+  ## Example: HIBP_API_KEY
+  ##
+  existingSecretKey: ""
+  ## @param hibp.value HaveIBeenPwned API Key plain text
+  ##
+  value: ""
 
 ## @param orgAttachmentLimit Max Kilobytes of attachment storage allowed per organization.
 ## When this limit is reached, organization members will not be allowed to upload further attachments for ciphers owned by that organization.
@@ -586,9 +616,8 @@ adminToken:
   ##
   existingSecretKey: ""
   ## @param adminToken.value Plain or argon2 string containing the admin token.
-  ## This example is the argon2 has of "R@ndomTokenString" (no quotes).
   ##
-  value: "$argon2id$v=19$m=19456,t=2,p=1$Vkx1VkE4RmhDMUhwNm9YVlhPQkVOZk1Yc1duSDdGRVYzd0Y5ZkgwaVg0Yz0$PK+h1ANCbzzmEKaiQfCjWw+hWFaMKvLhG2PjRanH5Kk"
+  value: ""
 
 ## @param adminRateLimitSeconds Number of seconds, on average, between admin login requests from the same IP address before rate limiting kicks in.
 ##
@@ -721,6 +750,9 @@ smtp:
   ## @param smtp.acceptInvalidCerts Accept Invalid Certificates
   ##
   acceptInvalidCerts: "false"
+  ## @param smtp.heloName HELO Hostname: override the pod hostname used in the SMTP HELO command
+  ##
+  heloName: ""
   ## @param smtp.debug SMTP debugging
   ##
   debug: false
@@ -736,6 +768,14 @@ rocket:
   address: "0.0.0.0"
   port: "8080"
   workers: "10"
+  tls:
+    ## @param rocket.tls.secretName Name of the kubernetes.io/tls secret to use for HTTPS.
+    ## If unset, Vaultwarden service listens to HTTP.
+    ##
+    secretName: ""
+    ## @param rocket.tls.path Path to mount TLS secrets within the container
+    ##
+    path: "/certs"
 
 ## Service configuration
 service:
@@ -814,6 +854,128 @@ ingress:
   ##   - Add support for using cert-manager.
   ##   - Support for multiple TLS hostnames.
   ##
+
+## @section Kubernetes Gateway API Configuration
+## Ref: https://gateway-api.sigs.k8s.io/
+##
+
+## @param httpRoute HTTPRoute configuration. Supports two shapes — see examples below.
+## Requires Gateway API CRDs to be installed in the cluster.
+## Ref: https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api
+##
+## Shape 1 — Flat (single HTTPRoute, backward-compatible with chart v0.37.0):
+## httpRoute:
+##   enabled: true
+##   labels: {}
+##   additionalAnnotations: {}
+##   parentRefs:
+##     - name: my-gateway
+##       namespace: gateway-system
+##       sectionName: https
+##   hostnames:
+##     - vw.example.com
+##   path: /
+##   rules: []           # full override; takes precedence over path and httpsRedirect
+##   httpsRedirect: false
+##
+## Shape 2 — Map (multiple named HTTPRoutes, e.g. HTTPS backend + HTTP-to-HTTPS redirect):
+## httpRoute:
+##   main:
+##     enabled: true
+##     parentRefs:
+##       - name: my-gateway
+##         namespace: gateway-system
+##         sectionName: https
+##     hostnames:
+##       - vw.example.com
+##     path: /
+##     rules: []
+##     httpsRedirect: false
+##     apiVersion: gateway.networking.k8s.io/v1   # optional override
+##     kind: HTTPRoute                             # optional override
+##     labels: {}
+##     additionalAnnotations: {}
+##   redirect:
+##     enabled: true
+##     parentRefs:
+##       - name: my-gateway
+##         namespace: gateway-system
+##         sectionName: http
+##     hostnames:
+##       - vw.example.com
+##     httpsRedirect: true   # emits a 301 RequestRedirect filter; no backendRefs
+##
+## Route naming: the "main" route uses the chart's fullname; all other routes get a
+## "-<name>" suffix (e.g. "<release>-vaultwarden-redirect").
+##
+httpRoute: {}
+
+## @section SSO OpenID Connect Configuration support for https://github.com/dani-garcia/vaultwarden/pull/3899
+##
+sso:
+  ## @param sso.enabled boolean to define if SSO is enabled or not.
+  ##
+  enabled: false
+  ## @param sso.existingSecret Name of an existing secret containing the OpenID Connect client id and secret. Also set sso.clientId.existingSecretKey and sso.clientSecret.existingSecretKey.
+  ##
+  existingSecret: ""
+  ## @param sso.onlySSO boolen to disable the email+master-password login flow.
+  ##
+  onlySSO: false
+  ## @param sso.enforceSSO boolen to enforce SSO authentication for all users (except admin token access).
+  ##
+  enforceSSO: false
+  ## @param sso.signupsMatchEmail boolen to define if SSO user signup should take control of existing account with given mail (only works during signup).
+  signupsMatchEmail: true
+  ## @param sso.ignoreEmailVerification boolean to define if signup without mail verification is allowed (this is needed if your SSO provider does not send the 'email_verified' claim).
+  ##
+  ignoreEmailVerification: false
+  ## @param sso.authority the OpenID Connect Discovery endpoint without '/.well-known/openid-configuration' and trailing '/'-
+  ## Example: https://account.example.com/realm/example
+  ##
+  authority: ""
+  ## @param sso.scopes OpenID connect scopes to use
+  ##
+  scopes: "email profile"
+  ## @param sso.authorizeExtraParams OpenID connect extra params fort he authorize redirect.
+  ##
+  authorizeExtraParams: ""
+  ## @param sso.pkce boolean to enable/disable PKCE for the auth flow
+  ##
+  pkce: true
+  ## @param sso.trustedAudience additional audience to trust for the ID token. (`client_id` is always trusted). Use single quote when writing the regex: `'^$'`.
+  ##
+  trustedAudience: ''
+  ## @param sso.masterPasswordPolicy optional master password policy for sso (currently 'enforceOnLogin' is not supported).
+  ##
+  masterPasswordPolicy: '{"enforceOnLogin":false,"minComplexity":3,"minLength":12,"requireLower":true,"requireNumbers":true,"requireSpecial":true,"requireUpper":true}'
+  ## @param sso.disableSessionHandling optional boolean to disable sso session handling  if you can not retrieve refresh_tokens (access token will have default lifetime form 2h and refresh token from 7 days)
+  ##
+  disableSessionHandling: false
+  ## @param sso.cacheExpiration expiration time for sso client cache, passing 0 disables the cache.
+  ##
+  cacheExpiration: 0
+  ## @param sso.debugTokens boolen to enbable token logging for debugging purpose
+  ##
+  debugTokens: false
+  ## Client ID for OpenID Connect authentication.
+  ##
+  clientId:
+    ## @param sso.clientId.value string for the client id of the OpenID Connect authentication.
+    ##
+    value: ""
+    ## @param sso.clientId.existingSecretKey When using an existing secret, specify the key which contains the password.
+    ##
+    existingSecretKey: ""
+  ## Client ID for OpenID Connect authentication.
+  ##
+  clientSecret:
+    ## @param sso.clientSecret.value string for the client id of the OpenID Connect authentication.
+    ##
+    value: ""
+    ## @param sso.clientSecret.existingSecretKey When using an existing secret, specify the key which contains the password.
+    ##
+    existingSecretKey: ""
 
 ## @section Backup Configuration
 ## https://github.com/ttionya/vaultwarden-backup

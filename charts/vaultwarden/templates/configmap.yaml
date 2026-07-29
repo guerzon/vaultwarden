@@ -20,7 +20,9 @@ metadata:
     {{- . | toYaml | nindent 4 }}
 {{- end }}
 data:
+  {{- if .Values.domain }}
   DOMAIN: {{ .Values.domain | quote }}
+  {{- end }}
   {{- if and .Values.smtp.host .Values.smtp.from }}
   SMTP_HOST: {{ .Values.smtp.host | quote }}
   SMTP_SECURITY: {{ .Values.smtp.security | quote }}
@@ -33,6 +35,9 @@ data:
   SMTP_DEBUG: {{ .Values.smtp.debug | quote }}
   SMTP_ACCEPT_INVALID_HOSTNAMES: {{ .Values.smtp.acceptInvalidHostnames | quote }}
   SMTP_ACCEPT_INVALID_CERTS: {{ .Values.smtp.acceptInvalidCerts | quote }}
+  {{- if .Values.smtp.heloName }}
+  HELO_NAME: {{ .Values.smtp.heloName | quote }}
+  {{- end }}
   {{- end }}
   {{- if .Values.storage.data }}
   DATA_FOLDER: {{ default "/data" .Values.storage.data.path | quote }}
@@ -40,9 +45,17 @@ data:
   {{- if .Values.storage.attachments }}
   ATTACHMENTS_FOLDER: {{ default "/data/attachments" .Values.storage.attachments.path | quote }}
   {{- end }}
+  {{- with .Values.database.uriOverride }}
+  DATABASE_URL: {{ . | quote }}
+  {{- end }}
   ROCKET_ADDRESS: {{ .Values.rocket.address | quote }}
   ROCKET_PORT: {{ .Values.rocket.port | quote }}
   ROCKET_WORKERS: {{ .Values.rocket.workers | quote }}
+  {{- if .Values.rocket.tls.secretName }}
+  {{- with .Values.rocket.tls }}
+  ROCKET_TLS: '{certs="{{ .path }}/tls.crt",key="{{ .path }}/tls.key"}'
+  {{- end }}
+  {{- end }}
   SHOW_PASSWORD_HINT: {{ .Values.showPassHint | quote }}
   SIGNUPS_ALLOWED: {{ .Values.signupsAllowed | quote }}
   INVITATIONS_ALLOWED: {{ .Values.invitationsAllowed | quote }}
@@ -59,6 +72,21 @@ data:
   {{- end }}
   DB_CONNECTION_RETRIES: {{ .Values.database.connectionRetries | quote }}
   DATABASE_MAX_CONNS: {{ .Values.database.maxConnections | quote }}
+  {{- with .Values.database.timeout }}
+  DATABASE_TIMEOUT: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.database.idleTimeout }}
+  DATABASE_IDLE_TIMEOUT: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.database.minConnections }}
+  DATABASE_MIN_CONNS: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.database.enableWal }}
+  ENABLE_DB_WAL: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.database.connInit }}
+  DATABASE_CONN_INIT: {{ . | quote }}
+  {{- end }}
   INVITATION_ORG_NAME: {{ .Values.invitationOrgName | quote }}
   ICON_BLACKLIST_NON_GLOBAL_IPS: {{ .Values.iconBlacklistNonGlobalIps | quote }}
   IP_HEADER: {{ .Values.ipHeader | quote }}
@@ -107,7 +135,7 @@ data:
   {{- with .Values.timeZone }}
   TZ: {{ . | quote }}
   {{- end }}
-  {{- with .Values.hibpApiKey }}
+  {{- with include "vaultwarden.hibpApiKeyLegacy" . }}
   HIBP_API_KEY: {{ . | quote }}
   {{- end }}
   {{- with .Values.orgAttachmentLimit }}
@@ -122,3 +150,23 @@ data:
   EMAIL_CHANGE_ALLOWED: {{ .Values.emailChangeAllowed | quote }}
   ADMIN_RATELIMIT_SECONDS: {{ .Values.adminRateLimitSeconds | quote }}
   ADMIN_RATELIMIT_MAX_BURST: {{ .Values.adminRateLimitMaxBurst | quote }}
+  {{- if .Values.sso.enabled }}
+  SSO_ENABLED: {{ .Values.sso.enabled | quote }}
+  SSO_ONLY: {{ .Values.sso.onlySSO | quote }}
+  SSO_SIGNUPS_MATCH_EMAIL: {{ .Values.sso.signupsMatchEmail | quote }}
+  SSO_ALLOW_UNKNOWN_EMAIL_VERIFICATION: {{ .Values.sso.ignoreEmailVerification | quote }}
+  SSO_AUTHORITY: {{ .Values.sso.authority | quote }}
+  SSO_SCOPES: {{ .Values.sso.scopes | quote }}
+  SSO_AUTHORIZE_EXTRA_PARAMS: {{ .Values.sso.authorizeExtraParams | quote }}
+  SSO_PKCE: {{ .Values.sso.pkce | quote }}
+  SSO_AUDIENCE_TRUSTED: {{ .Values.sso.trustedAudience | quote }}
+  {{- if .Values.sso.masterPasswordPolicy }}
+  SSO_MASTER_PASSWORD_POLICY: {{ .Values.sso.masterPasswordPolicy | quote }}
+  {{- end }}
+  SSO_AUTH_ONLY_NOT_SESSION: {{ .Values.sso.disableSessionHandling | quote }}
+  SSO_CLIENT_CACHE_EXPIRATION: {{ .Values.sso.cacheExpiration | quote }}
+  SSO_DEBUG_TOKENS: {{ .Values.sso.debugTokens | quote }}
+  {{- if .Values.sso.enforceSSO }}
+  SSO_FRONTEND: "override"
+  {{- end }}
+  {{- end }}
