@@ -84,13 +84,15 @@ If the deployment is lost, including PVs, it can be restored from the backup:
 2. Have the `zipPassword` ready for unzipping the archive.
 3. Run the restore script (requires functional kubectl):
 
+zipFile is a part of Helm chart secret
+
 `./restore.sh --archive <archive-file> --release <helm-release> --storage-class <Storage class>`
 
 Example: 
 
    `./restore.sh --archive /tmp/backup.20221103-19-05-01.zip --release vaultwarden --storage-class "local-path"`
 
-Kubernetes Namespace and context can be set with kubectl beforehand or passed as arguments.
+Kubernetes Namespace and context can be set with kubectl beforehand or passed as arguments. Create one if needed
 
 The script will create a PV and PVC in the target cluster and namespace. When the VaultWarden helm chart is deployed, it will use this PV and PVC.
 
