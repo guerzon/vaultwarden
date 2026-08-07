@@ -13,7 +13,7 @@ image:
   ## @param image.tag Vaultwarden image tag
   ## Ref: https://hub.docker.com/r/vaultwarden/server/tags
   ##
-  tag: "1.36.0-alpine"
+  tag: "1.37.1-alpine"
   ## @param image.pullPolicy Vaultwarden image pull policy
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
   ##
@@ -111,6 +111,11 @@ affinity: {}
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 ##
 tolerations: []
+
+## @param topologySpreadConstraints Topology spread constraints for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+##
+topologySpreadConstraints: []
 
 ## @param priorityClassName Assign a priority class to pods
 ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
