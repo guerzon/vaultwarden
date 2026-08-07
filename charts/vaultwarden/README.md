@@ -337,6 +337,18 @@ attachments:
   keepPvc: true
 ```
 
+To add custom labels to the persistent volume claims, set the `labels` key. This is useful for backup tools, monitoring, or policies that select volumes by label:
+
+```yaml
+data:
+  name: "vaultwarden-data"
+  size: "15Gi"
+  class: "local-path"
+  labels:
+    environment: "production"
+    team: "platform"
+```
+
 ### Using an Existing Persistent Volume Claim
 
 In case you want to use an existing PVC to store your data and attachments (i.e. NAS), `storage.existingVolumeClaim` can be set, which will update the PodSpec to use the provided PVC.  Note, that use of this value will ignore the values of both `storage.data` 
