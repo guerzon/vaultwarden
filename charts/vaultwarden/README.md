@@ -29,7 +29,7 @@ helm upgrade -i \
 
 ## General configuration
 
-This chart deploys `vaultwarden` from pre-built images on [Docker Hub](https://hub.docker.com/r/vaultwarden/server/tags): `vaultwarden/server`. The image can be defined by specifying the tag with `image.tag`.
+This chart deploys `vaultwarden` from pre-built images on [Docker Hub](https://hub.docker.com/r/vaultwarden/server/tags): `vaultwarden/server`. The image is composed from `image.tag` and `image.flavor`, so `tag: "1.24.0"` with `flavor: "alpine"` resolves to `1.24.0-alpine`.
 
 Example that uses the Alpine-based image `1.24.0-alpine` and an existing secret that contains registry credentials:
 
@@ -37,9 +37,18 @@ Example that uses the Alpine-based image `1.24.0-alpine` and an existing secret 
 image:
   registry: ghcr.io
   repository: guerzon/vaultwarden
-  tag: "1.24.0-alpine"
+  tag: "1.24.0"
+  flavor: "alpine"
   pullSecrets:
     - name: myRegKey
+```
+
+Upstream publishes an Alpine (musl) and a Debian (glibc) image for each release. Set `flavor: ""` to get the Debian image, which is the safer choice on clusters where musl's resolver misbehaves:
+
+```yaml
+image:
+  tag: "1.24.0"
+  flavor: ""
 ```
 
 **Important**: specify the URL used by users with the `domain` variable, otherwise, some functionalities might not work:
@@ -380,7 +389,8 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | --------------------------- | ----------------------------------------------------------------------------------------- | -------------------- |
 | `image.registry`            | Vaultwarden image registry                                                                | `docker.io`          |
 | `image.repository`          | Vaultwarden image repository                                                              | `vaultwarden/server` |
-| `image.tag`                 | Vaultwarden image tag                                                                     | `1.37.2-alpine`      |
+| `image.tag`                 | Vaultwarden image tag, without the flavor suffix                                          | `1.37.2`             |
+| `image.flavor`              | Image flavor, appended to `image.tag`. Set to `""` for the Debian (glibc) image           | `alpine`             |
 | `image.pullPolicy`          | Vaultwarden image pull policy                                                             | `IfNotPresent`       |
 | `image.pullSecrets`         | Specify docker-registry secrets                                                           | `[]`                 |
 | `image.extraSecrets`        | Vaultwarden image extra secrets                                                           | `[]`                 |

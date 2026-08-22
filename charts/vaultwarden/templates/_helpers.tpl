@@ -32,6 +32,17 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
+Fully-qualified image reference. image.flavor, when set, is appended to image.tag.
+*/}}
+{{- define "vaultwarden.image" -}}
+{{- $tag := .Values.image.tag -}}
+{{- if .Values.image.flavor -}}
+{{- $tag = printf "%s-%s" $tag .Values.image.flavor -}}
+{{- end -}}
+{{- printf "%s/%s:%s" .Values.image.registry .Values.image.repository $tag -}}
+{{- end }}
+
+{{/*
 Common labels
 */}}
 {{- define "vaultwarden.labels" -}}

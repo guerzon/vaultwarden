@@ -10,10 +10,14 @@ image:
   ##
   repository: vaultwarden/server
   ##
-  ## @param image.tag Vaultwarden image tag
+  ## @param image.tag Vaultwarden image tag, without the flavor suffix
   ## Ref: https://hub.docker.com/r/vaultwarden/server/tags
   ##
-  tag: "1.37.2-alpine"
+  tag: "1.37.2"
+  ##
+  ## @param image.flavor Image flavor, appended to `image.tag`. Set to `""` for the Debian (glibc) image
+  ##
+  flavor: "alpine"
   ## @param image.pullPolicy Vaultwarden image pull policy
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
   ##
