@@ -34,7 +34,7 @@ initContainers:
 enableServiceLinks: false
 {{- end }}
 containers:
-  - image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
+  - image: {{ include "vaultwarden.image" . }}
     imagePullPolicy: {{ .Values.image.pullPolicy }}
     name: vaultwarden
     envFrom:
