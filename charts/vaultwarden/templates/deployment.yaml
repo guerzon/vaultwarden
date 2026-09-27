@@ -40,7 +40,7 @@ spec:
         {{- end }}
     spec:
       {{- include "vaultwarden.podSpec" . | nindent 6 }}
-      {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.storage.attachments) (.Values.rocket.tls.secretName) (.Values.extraVolumes) }}
+      {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.storage.attachments) (.Values.rocket.tls.secretName) (.Values.extraVolumes) (eq (include "vaultwarden.doBackup" .) "true") }}
       volumes:
         {{- if .Values.storage.existingVolumeClaim }}
         {{- with .Values.storage.existingVolumeClaim }}
@@ -63,6 +63,16 @@ spec:
         {{- end }}
         {{- with .Values.extraVolumes }}
         {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if eq (include "vaultwarden.doBackup" .) "true" }}
+        - name: backup-secret-conf
+          secret:
+            secretName: {{ include "vaultwarden.fullname" . }}-rclone
+            optional: false
+            # readable by user/owner
+            defaultMode: 0400
+        - name: config
+          emptyDir: {}
         {{- end }}
       {{- end }}
 {{- end }}
