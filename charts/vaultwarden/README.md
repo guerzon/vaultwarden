@@ -351,7 +351,7 @@ data:
 
 ### Using an Existing Persistent Volume Claim
 
-In case you want to use an existing PVC to store your data and attachments (i.e. NAS), `storage.existingVolumeClaim` can be set, which will update the PodSpec to use the provided PVC.  Note, that use of this value will ignore the values of both `storage.data` 
+In case you want to use an existing PVC to store your data and attachments (i.e. NAS), `storage.existingVolumeClaim` can be set, which will update the PodSpec to use the provided PVC.  Note, that use of this value will ignore the values of both `storage.data`
 and `storage.attachments` values.
 
 ```yaml
@@ -380,7 +380,7 @@ helm -n $NAMESPACE uninstall $RELEASE_NAME
 | --------------------------- | ----------------------------------------------------------------------------------------- | -------------------- |
 | `image.registry`            | Vaultwarden image registry                                                                | `docker.io`          |
 | `image.repository`          | Vaultwarden image repository                                                              | `vaultwarden/server` |
-| `image.tag`                 | Vaultwarden image tag                                                                     | `1.37.4-alpine`      |
+| `image.tag`                 | Vaultwarden image tag                                                                     | `1.37.5-alpine`      |
 | `image.pullPolicy`          | Vaultwarden image pull policy                                                             | `IfNotPresent`       |
 | `image.pullSecrets`         | Specify docker-registry secrets                                                           | `[]`                 |
 | `image.extraSecrets`        | Vaultwarden image extra secrets                                                           | `[]`                 |
