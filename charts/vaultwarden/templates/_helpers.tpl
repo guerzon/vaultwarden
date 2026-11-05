@@ -94,6 +94,13 @@ Determine whether to use deployment or statefulset
 {{- end }}
 
 {{/*
+Do backup? Needs backup enabled and persistence
+*/}}
+{{- define "vaultwarden.doBackup" -}}
+  {{- and .Values.backup.enabled (hasKey .Values.storage "data") -}}
+{{- end }}
+
+{{/*
 Return true when the HIBP API key should be sourced from a Kubernetes Secret.
 */}}
 {{- define "vaultwarden.hibpUseSecret" -}}
