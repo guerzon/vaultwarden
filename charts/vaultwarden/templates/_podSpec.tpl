@@ -179,7 +179,11 @@ containers:
       {{- end }}
     ports:
       - containerPort: {{ .Values.rocket.port }}
+        {{- if .Values.rocket.tls.secretName }}
+        name: https
+        {{- else }}
         name: http
+        {{- end }}
         protocol: TCP
     {{- if or (.Values.storage.existingVolumeClaim) (.Values.storage.data) (.Values.storage.attachments) (.Values.rocket.tls.secretName) (.Values.extraVolumeMounts) }}
     volumeMounts:
@@ -218,10 +222,11 @@ containers:
     livenessProbe:
       httpGet:
         path: {{ .Values.livenessProbe.path }}
-        port: http
         {{- if .Values.rocket.tls.secretName }}
+        port: https
         scheme: HTTPS
         {{- else }}
+        port: http
         scheme: HTTP
         {{- end }}
       initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
@@ -234,10 +239,11 @@ containers:
     readinessProbe:
       httpGet:
         path: {{ .Values.readinessProbe.path }}
-        port: http
         {{- if .Values.rocket.tls.secretName }}
+        port: https
         scheme: HTTPS
         {{- else }}
+        port: http
         scheme: HTTP
         {{- end }}
       initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
@@ -250,7 +256,13 @@ containers:
     startupProbe:
       httpGet:
         path: {{ .Values.startupProbe.path }}
+        {{- if .Values.rocket.tls.secretName }}
+        port: https
+        scheme: HTTPS
+        {{- else }}
         port: http
+        scheme: HTTP
+        {{- end }}
       initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
       periodSeconds: {{ .Values.startupProbe.periodSeconds }}
       timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
